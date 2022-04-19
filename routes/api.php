@@ -2,7 +2,6 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-include(app_path('/global_config.php'));
 /*
 |--------------------------------------------------------------------------
 | API Routes
