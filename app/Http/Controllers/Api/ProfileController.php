@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Otp;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -50,13 +51,39 @@ class ProfileController extends ApiController
         } else {
             $user = User::find(auth('api')->user()->id);
             if ($user) {
-                $user->update([
-                    'name'  =>  $data['name'],
-                    'email' =>  $data['email'],
-                    'phone_number'  =>  $data['phone_number'],
-                    'username'  =>  $data['username'],
-                ]);
-                return $this->result_message('User Information Updated Successfully.');
+                if ($data['phone_number'] == $user->phone_number) {
+                    $user->update([
+                        'name'  =>  $data['name'],
+                        'email' =>  $data['email'],
+                        'phone_number'  =>  $data['phone_number'],
+                        'username'  =>  $data['username'],
+                    ]);
+                    return $this->result_message('User Information Updated Successfully.');
+                } else {
+                    if (isset($data['otp'])) {
+                        $findotp = Otp::where('phone_number', $data['phone_number'])->first();
+                        if ($findotp->otp == $data['otp']) {
+                            $user->update([
+                                'name'  =>  $data['name'],
+                                'email' =>  $data['email'],
+                                'phone_number'  =>  $data['phone_number'],
+                                'username'  =>  $data['username'],
+                            ]);
+                            $findotp->delete();
+                            return $this->result_message('User Information Updated Successfully.');
+                        }else{
+                            return $this->result_message('Please check your otp.');
+                        }
+                    } else {
+                        $otp = rand(1000, 9999);
+                        $this->otp($data['phone_number'], $otp);
+                        $update = Otp::create([
+                            'phone_number'  =>  $data['phone_number'],
+                            'otp'           =>  $otp
+                        ]);
+                        return $this->result_message('Please enter otp to verify your number.');
+                    }
+                }
             } else {
                 return $this->result_fail('Something Went Wrong.');
             }
@@ -137,7 +164,7 @@ class ProfileController extends ApiController
         return array('distance' => $dist, 'time' => $time);
     }
 
-    function getLocation($lat,$long)
+    function getLocation($lat, $long)
     {
         $geolocation = $lat . ',' . $long;
         $request = 'http://maps.googleapis.com/maps/api/geocode/json?latlng=' . $geolocation . '&sensor=false';
