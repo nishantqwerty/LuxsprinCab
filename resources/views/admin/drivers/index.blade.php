@@ -34,6 +34,8 @@
                             <th ><strong> User Name: </strong></th>
                             <th ><strong> Email: </strong></th>
                             <th ><strong> Phone Number: </strong></th>
+                            <th ><strong> Validate: </strong></th>
+                            <th ><strong> Status: </strong></th>
                             <th ><strong> Action: </strong></th>
                         </tr>
                     </thead>
@@ -44,6 +46,23 @@
                             <td> {{ $user->username }} </td>
                             <td> {{ $user->email }} </td>
                             <td> {{ $user->phone_number }} </td>
+                            <td>
+                              @if($user->is_validated == VALIDATE_REQUEST)
+                                <a href="{{ route('accept-reject',['id' => $user->id,'status' => DRIVER_APPROVED]) }}"><i class="fa fa-check" aria-hidden="true" style="color:green" title="Approve"></i></a>&nbsp;&#47;&nbsp;
+                                <a href="{{ route('accept-reject',['id' => $user->id,'status' => DRIVER_REJECTED]) }}"><i class="fa fa-window-close" aria-hidden="true" style="color:red" title="Reject"></i></a>
+                              @elseif($user->is_validated == DRIVER_APPROVED)
+                                <button type="button" class="btn btn-success">Approved</button>
+                              @elseif($user->is_validated == DRIVER_REJECTED)
+                                <button type="button" class="btn btn-danger">Rejected</button>
+                              @endif
+                            </td>
+                            <td>
+                              @if($user->is_active == DRIVER_ACTIVE)
+                                <a href="{{ route('change-driver-status',['id' => $user->id,'status' => DRIVER_INACTIVE]) }}" class="btn btn-success" title="Click To Deactivate">Active</a>
+                              @else
+                                <a href="{{ route('change-driver-status',['id' => $user->id,'status' => DRIVER_ACTIVE]) }}" class="btn btn-secondary" title="Click To Activate">In Active</a>
+                              @endif 
+                            </td>
                             <td>
                               <a href="{{ route('edit-driver', ['id' => $user->id]) }}"> <i class="fa fa-edit" ></i> <a>
                               <a href="{{ route('delete-driver', ['id' => $user->id]) }}"> <i class="fa fa-trash" style="font-size:20px;color:red"></i> <a>

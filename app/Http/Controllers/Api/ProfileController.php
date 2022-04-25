@@ -51,6 +51,13 @@ class ProfileController extends ApiController
         } else {
             $user = User::find(auth('api')->user()->id);
             if ($user) {
+                if($request->has('image')){
+                    $filename = time().'.'.$request->image->extension();
+                    $request->image->storeAs('public/images',$filename);
+                    $user->update([
+                        'image' =>  $filename,
+                    ]);
+                }
                 if ($data['phone_number'] == $user->phone_number) {
                     $user->update([
                         'name'  =>  $data['name'],

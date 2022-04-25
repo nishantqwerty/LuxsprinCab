@@ -82,4 +82,31 @@ class DriverController extends Controller
             return redirect()->back()->with('error', 'Something Went Wrong.');
         }
     }
+
+    public function changeStatus($id, $status)
+    {
+        $user = User::find($id);
+        if ($user) {
+            $user->update([
+                'is_active' =>  $status
+            ]);
+            return back()->with('success', 'Driver Status Updated Successfully.');
+        } else {
+            return back()->with('error', 'Something Went Wrong.');
+        }
+    }
+
+    public function acceptReject($id, $status)
+    {
+        $user = User::find($id);
+        if ($user) {
+            $user->update([
+                'is_validated' =>  $status
+            ]);
+            return back()->with('success', 'Driver Status Updated Successfully.');
+        } else {
+            return back()->with('error', 'Something Went Wrong.');
+        }
+    }
+
 }

@@ -61,6 +61,8 @@ Route::group(['namespace' => 'Admin'], function () {
             Route::post('/edit/{id}', 'DriverController@update')->name('update-driver');
             Route::get('/view/{id}', 'DriverController@view')->name('view-driver');
             Route::get('/delete/{id}', 'DriverController@delete')->name('delete-driver');
+            Route::get('/change-status/{id}/{status}', 'DriverController@changeStatus')->name('change-driver-status');
+            Route::get('/accept-reject/{id}/{status}', 'DriverController@acceptReject')->name('accept-reject');
 
         });
 
