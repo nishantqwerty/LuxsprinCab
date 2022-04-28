@@ -37,25 +37,72 @@ class LoginController extends ApiController
         } else {
             $user = User::where($fieldType, $login)->where('user_role', DRIVER)->first();
             if ($user) {
-                if ($user->is_validated == DRIVER_REJECTED) {
-                    if ($user->is_active == DRIVER_INACTIVE) {
-                        if (Auth::attempt($request->only($fieldType, 'password'))) {
-                            $token = $user->createToken('Auth Token')->accessToken;
-                            return $this->result_ok('User Logged In.', ['token' => $token, 'user' => Auth::user()]);
-                        } else {
-                            return $this->result_fail("Please check your email or password");
-                        }
+                if ($user->is_active == DRIVER_ACTIVE) {
+                    if (Auth::attempt($request->only($fieldType, 'password'))) {
+                        $token = $user->createToken('Auth Token')->accessToken;
+                        return $this->result_ok('User Logged In.', ['token' => $token, 'user' => Auth::user()]);
                     } else {
-                        return $this->result_fail('Your Account has been deactivated please contact administrator.');
+                        return $this->result_fail("Please check your email or password");
                     }
                 } else {
-                    return $this->result_fail('Your Account is rejected by the admin.');
+                    return $this->result_fail('Your Account has been deactivated please contact administrator.');
                 }
             } else {
                 return $this->result_fail('Account does not exists.');
             }
         }
     }
+    // public function login(Request $request)
+    // {
+    //     $data = $request->all();
+    //     $login = $request->input('login');
+    //     $fieldType = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
+    //     $request->merge([$fieldType => $login]);
+    //     $validator = Validator::make($data, [
+    //         'login'  => 'required',
+    //         'password'  => 'required',
+    //     ]);
+    //     if ($validator->fails()) {
+    //         $errors = $validator->errors();
+    //         if (!empty($errors)) {
+    //             foreach ($errors->all() as $error) {
+    //                 return $this->result_fail($error);
+    //             }
+    //         }
+    //     } else {
+    //         $user = User::where($fieldType, $login)->where('user_role', DRIVER)->first();
+    //         if ($user) {
+    //             if ($user->is_validated == DRIVER_REGISTERED) {
+    //                 if (Auth::attempt($request->only($fieldType, 'password'))) {
+    //                     $token = $user->createToken('Auth Token')->accessToken;
+    //                     return $this->result_ok('User Logged In.', ['token' => $token, 'user' => Auth::user()]);
+    //                 }
+    //             } else {
+    //                 if ($user->is_validated != DRIVER_DOCS_PENDING) {
+    //                     if ($user->is_validated == DRIVER_APPROVED) {
+    //                         if ($user->is_active == DRIVER_ACTIVE) {
+    //                             if (Auth::attempt($request->only($fieldType, 'password'))) {
+    //                                 $token = $user->createToken('Auth Token')->accessToken;
+    //                                 return $this->result_ok('User Logged In.', ['token' => $token, 'user' => Auth::user()]);
+    //                             } else {
+    //                                 return $this->result_fail("Please check your email or password");
+    //                             }
+    //                         } else {
+    //                             return $this->result_fail('Your Account has been deactivated please contact administrator.');
+    //                         }
+    //                     } else {
+    //                         return $this->result_fail('Your Account is rejected by the admin.');
+    //                     }
+    //                 } else {
+    //                     return $this->result_fail('Your documents are under verification.');
+    //                 }
+    //             }
+    //         } else {
+    //             return $this->result_fail('Account does not exists.');
+    //         }
+    //     }
+    // }
 
     public function register(Request $request)
     {
@@ -83,6 +130,7 @@ class LoginController extends ApiController
                 'phone_number'  =>  $data['phone_number'],
                 'password'  =>  Hash::make($data['password']),
                 'user_role' =>  DRIVER,
+                'is_active' =>  DRIVER_ACTIVE,
             );
             $otp = rand(1000, 9999);
             $userotp = Otp::where('phone_number', $data['phone_number'])->first();

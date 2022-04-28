@@ -15,5 +15,6 @@ Route::group(['namespace'   =>  'Driver'], function () {
     Route::group(['middleware' => 'auth:api'], function () {
         Route::get('/online-offline/{id}','DashboardController@onlineOffline');
         Route::post('/bank-account','DashboardController@bankAccount');
+        Route::post('/documents','DashboardController@documents');
     });
 });
