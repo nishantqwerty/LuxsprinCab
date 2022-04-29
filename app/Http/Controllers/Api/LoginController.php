@@ -35,13 +35,17 @@ class LoginController extends ApiController
                 }
             }
         } else {
-            $user = User::where($fieldType, $login)->where('user_role',USER)->first();
+            $user = User::where($fieldType, $login)->where('user_role', USER)->first();
             if ($user) {
-                if (Auth::attempt($request->only($fieldType, 'password'))) {
-                    $token = $user->createToken('Auth Token')->accessToken;
-                    return $this->result_ok('User Logged In.', ['token' => $token, 'user' => Auth::user()]);
+                if ($user->is_active == USER_ACTIVE) {
+                    if (Auth::attempt($request->only($fieldType, 'password'))) {
+                        $token = $user->createToken('Auth Token')->accessToken;
+                        return $this->result_ok('User Logged In.', ['token' => $token, 'user' => Auth::user()]);
+                    } else {
+                        return $this->result_fail("Please check your email or password");
+                    }
                 } else {
-                    return $this->result_fail("Please check your email or password");
+                    return $this->result_fail("Your account is inactive, please contact administrator.");
                 }
             } else {
                 return $this->result_fail('Account does not exists.');
@@ -75,6 +79,7 @@ class LoginController extends ApiController
                 'phone_number'  =>  $data['phone_number'],
                 'password'  =>  Hash::make($data['password']),
                 'user_role' =>  USER,
+                'is_active' =>  USER_ACTIVE,
             );
             $otp = rand(1000, 9999);
             $userotp = Otp::where('phone_number', $data['phone_number'])->first();
@@ -259,7 +264,7 @@ class LoginController extends ApiController
         if ($user) {
             $user->delete();
             return $this->result_ok('Account Deleted Successfully.');
-        }else{
+        } else {
             return $this->result_fail('Something Went Wrong.');
         }
     }

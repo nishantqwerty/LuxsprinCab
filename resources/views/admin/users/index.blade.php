@@ -34,6 +34,7 @@
                             <th ><strong> User Name: </strong></th>
                             <th ><strong> Email: </strong></th>
                             <th ><strong> Phone Number: </strong></th>
+                            <th ><strong> Status: </strong></th>
                             <th ><strong> Action: </strong></th>
                         </tr>
                     </thead>
@@ -44,6 +45,13 @@
                             <td> {{ $user->username }} </td>
                             <td> {{ $user->email }} </td>
                             <td> {{ $user->phone_number }} </td>
+                            <td>
+                              @if($user->is_active == USER_ACTIVE)
+                                <a href="{{ route('change-status',['id' => $user->id,'status' => DRIVER_INACTIVE]) }}" class="btn btn-success" title="Click To Deactivate">Active</a>
+                              @else
+                                <a href="{{ route('change-status',['id' => $user->id,'status' => DRIVER_ACTIVE]) }}" class="btn btn-secondary" title="Click To Activate">In Active</a>
+                              @endif 
+                            </td>
                             <td>
                               <a href="{{ route('edit', ['id' => $user->id]) }}"> <i class="fa fa-edit" ></i> <a>
                               <a href="{{ route('delete', ['id' => $user->id]) }}"> <i class="fa fa-trash" style="font-size:20px;color:red"></i> <a>

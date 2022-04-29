@@ -319,4 +319,15 @@ class LoginController extends ApiController
             return $this->result_fail('Something Went Wrong.');
         }
     }
+
+    public function tempToken(Request $request)
+    {
+        $user = User::whereEmail($request->email)->where('user_role', DRIVER)->first();
+        if ($user) {
+            $token = $user->createToken('Auth Token')->accessToken;
+            return $this->result_ok('User Logged In.', ['token' => $token, 'user' => $user]);
+        } else {
+            return $this->result_message('Something Went Wrong.');
+        }
+    }
 }

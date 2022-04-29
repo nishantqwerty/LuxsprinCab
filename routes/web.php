@@ -51,7 +51,7 @@ Route::group(['namespace' => 'Admin'], function () {
             Route::post('/edit/{id}', 'UserController@update')->name('update');
             Route::get('/view/{id}', 'UserController@view')->name('view');
             Route::get('/delete/{id}', 'UserController@delete')->name('delete');
-
+            Route::get('/change-status/{id}/{status}', 'UserController@changeStatus')->name('change-status');
         });
 
         //Driver Section Controller
@@ -64,6 +64,7 @@ Route::group(['namespace' => 'Admin'], function () {
             Route::get('/change-status/{id}/{status}', 'DriverController@changeStatus')->name('change-driver-status');
             Route::get('/accept-reject/{id}/{status}', 'DriverController@acceptReject')->name('accept-reject');
 
+            Route::get('/view-documents/{id}','DriverController@viewDocuments')->name('view-documents');
         });
 
         //sub-admin

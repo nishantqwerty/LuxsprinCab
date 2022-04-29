@@ -11,10 +11,20 @@ Route::group(['namespace'   =>  'Driver'], function () {
     Route::post('/resend-otp', 'LoginController@resendOtp');
     Route::post('/verify-otp', 'LoginController@verifyOtp');
     Route::post('/reset-password', 'LoginController@resetPassword');
+    Route::get('/temp-token', 'LoginController@tempToken');
+
 
     Route::group(['middleware' => 'auth:api'], function () {
+        Route::get('/logout','LoginController@logout');
+        Route::get('/delete-Account','LoginController@deleteAccount');
         Route::get('/online-offline/{id}','DashboardController@onlineOffline');
         Route::post('/bank-account','DashboardController@bankAccount');
+        Route::get('/bank-account-detail','DashboardController@bankAccountDetail');
         Route::post('/documents','DashboardController@documents');
+        Route::get('/vehicle-info','DashboardController@vehicleInfo');
+
+        Route::get('/get-profile','ProfileController@getProfile');
+        Route::post('/update-profile','ProfileController@updateProfile');
+        Route::post('/change-password','ProfileController@changePassword');
     });
 });

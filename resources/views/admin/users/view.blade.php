@@ -63,6 +63,7 @@
                     <tr><th style="text-align: right;">Name</th></tr>
                     <tr><th style="text-align: right;">Email</th></tr>
                     <tr><th style="text-align: right;">Phone Number</th></tr>
+                    <tr><th style="text-align: right;">Status</th></tr>
                     <tr><th style="text-align: right;">Image</th></tr>
                 </table>
             </div>
@@ -76,6 +77,9 @@
                 </tr>
                 <tr>
                     <th >{{ !empty($user->phone_number) ? $user->phone_number : 0 }}</th>
+                </tr>
+                <tr>
+                    <th >{{ ($user->is_active == USER_ACTIVE) ? 'ACTIVE' : "INACTIVE"  }}</th>
                 </tr>
                 <tr>
                     <th >

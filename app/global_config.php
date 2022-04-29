@@ -10,6 +10,9 @@ define('PASSWORD_CHANGED',0);
 define('DRIVER_ACTIVE',1);
 define('DRIVER_INACTIVE',2);
 
+define('USER_ACTIVE',1);
+define('USER_INACTIVE',2);
+
 define('VALIDATE_REQUEST',0);
 
 define('DRIVER_REGISTERED',0);

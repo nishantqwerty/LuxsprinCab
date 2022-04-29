@@ -34,6 +34,7 @@
                             <th ><strong> User Name: </strong></th>
                             <th ><strong> Email: </strong></th>
                             <th ><strong> Phone Number: </strong></th>
+                            <th ><strong> Documents: </strong></th>
                             <th ><strong> Validate: </strong></th>
                             <th ><strong> Status: </strong></th>
                             <th ><strong> Action: </strong></th>
@@ -46,6 +47,7 @@
                             <td> {{ $user->username }} </td>
                             <td> {{ $user->email }} </td>
                             <td> {{ $user->phone_number }} </td>
+                            <td> <a href="{{ route('view-documents',['id' => $user->id]) }}">View Documents</a> </td>
                             <td>
                               @if($user->is_validated == VALIDATE_REQUEST)
                                 <a href="{{ route('accept-reject',['id' => $user->id,'status' => DRIVER_APPROVED]) }}"><i class="fa fa-check" aria-hidden="true" style="color:green" title="Approve"></i></a>&nbsp;&#47;&nbsp;
