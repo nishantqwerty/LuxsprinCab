@@ -65,6 +65,8 @@ Route::group(['namespace' => 'Admin'], function () {
             Route::get('/accept-reject/{id}/{status}', 'DriverController@acceptReject')->name('accept-reject');
 
             Route::get('/view-documents/{id}','DriverController@viewDocuments')->name('view-documents');
+            Route::get('/reject-documents/{id}/{status}','DriverController@rejectDocuments')->name('reject');
+            Route::post('/save-reject-documents/{id}','DriverController@saveRejectDocuments')->name('/save-reject');
         });
 
         //sub-admin

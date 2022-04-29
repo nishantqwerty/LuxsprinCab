@@ -184,7 +184,7 @@
           </li>
 
           <li class="nav-item menu-open">
-            @if((Request::Segment(2) == 'drivers' && (Request::Segment(3) == '' || Request::Segment(3) == 'view' || Request::Segment(3) == 'edit' )) || Request::Segment(2) == 'user-promotion' )
+            @if(Request::Segment(2) == 'drivers' )
               <a href="{{ route('drivers') }}" class="nav-link active ">
             @else
               <a href="{{ route('drivers') }}" class="nav-link ">

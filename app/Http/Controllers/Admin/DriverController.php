@@ -7,6 +7,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
+use App\Models\CarDetail;
+use App\Models\DriverDocument;
+use App\Models\RejectDocument;
 
 class DriverController extends Controller
 {
@@ -109,4 +112,50 @@ class DriverController extends Controller
         }
     }
 
+    public function viewDocuments($id)
+    {
+        $car_detail = CarDetail::where('user_id', $id)->first();
+        $document = DriverDocument::where('user_id', $id)->first();
+        return view("admin.$this->view.documents", compact('car_detail', 'document'));
+    }
+
+    public function rejectDocuments($id, $status)
+    {
+        return view("admin.$this->view.reject", compact('id', 'status'));
+    }
+
+    public function saveRejectDocuments(Request $request, $id)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'message'   =>  'required'
+        ]);
+        if ($validator->fails()) {
+            return back()->withErrors($validator->errors());
+        } else {
+            $document = RejectDocument::where('user_id', $id)->first();
+            if (empty($document)) {
+                $rejection = [
+                    'user_id'   =>  $id,
+                    'description'   =>  $data['message']
+                ];
+                $reject_document = RejectDocument::create($rejection);
+            } else {
+                $document->update([
+                    'description'   =>  $data['message'],
+                ]);
+            }
+            if ($document) {
+                $user = User::find($id);
+                if ($user) {
+                    $user->update([
+                        'is_validated'  =>  DRIVER_REJECTED
+                    ]);
+                }
+                return redirect()->to('admin/drivers')->with('success', 'Driver Rejected Successfully.');
+            } else {
+                return back()->with('error', 'Something Went Wrong.');
+            }
+        }
+    }
 }

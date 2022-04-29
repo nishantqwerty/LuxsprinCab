@@ -113,6 +113,7 @@ class ProfileController extends ApiController
     {
         $user = User::find(auth('api')->user()->id);
         if ($user) {
+            $user['image']  =   asset("storage/images/$user->image");
             return $this->result_ok('User Detail', $user);
         } else {
             return $this->result_fail('Something Went Wrong.');
