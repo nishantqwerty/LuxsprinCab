@@ -26,5 +26,6 @@ Route::group(['namespace'   =>  'Driver'], function () {
         Route::get('/get-profile','ProfileController@getProfile');
         Route::post('/update-profile','ProfileController@updateProfile');
         Route::post('/change-password','ProfileController@changePassword');
+        Route::post('/update-bank-account','DashboardController@updateBankAccount');
     });
 });

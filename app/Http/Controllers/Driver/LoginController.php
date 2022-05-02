@@ -59,7 +59,7 @@ class LoginController extends ApiController
         $validator  =   Validator::make($data, [
             'name'  =>  'required',
             'username'      =>  'required|unique:users,username',
-            'email'         =>  'required|email|unique:users,email,user_role,'. DRIVER,
+            'email'         =>  'required|email|unique:users,email',
             'phone_number'  =>  'required|numeric|unique:users,phone_number',
             'password'      =>  'required|min:6',
             'confirm_password'  =>  'required|same:password',

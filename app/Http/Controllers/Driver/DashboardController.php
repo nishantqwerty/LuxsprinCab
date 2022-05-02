@@ -101,7 +101,7 @@ class DashboardController extends ApiController
                 'capacity'      =>  $data['capacity'],
                 'vin'           =>  $data['vin']
             ];
-            
+
             $license_details = [
                 'user_id'       =>  auth('api')->user()->id,
                 'license_number'            =>  $data['license_number'],
@@ -138,7 +138,7 @@ class DashboardController extends ApiController
                 $license_details['insurance_image'] = $filename;
             }
             $license = DriverDocument::create($license_details);
-            if($license){
+            if ($license) {
                 $car = CarDetail::create($car_details);
             }
 
@@ -168,7 +168,7 @@ class DashboardController extends ApiController
 
     public function vehicleInfo()
     {
-        $info = CarDetail::where('user_id', auth('api')->user()->email)->first();
+        $info = CarDetail::where('user_id', auth('api')->user()->id)->first();
         if ($info) {
             return $this->result_ok('Car Detail', $info);
         } else {
@@ -176,5 +176,38 @@ class DashboardController extends ApiController
         }
     }
 
-    
+    public function updateBankAccount(Request $request)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data,[
+        'bank_name' =>'required',
+        'account_number'    =>  'required|unique:account_number,bank_accounts',
+        'confirm_account_number'    =>  'required|same:account_number',
+        'ifsc_code'     =>  'required',
+        'beneficiary_name'  =>  'required'
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            if (!empty($errors)) {
+                foreach ($errors->all() as $error) {
+                    return $this->result_fail($error);
+                }
+            }
+        }else{
+            $account = BankAccount::where('user_id',auth('api')->user()->id)->first();
+            if($account){
+                $details = [
+                    'bank_name'     =>  $data['bank_name'],
+                    'account_number'    =>  $data['account_number'],
+                    'ifsc_code'     =>  $data['ifsc_code'],
+                    'beneficiary_name'  =>  $data['beneficiary_name']
+                ];
+                $account->update($details);
+                return $this->result_message('Bank Details Updated Successfully.');
+            }else{
+                return $this->result_fail('Something Went Wrong.');
+            }
+        }
+
+    }
 }
