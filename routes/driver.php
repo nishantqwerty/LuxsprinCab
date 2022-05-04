@@ -27,5 +27,7 @@ Route::group(['namespace'   =>  'Driver'], function () {
         Route::post('/update-profile','ProfileController@updateProfile');
         Route::post('/change-password','ProfileController@changePassword');
         Route::post('/update-bank-account','DashboardController@updateBankAccount');
+        Route::get('/cars','CarController@carDetails');
+        Route::get('/car-models/{brand_id}','CarController@carModels');
     });
 });
