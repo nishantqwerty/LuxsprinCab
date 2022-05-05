@@ -18,7 +18,8 @@ class ProfileController extends ApiController
             'name'          =>  'required',
             'email'         =>  'required|email|unique:users,email,' . auth('api')->user()->id,
             'phone_number'  =>  'required|numeric|unique:users,phone_number,' . auth('api')->user()->id,
-            'username'      =>  'required|unique:users,username,' . auth('api')->user()->id
+            'username'      =>  'required|unique:users,username,' . auth('api')->user()->id,
+             'address'       =>  'required'
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors();
@@ -43,6 +44,7 @@ class ProfileController extends ApiController
                         'email' =>  $data['email'],
                         'phone_number'  =>  $data['phone_number'],
                         'username'  =>  $data['username'],
+                         'address' => $data['address'],
                     ]);
                     return $this->result_message('User Information Updated Successfully.');
                 } else {
@@ -54,6 +56,7 @@ class ProfileController extends ApiController
                                 'email' =>  $data['email'],
                                 'phone_number'  =>  $data['phone_number'],
                                 'username'  =>  $data['username'],
+                                 'address' => $data['address'],
                             ]);
                             $findotp->delete();
                             return $this->result_message('User Information Updated Successfully.');

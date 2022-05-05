@@ -195,6 +195,19 @@
               </p>
             </a>
           </li>
+
+          <li class="nav-item menu-open">
+            @if(Request::Segment(2) == 'car-fare' )
+              <a href="{{ route('car-fare') }}" class="nav-link active ">
+            @else
+              <a href="{{ route('car-fare') }}" class="nav-link ">
+            @endif
+              <i class="nav-icon fas fa-user"></i>
+              <p>
+                Car Fare
+              </p>
+            </a>
+          </li>
           
           <li class="nav-item menu-open">
             <a href="{{ route('logout') }}" class="nav-link ">

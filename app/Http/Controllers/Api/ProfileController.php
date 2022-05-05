@@ -26,7 +26,8 @@ class ProfileController extends ApiController
     {
         $user = User::find(auth('api')->user()->id);
         if ($user) {
-            return $this->result_ok('User', Auth::user());
+            $user['image']  =   asset('storage/images/' . $user->image);
+            return $this->result_ok('User', $user);
         } else {
             return $this->result_fail('Something Went Wrong.');
         }
@@ -51,9 +52,9 @@ class ProfileController extends ApiController
         } else {
             $user = User::find(auth('api')->user()->id);
             if ($user) {
-                if($request->has('image')){
-                    $filename = time().'.'.$request->image->extension();
-                    $request->image->storeAs('public/images',$filename);
+                if ($request->has('image')) {
+                    $filename = time() . '.' . $request->image->extension();
+                    $request->image->storeAs('public/images', $filename);
                     $user->update([
                         'image' =>  $filename,
                     ]);
@@ -67,8 +68,8 @@ class ProfileController extends ApiController
                     ]);
                     return $this->result_message('User Information Updated Successfully.');
                 } else {
+                    $findotp = Otp::where('phone_number', $data['phone_number'])->first();
                     if (isset($data['otp'])) {
-                        $findotp = Otp::where('phone_number', $data['phone_number'])->first();
                         if ($findotp->otp == $data['otp']) {
                             $user->update([
                                 'name'  =>  $data['name'],
@@ -78,16 +79,23 @@ class ProfileController extends ApiController
                             ]);
                             $findotp->delete();
                             return $this->result_message('User Information Updated Successfully.');
-                        }else{
+                        } else {
                             return $this->result_message('Please check your otp.');
                         }
                     } else {
+
                         $otp = rand(1000, 9999);
                         $this->otp($data['phone_number'], $otp);
-                        $update = Otp::create([
-                            'phone_number'  =>  $data['phone_number'],
-                            'otp'           =>  $otp
-                        ]);
+                        if ($findotp) {
+                            $findotp->update([
+                                'otp'   =>  $otp,
+                            ]);
+                        } else {
+                            Otp::create([
+                                'phone_number'  =>  $data['phone_number'],
+                                'otp'           =>  $otp
+                            ]);
+                        }
                         return $this->result_message('Please enter otp to verify your number.');
                     }
                 }

@@ -64,14 +64,18 @@ Route::group(['namespace' => 'Admin'], function () {
             Route::get('/change-status/{id}/{status}', 'DriverController@changeStatus')->name('change-driver-status');
             Route::get('/accept-reject/{id}/{status}', 'DriverController@acceptReject')->name('accept-reject');
 
-            Route::get('/view-documents/{id}','DriverController@viewDocuments')->name('view-documents');
-            Route::get('/reject-documents/{id}/{status}','DriverController@rejectDocuments')->name('reject');
-            Route::post('/save-reject-documents/{id}','DriverController@saveRejectDocuments')->name('/save-reject');
+            Route::get('/view-documents/{id}', 'DriverController@viewDocuments')->name('view-documents');
+            Route::get('/reject-documents/{id}/{status}', 'DriverController@rejectDocuments')->name('reject');
+            Route::post('/save-reject-documents/{id}', 'DriverController@saveRejectDocuments')->name('/save-reject');
         });
 
         //sub-admin
         Route::group(['prefix' => '/profile'], function () {
             Route::get('/delete-image/{id}', 'ProfileController@deleteImage')->name('delete-image');
+        });
+
+        Route::group(['prefix' => '/car-fare'], function () {
+            Route::get('/car-fare','CarsController@fare');
         });
     });
 });
