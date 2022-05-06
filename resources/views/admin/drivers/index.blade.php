@@ -49,7 +49,7 @@
                             <td> {{ $user->phone_number }} </td>
                             <td> <a href="{{ route('view-documents',['id' => $user->id]) }}">View Documents</a> </td>
                             <td>
-                              @if($user->is_validated == DRIVER_DOCS_PENDING)
+                              @if($user->is_validated == DRIVER_UNDER_VERIFICATION)
                                 <a href="{{ route('accept-reject',['id' => $user->id,'status' => DRIVER_APPROVED]) }}"><i class="fa fa-check" aria-hidden="true" style="color:green" title="Approve"></i></a>&nbsp;&#47;&nbsp;
                                 <a href="{{ route('reject',['id' => $user->id,'status' => DRIVER_REJECTED]) }}"><i class="fa fa-window-close" aria-hidden="true" style="color:red" title="Reject"></i></a>
                               @elseif($user->is_validated == DRIVER_APPROVED)

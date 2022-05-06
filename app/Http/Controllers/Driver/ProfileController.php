@@ -6,6 +6,7 @@ use App\Models\Otp;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
+use App\Models\RejectDocument;
 use Illuminate\Support\Facades\Validator;
 use Hash;
 
@@ -19,7 +20,7 @@ class ProfileController extends ApiController
             'email'         =>  'required|email|unique:users,email,' . auth('api')->user()->id,
             'phone_number'  =>  'required|numeric|unique:users,phone_number,' . auth('api')->user()->id,
             'username'      =>  'required|unique:users,username,' . auth('api')->user()->id,
-             'address'       =>  'required'
+            'address'       =>  'required'
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors();
@@ -44,7 +45,7 @@ class ProfileController extends ApiController
                         'email' =>  $data['email'],
                         'phone_number'  =>  $data['phone_number'],
                         'username'  =>  $data['username'],
-                         'address' => $data['address'],
+                        'address' => $data['address'],
                     ]);
                     return $this->result_message('User Information Updated Successfully.');
                 } else {
@@ -56,7 +57,7 @@ class ProfileController extends ApiController
                                 'email' =>  $data['email'],
                                 'phone_number'  =>  $data['phone_number'],
                                 'username'  =>  $data['username'],
-                                 'address' => $data['address'],
+                                'address' => $data['address'],
                             ]);
                             $findotp->delete();
                             return $this->result_message('User Information Updated Successfully.');
@@ -126,6 +127,25 @@ class ProfileController extends ApiController
             return $this->result_ok('User Detail', $user);
         } else {
             return $this->result_fail('Something Went Wrong.');
+        }
+    }
+
+    public function getStatus()
+    {
+        $user = User::find(auth('api')->user()->id);
+        if ($user) {
+            $data = [];
+            $data['status'] = $user->is_validated;
+            $data['description'] = "";
+            if($user->is_validated == DRIVER_REJECTED){
+                $reject = RejectDocument::where('user_id',auth('api')->user()->id)->first();
+                if($reject){
+                    $data['description'] = strip_tags($reject->description);
+                }
+            }
+            return $this->result_ok('Userstatus', $data);
+        } else {
+            return $this->result_fail('Something went wrong');
         }
     }
 }

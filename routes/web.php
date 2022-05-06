@@ -75,7 +75,12 @@ Route::group(['namespace' => 'Admin'], function () {
         });
 
         Route::group(['prefix' => '/car-fare'], function () {
-            Route::get('/car-fare','CarsController@fare');
+            Route::get('/', 'CarsController@index')->name('car-fare');
+            Route::get('/add-fare', 'CarsController@add')->name('add-fare');
+            Route::post('/add-fare', 'CarsController@save')->name('save-fare');
+            Route::get('/edit-fare/{id}', 'CarsController@edit')->name('edit-fare');
+            Route::post('/edit-fare/{id}', 'CarsController@update')->name('update-fare');
+            Route::get('/delete/{id}', 'CarsController@delete')->name('delete-fare');
         });
     });
 });

@@ -34,5 +34,6 @@ Route::group(['namespace'   =>  'Driver'], function () {
         Route::get('/model-year','CarController@modelYear');
         Route::get('/category','CarController@carCategory');
         Route::get('/color','CarController@color');
+        Route::get('/get-status','ProfileController@getStatus');
     });
 });

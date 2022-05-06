@@ -25,7 +25,7 @@ Route::group(['namespace'   =>  'Api'], function () {
 
     Route::group(['middleware' => 'auth:api'], function () {
         Route::get('/dashboard','ProfileController@dashboard');
-        Route::get('/logout', 'LoginController@register');
+        Route::get('/logout', 'LoginController@logout');
         Route::get('/delete-account', 'LoginController@deleteAccount');
         Route::get('/profile', 'ProfileController@profile');
         Route::post('/update-profile', 'ProfileController@updateProfile');

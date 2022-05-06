@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\DriverDocument;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\ApiController;
+use App\Models\RejectDocument;
 use Illuminate\Support\Facades\Validator;
 
 class DashboardController extends ApiController
@@ -53,6 +54,12 @@ class DashboardController extends ApiController
                 'beneficiary_name' =>  $data['beneficiary_name'],
             );
             if (BankAccount::create($details)) {
+                $user = User::find(auth('api')->user()->id);
+                if ($user) {
+                    $user->update([
+                        'is_validated'  =>  DRIVER_UNDER_VERIFICATION
+                    ]);
+                }
                 return $this->result_message('Bank Account Added Successfully.');
             } else {
                 return $this->result_fail('Something Went Wrong.');
@@ -65,6 +72,7 @@ class DashboardController extends ApiController
         $data = $request->all();
         $validator = Validator::make($data, [
             'brand'         =>  'required',
+            'category_id'   =>  'required',
             'brand_model'   =>  'required',
             'model_year'    =>  'required|numeric',
             'color'         =>  'required',
@@ -94,6 +102,7 @@ class DashboardController extends ApiController
         } else {
             $car_details = [
                 'user_id'       =>  auth('api')->user()->id,
+                'category_id'   =>  $data['category_id'],
                 'brand'         =>  $data['brand'],
                 'brand_model'   =>  $data['brand_model'],
                 'model_year'    =>  $data['model_year'],
@@ -147,7 +156,7 @@ class DashboardController extends ApiController
                 $user = User::find(auth('api')->user()->id);
                 if ($user) {
                     $user->update([
-                        'is_validated' => DRIVER_DOCS_PENDING,
+                        'is_validated' => BANK_DETAILS_PENDING,
                     ]);
                 }
                 return $this->result_message('Documents Uploaded Successfully.');
@@ -169,7 +178,7 @@ class DashboardController extends ApiController
 
     public function vehicleInfo()
     {
-        $info = CarDetail::where('user_id', auth('api')->user()->id)->with('documents')->first();
+        $info = CarDetail::where('user_id', auth('api')->user()->id)->with(['documents', 'category', 'brand', 'brandModel'])->first();
         if ($info) {
             $info['documents']['license_front_side'] = asset('storage/license_front/' . $info->documents->license_front_side);
             $info['documents']['license_back_side'] = asset('storage/license_back/' . $info->documents->license_back_side);
@@ -224,21 +233,33 @@ class DashboardController extends ApiController
     {
         $data = $request->all();
         $validator = Validator::make($data, [
+            'category_id'   =>  'required',
             'brand'         =>  'required',
             'brand_model'   =>  'required',
             'model_year'    =>  'required|numeric',
             'color'         =>  'required',
-            'car_number'    =>  'required|unique:car_details,car_number',
+            'car_number'    =>  [
+                'required',
+                Rule::unique('car_details')->ignore(auth('api')->user()->id, 'user_id')
+            ],
             'capacity'      =>  'required',
             'vin'           =>  'required',
-            'license_number' =>  'required|unique:driver_documents,license_number',
+            // 'license_number' =>  'required|unique:driver_documents,license_number',
+            'license_number' =>  [
+                'required',
+                Rule::unique('driver_documents')->ignore(auth('api')->user()->id, 'user_id')
+            ],
             'expiry_date'   =>  'required|date',
             'license_front_side'    =>  'required',
             'license_back_side'     =>  'required',
             'insurance_number'     =>  'required',
             'insurance_expiry_date'     =>  'required|date',
             'insurance_image'     =>  'required',
-            'car_registeration'     =>  'required|unique:driver_documents,car_registeration',
+            // 'car_registeration'     =>  'required|unique:driver_documents,car_registeration',
+            'car_registeration'     =>  [
+                'required',
+                Rule::unique('driver_documents')->ignore(auth('api')->user()->id, 'user_id')
+            ],
             'registeration_expiry_date' =>  'required|date',
             'registeration_image'   =>  'required',
             'inspection_date'       =>  'required|date',
@@ -254,6 +275,7 @@ class DashboardController extends ApiController
         } else {
             $car_details = [
                 'brand'         =>  $data['brand'],
+                'category_id'   =>  $data['category_id'],
                 'brand_model'   =>  $data['brand_model'],
                 'model_year'    =>  $data['model_year'],
                 'color'         =>  $data['color'],
@@ -271,35 +293,46 @@ class DashboardController extends ApiController
                 'car_registeration_expiry_date' =>  date('Y-m-d', strtotime($data['registeration_expiry_date'])),
                 'car_inspection_date'       =>  date('Y-m-d', strtotime($data['inspection_date'])),
             ];
-            if ($request->has('license_front_side')) {
-                $filename = time() . '.' . $request->license_front_side->extension();
-                $request->license_front_side->storeAs('public/license_front', $filename);
-                $license_details['license_front_side'] = $filename;
+            if (strpos($request->license_front_side, "http") !== 0) {
+                if ($request->has('license_front_side')) {
+                    $filename = time() . '.' . $request->license_front_side->extension();
+                    $request->license_front_side->storeAs('public/license_front', $filename);
+                    $license_details['license_front_side'] = $filename;
+                }
             }
-            if ($request->has('license_back_side')) {
-                $filename = time() . '.' . $request->license_back_side->extension();
-                $request->license_back_side->storeAs('public/license_back', $filename);
-                $license_details['license_back_side'] = $filename;
+            if (strpos($request->license_back_side, "http") !== 0) {
+                if ($request->has('license_back_side')) {
+                    $filename = time() . '.' . $request->license_back_side->extension();
+                    $request->license_back_side->storeAs('public/license_back', $filename);
+                    $license_details['license_back_side'] = $filename;
+                }
             }
-            if ($request->has('registeration_image')) {
-                $filename = time() . '.' . $request->registeration_image->extension();
-                $request->registeration_image->storeAs('public/registeration_image', $filename);
-                $license_details['car_registeration_photo'] = $filename;
+            if (strpos($request->registeration_image, "http") !== 0) {
+                if ($request->has('registeration_image')) {
+                    $filename = time() . '.' . $request->registeration_image->extension();
+                    $request->registeration_image->storeAs('public/registeration_image', $filename);
+                    $license_details['car_registeration_photo'] = $filename;
+                }
             }
-            if ($request->has('inspection_photo')) {
-                $filename = time() . '.' . $request->inspection_photo->extension();
-                $request->inspection_photo->storeAs('public/inspection_photo', $filename);
-                $license_details['car_inspection_photo'] = $filename;
+
+            if (strpos($request->inspection_photo, "http") !== 0) {
+                if ($request->has('inspection_photo')) {
+                    $filename = time() . '.' . $request->inspection_photo->extension();
+                    $request->inspection_photo->storeAs('public/inspection_photo', $filename);
+                    $license_details['car_inspection_photo'] = $filename;
+                }
             }
-            if ($request->has('insurance_image')) {
-                $filename = time() . '.' . $request->insurance_image->extension();
-                $request->insurance_image->storeAs('public/insurance', $filename);
-                $license_details['insurance_image'] = $filename;
+            if (strpos($request->insurance_image, "http") !== 0) {
+                if ($request->has('insurance_image')) {
+                    $filename = time() . '.' . $request->insurance_image->extension();
+                    $request->insurance_image->storeAs('public/insurance', $filename);
+                    $license_details['insurance_image'] = $filename;
+                }
             }
             $license = DriverDocument::where('user_id', auth('api')->user()->id);
             if ($license) {
                 $license->update($license_details);
-                $car = CarDetail::where('user_id', auth('api')->id);
+                $car = CarDetail::where('user_id', auth('api')->user()->id);
                 if ($car) {
                     $car->update($car_details);
                 }
@@ -309,8 +342,12 @@ class DashboardController extends ApiController
                 $user = User::find(auth('api')->user()->id);
                 if ($user) {
                     $user->update([
-                        'is_validated' => DRIVER_DOCS_PENDING,
+                        'is_validated' => RESUBMIT_DOCUMENT,
                     ]);
+                }
+                $reject = RejectDocument::where('user_id', auth('api')->user()->id)->first();
+                if ($reject) {
+                    $reject->delete();
                 }
                 return $this->result_message('Documents Uploaded Successfully.');
             } else {
