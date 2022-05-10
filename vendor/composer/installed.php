@@ -1,11 +1,11 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => NULL,
+        'reference' => '247b0813bfe90c3e45f4a10be10f0a30f703befb',
         'name' => 'laravel/laravel',
         'dev' => true,
     ),
@@ -431,12 +431,12 @@
             'dev_requirement' => false,
         ),
         'laravel/laravel' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => NULL,
+            'reference' => '247b0813bfe90c3e45f4a10be10f0a30f703befb',
             'dev_requirement' => false,
         ),
         'laravel/passport' => array(
@@ -605,12 +605,12 @@
             'dev_requirement' => true,
         ),
         'monolog/monolog' => array(
-            'pretty_version' => '2.5.0',
-            'version' => '2.5.0.0',
+            'pretty_version' => '2.6.0',
+            'version' => '2.6.0.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../monolog/monolog',
             'aliases' => array(),
-            'reference' => '4192345e260f1d51b365536199744b987e160edc',
+            'reference' => '247918972acd74356b0a91dfaa5adcaec069b6c0',
             'dev_requirement' => false,
         ),
         'mtdowling/cron-expression' => array(
@@ -937,8 +937,8 @@
         'psr/log-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '1.0.0 || 2.0.0 || 3.0.0',
-                1 => '1.0|2.0',
+                0 => '1.0|2.0',
+                1 => '1.0.0 || 2.0.0 || 3.0.0',
             ),
         ),
         'psr/simple-cache' => array(

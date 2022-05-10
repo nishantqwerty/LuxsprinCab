@@ -33,5 +33,8 @@ Route::group(['namespace'   =>  'Api'], function () {
 
         Route::get('/location','LocationController@getLocation');
         Route::get('/driver-location','LocationController@GetDrivingDistance');
+        Route::post('/create-job','LocationController@createJob');
+
+        Route::get('/home-screen','LocationController@GetDrivingDistance');
     });
 });
