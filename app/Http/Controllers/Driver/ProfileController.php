@@ -58,6 +58,7 @@ class ProfileController extends ApiController
                                 'phone_number'  =>  $data['phone_number'],
                                 'username'  =>  $data['username'],
                                 'address' => $data['address'],
+                                'country_code' =>  $data['country_code'],
                             ]);
                             $findotp->delete();
                             return $this->result_message('User Information Updated Successfully.');
@@ -137,9 +138,9 @@ class ProfileController extends ApiController
             $data = [];
             $data['status'] = $user->is_validated;
             $data['description'] = "";
-            if($user->is_validated == DRIVER_REJECTED){
-                $reject = RejectDocument::where('user_id',auth('api')->user()->id)->first();
-                if($reject){
+            if ($user->is_validated == DRIVER_REJECTED) {
+                $reject = RejectDocument::where('user_id', auth('api')->user()->id)->first();
+                if ($reject) {
                     $data['description'] = strip_tags($reject->description);
                 }
             }

@@ -80,6 +80,7 @@ class LoginController extends ApiController
                 'password'  =>  Hash::make($data['password']),
                 'user_role' =>  DRIVER,
                 'is_active' =>  DRIVER_ACTIVE,
+                'country_code' =>  $data['country_code'],
             );
             $otp = rand(1000, 9999);
             $userotp = Otp::where('phone_number', $data['phone_number'])->first();

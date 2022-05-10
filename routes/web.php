@@ -82,5 +82,18 @@ Route::group(['namespace' => 'Admin'], function () {
             Route::post('/edit-fare/{id}', 'CarsController@update')->name('update-fare');
             Route::get('/delete/{id}', 'CarsController@delete')->name('delete-fare');
         });
+
+        Route::group(['prefix' => '/route-stops'], function () {
+            Route::get('/', 'RouteController@index')->name('route-stops');
+            Route::get('/add-routes', 'RouteController@add')->name('add-routes');
+            Route::post('/add-routes', 'RouteController@save')->name('save-routes');
+            Route::get('/edit-routes/{id}', 'RouteController@edit')->name('edit-routes');
+            Route::post('/edit-routes/{id}', 'RouteController@update')->name('update-routes');
+            Route::get('/delete/{id}', 'RouteController@delete')->name('delete-routes');
+        });
+
+        Route::group(['prefix' => '/messages'], function () {
+            Route::get('/', 'MessageController@index')->name('messages');
+        });
     });
 });

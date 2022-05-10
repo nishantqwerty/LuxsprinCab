@@ -76,6 +76,7 @@ class ProfileController extends ApiController
                                 'email' =>  $data['email'],
                                 'phone_number'  =>  $data['phone_number'],
                                 'username'  =>  $data['username'],
+                                'country_code'  =>  $data['country_code'],
                             ]);
                             $findotp->delete();
                             return $this->result_message('User Information Updated Successfully.');

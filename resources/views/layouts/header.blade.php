@@ -208,6 +208,32 @@
               </p>
             </a>
           </li>
+
+          <li class="nav-item menu-open">
+            @if(Request::Segment(2) == 'route-stops' )
+              <a href="{{ route('route-stops') }}" class="nav-link active ">
+            @else
+              <a href="{{ route('route-stops') }}" class="nav-link ">
+            @endif
+              <i class="nav-icon fas fa-user"></i>
+              <p>
+                Routes and Stops
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item menu-open">
+            @if(Request::Segment(2) == 'messages' )
+              <a href="{{ route('messages') }}" class="nav-link active ">
+            @else
+              <a href="{{ route('messages') }}" class="nav-link ">
+            @endif
+              <i class="nav-icon fas fa-user"></i>
+              <p>
+                Support Messages
+              </p>
+            </a>
+          </li>
           
           <li class="nav-item menu-open">
             <a href="{{ route('logout') }}" class="nav-link ">
