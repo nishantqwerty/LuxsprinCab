@@ -20,7 +20,7 @@ class ProfileController extends ApiController
             'email'         =>  'required|email|unique:users,email,' . auth('api')->user()->id,
             'phone_number'  =>  'required|numeric|unique:users,phone_number,' . auth('api')->user()->id,
             'username'      =>  'required|unique:users,username,' . auth('api')->user()->id,
-            'address'       =>  'required'
+            // 'address'       =>  'required'
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors();
@@ -67,7 +67,12 @@ class ProfileController extends ApiController
                         }
                     } else {
                         $otp = rand(1000, 9999);
-                        $this->otp($data['phone_number'], $otp);
+                        if (mb_substr($data['phone_number'], 0, 1) == 1) {
+                            $this->us_otp($data['phone_number'], $otp);
+                        } else {
+                            $this->otp($data['phone_number'], $otp);
+                        }
+                        // $this->otp($data['phone_number'], $otp);
                         if ($findotp) {
                             $findotp->update([
                                 'otp'   =>  $otp,

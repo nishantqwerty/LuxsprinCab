@@ -86,7 +86,12 @@ class ProfileController extends ApiController
                     } else {
 
                         $otp = rand(1000, 9999);
-                        $this->otp($data['phone_number'], $otp);
+                        if (mb_substr($data['phone_number'], 0, 1) == 1) {
+                            $this->us_otp($data['phone_number'], $otp);
+                        } else {
+                            $this->otp($data['phone_number'], $otp);
+                        }
+                        // $this->otp($data['phone_number'], $otp);
                         if ($findotp) {
                             $findotp->update([
                                 'otp'   =>  $otp,

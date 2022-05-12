@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
+use Twilio\Rest\Client;
 
 class ApiController extends Controller
 {
@@ -71,14 +72,14 @@ class ApiController extends Controller
             ], $code);
     }
 
-    public function otp($phone,$otp)
+    public function otp($phone, $otp)
     {
         $basic  = new \Vonage\Client\Credentials\Basic(env("VONAGE_API_KEY"), env("VONAGE_API_SECRET"));
         $client = new \Vonage\Client($basic);
         $response = $client->sms()->send(
             new \Vonage\SMS\Message\SMS($phone, 'HCAB', "OTP to verify your mobile is $otp")
         );
-        
+
         $message = $response->current();
 
         if ($message->getStatus() == 0) {
@@ -91,6 +92,31 @@ class ApiController extends Controller
             return response()
                 ->json([
                     'message' => "The message failed with status: " . $message->getStatus(),
+                    'code' => 400
+                ], 400);
+        }
+    }
+
+    public function us_otp($phone, $otp)
+    {
+        $account_sid = env("TWILIO_SID");
+        $auth_token = env("TWILIO_AUTH_TOKEN");
+        $twilio_number = env("TWILIO_NUMBER");
+        $client = new Client($account_sid, $auth_token);
+        $response = $client->messages->create(
+            $phone,
+            ['from' => $twilio_number, 'body' => "OTP to verify your mobile is $otp"]
+        );
+        if ($response) {
+            return response()
+                ->json([
+                    'message' => 'The message was sent successfully.',
+                    'code' => 200
+                ], 200);
+        } else {
+            return response()
+                ->json([
+                    'message' => "The message failed to send",
                     'code' => 400
                 ], 400);
         }
