@@ -154,4 +154,18 @@ class ProfileController extends ApiController
             return $this->result_fail('Something went wrong');
         }
     }
+
+    public function updateLocation($lat, $long)
+    {
+        $user = User::find(auth('api')->user()->id);
+        if ($user) {
+            $user->update([
+                'lat'   => $lat,
+                'long'  =>  $long,
+            ]);
+            return $this->result_message('Location Updated Successfully.');
+        } else {
+            return $this->result_fail('Something Went Wrong.');
+        }
+    }
 }

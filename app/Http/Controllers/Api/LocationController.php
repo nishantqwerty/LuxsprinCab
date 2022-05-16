@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\ApiController;
+use App\Models\CarFare;
 use Illuminate\Support\Facades\Validator;
 
 class LocationController extends ApiController
@@ -197,10 +198,10 @@ class LocationController extends ApiController
     {
         $data = $request->all();
         $validator = Validator::make($data, [
-            'source'    => 'required',
-            'destination'   => 'required',
-            'lat'           =>  'required',
-            'long'          =>  'required',
+            'lat1'           =>  'required',
+            'long1'          =>  'required',
+            'lat2'           =>  'required',
+            'long2'          =>  'required',
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors();
@@ -210,6 +211,26 @@ class LocationController extends ApiController
                 }
             }
         } else {
+            $lat1 = $data['lat1'];
+            $long1 = $data['long1'];
+            $lat2 = $data['lat2'];
+            $long2 = $data['long2'];
+            $theta = $long1 - $long2;
+            $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+            $dist = acos($dist);
+            $dist = rad2deg($dist);
+
+            $cab_fares = CarFare::with('carCategory')->get();
+            $fares = [];
+            foreach ($cab_fares as $fare) {
+                $fares[$fare->carCategory->name] =  floor($dist * $fare->fare);
+            }
+            // return $cab_fares;
+            if (!empty($fares)) {
+                return $this->result_ok('Fares', $fares);
+            } else {
+                return $this->result_fail('Something Went Wrong.');
+            }
         }
     }
 }

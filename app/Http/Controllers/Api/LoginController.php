@@ -81,6 +81,7 @@ class LoginController extends ApiController
                 'user_role' =>  USER,
                 'is_active' =>  USER_ACTIVE,
                 'country_code' =>  $data['country_code'],
+                'country_name' =>  $data['country_name'],
             );
             $otp = rand(1000, 9999);
             $userotp = Otp::where('phone_number', $data['phone_number'])->first();
