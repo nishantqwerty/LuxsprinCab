@@ -65,7 +65,7 @@ final class Versions
   'league/oauth2-server' => '8.3.4@0c2f32cd766861f3add4b95c49c5fcef3427e133',
   'league/uri' => '6.5.0@c68ca445abb04817d740ddd6d0b3551826ef0c5a',
   'league/uri-interfaces' => '2.3.0@00e7e2943f76d8cb50c7dfdc2f6dee356e15e383',
-  'monolog/monolog' => '2.5.0@4192345e260f1d51b365536199744b987e160edc',
+  'monolog/monolog' => '2.6.0@247918972acd74356b0a91dfaa5adcaec069b6c0',
   'nesbot/carbon' => '2.58.0@97a34af22bde8d0ac20ab34b29d7bfe360902055',
   'nette/schema' => 'v1.2.2@9a39cef03a5b34c7de64f551538cbba05c2be5df',
   'nette/utils' => 'v3.2.7@0af4e3de4df9f1543534beab255ccf459e7a2c99',
@@ -165,7 +165,7 @@ final class Versions
   'sebastian/type' => '3.0.0@b233b84bc4465aff7b57cf1c4bc75c86d00d6dad',
   'sebastian/version' => '3.0.2@c6c1022351a901512170118436c764e473f6de8c',
   'theseer/tokenizer' => '1.2.1@34a41e998c2183e22995f158c581e7b5e755ab9e',
-  'laravel/laravel' => '1.0.0+no-version-set@',
+  'laravel/laravel' => 'dev-master@c02f9ef2b2133096763e27b93ba68cf69fa62c3d',
 );
 
     private function __construct()

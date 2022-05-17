@@ -24,17 +24,18 @@ Route::group(['namespace'   =>  'Api'], function () {
     Route::post('/reset-password', 'LoginController@resetPassword');
 
     Route::group(['middleware' => 'auth:api'], function () {
-        Route::get('/dashboard','ProfileController@dashboard');
+        Route::get('/dashboard', 'ProfileController@dashboard');
         Route::get('/logout', 'LoginController@logout');
         Route::get('/delete-account', 'LoginController@deleteAccount');
         Route::get('/profile', 'ProfileController@profile');
         Route::post('/update-profile', 'ProfileController@updateProfile');
         Route::post('/change-password', 'ProfileController@changePassword');
 
-        Route::get('/location','LocationController@getLocation');
-        Route::get('/driver-location','LocationController@GetDrivingDistance');
-        Route::post('/create-job','LocationController@createJob');
+        Route::get('/location', 'LocationController@getLocation');
+        Route::get('/driver-location', 'LocationController@GetDriverLocation');
+        Route::post('/create-job', 'LocationController@createJob');
 
-        Route::get('/home-screen','LocationController@GetDrivingDistance');
+        Route::get('/home-screen', 'LocationController@GetDrivingDistance');
+        Route::post('/save-booking', 'BookingController@saveBooking');
     });
 });
