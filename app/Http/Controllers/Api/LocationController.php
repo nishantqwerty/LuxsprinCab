@@ -96,6 +96,7 @@ class LocationController extends ApiController
             //in KMs
             $miles = $dist * 60 * 1.1515 * 1.609344;
             if ($miles <= 5) {
+                $data['id'][]       =   $user->id;
                 $data['name'][]    =   $user->name;
                 $data['lat'][]     =   $lat2;
                 $data['long'][]    =   $long2;
@@ -109,6 +110,9 @@ class LocationController extends ApiController
             // } else {
             //     return $miles;
             // }
+        }
+        foreach ($data['id'] as $key_id => $name_id) {
+            $details[$key_id]['id'] = $name_id;
         }
         foreach ($data['name'] as $key => $name) {
             $details[$key]['driver_name'] = $name;
@@ -223,7 +227,9 @@ class LocationController extends ApiController
             $cab_fares = CarFare::with('carCategory')->get();
             $fares = [];
             foreach ($cab_fares as $fare) {
-                $fares[$fare->carCategory->name] =  floor($dist * $fare->fare);
+                if (!empty($fare)) {
+                    $fares[$fare->carCategory->name] =  floor($dist * $fare->fare);
+                }
             }
             // return $cab_fares;
             if (!empty($fares)) {

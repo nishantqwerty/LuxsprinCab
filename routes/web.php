@@ -94,6 +94,8 @@ Route::group(['namespace' => 'Admin'], function () {
 
         Route::group(['prefix' => '/messages'], function () {
             Route::get('/', 'MessageController@index')->name('messages');
+            Route::get('/show-chat', 'MessageController@show')->name('show-chat');
+            Route::post('/save-chat', 'MessageController@saveChat')->name('save-chat');
         });
     });
 });
