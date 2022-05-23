@@ -40,6 +40,10 @@ class LoginController extends ApiController
                 if ($user->is_active == DRIVER_ACTIVE) {
                     if (Auth::attempt($request->only($fieldType, 'password'))) {
                         $token = $user->createToken('Auth Token')->accessToken;
+                        $user->update([
+                            'device_type'   =>  $data['device_type'],
+                            'device_token'  =>  $data['device_token'],
+                        ]);
                         return $this->result_ok('User Logged In.', ['token' => $token, 'user' => Auth::user()]);
                     } else {
                         return $this->result_fail("Please check your email or password");
@@ -81,6 +85,8 @@ class LoginController extends ApiController
                 'user_role' =>  DRIVER,
                 'is_active' =>  DRIVER_ACTIVE,
                 'country_code' =>  $data['country_code'],
+                'device_type'   =>  isset($data['device_type']) ? $data['device_type'] : '',
+                'device_token'  =>  isset($data['device_token']) ? $data['device_token'] : '',
             );
             $otp = rand(1000, 9999);
             $userotp = Otp::where('phone_number', $data['phone_number'])->first();

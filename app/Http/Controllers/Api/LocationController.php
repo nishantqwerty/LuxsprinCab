@@ -86,6 +86,7 @@ class LocationController extends ApiController
         $lat1 = $auth_user->lat;
         $long1 = $auth_user->long;
         $users = User::where('user_role', DRIVER)->get();
+        $data = [];
         foreach ($users as $user) {
             $lat2 = $user->lat;
             $long2 = $user->long;
@@ -96,7 +97,7 @@ class LocationController extends ApiController
             //in KMs
             $miles = $dist * 60 * 1.1515 * 1.609344;
             if ($miles <= 5) {
-                $data['id'][]       =   $user->id;
+                $data['id'][]      =   $user->id;
                 $data['name'][]    =   $user->name;
                 $data['lat'][]     =   $lat2;
                 $data['long'][]    =   $long2;
@@ -111,22 +112,30 @@ class LocationController extends ApiController
             //     return $miles;
             // }
         }
-        foreach ($data['id'] as $key_id => $name_id) {
-            $details[$key_id]['id'] = $name_id;
+        if (!empty($data['id'])) {
+            foreach ($data['id'] as $key_id => $id) {
+                $details[$key_id]['id'] = $id;
+            }
         }
-        foreach ($data['name'] as $key => $name) {
-            $details[$key]['driver_name'] = $name;
+        if (!empty($data['name'])) {
+            foreach ($data['name'] as $key => $name) {
+                $details[$key]['driver_name'] = $name;
+            }
         }
-        foreach ($data['lat'] as $key1 => $lat) {
-            $details[$key1]['lat'] = $lat;
+        if (!empty($data['lat'])) {
+            foreach ($data['lat'] as $key1 => $lat) {
+                $details[$key1]['lat'] = $lat;
+            }
         }
-        foreach ($data['long'] as $key2 => $long) {
-            $details[$key2]['long'] = $long;
+        if (!empty($data['long'])) {
+            foreach ($data['long'] as $key2 => $long) {
+                $details[$key2]['long'] = $long;
+            }
         }
         if (!empty($details)) {
             return $this->result_ok('Nearby Drivers', $details);
         } else {
-            return $this->result_fail('Something Went Wrong.');
+            return $this->result_fail('No nearby driver found.');
         }
     }
 
@@ -228,7 +237,7 @@ class LocationController extends ApiController
             $fares = [];
             foreach ($cab_fares as $fare) {
                 if (!empty($fare)) {
-                    $fares[$fare->carCategory->name] =  floor($dist * $fare->fare);
+                    $fares[$fare->carCategory->name] =  floor($dist * $fare->fare * 100);
                 }
             }
             // return $cab_fares;

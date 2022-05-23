@@ -121,4 +121,130 @@ class ApiController extends Controller
                 ], 400);
         }
     }
+
+    public function sendNotificationAndroid($requestedData)
+    {
+        // $API_ACCESS_KEY = 'AIzaSyBXh7HBXsLGzZDeomvWliryh7sgmHEMtm4';
+        $API_ACCESS_KEY = env('FIREBASE_SERVER_KEY');
+        // $API_ACCESS_KEY = 'AAAAQh48WTQ:APA91bEplmbgrGW-weJ799CibrhcBukNZUvVn6r3UNGdkjmYCl_exHOkya-AA4GPvOt6CDAhq2-zXyyRiuxbC3poYRGv0e3VY7Rg1ldf43B1w5ytYVqjF0mv56DcLChxJtwuWgf9avqG';
+
+        $message = $requestedData['message'];
+        $deviceToken = $requestedData['device_token'];
+        $msg =  ["bookingId" => $requestedData['booking_id'], "userId" => $requestedData['id'], "name"   =>  $requestedData['user_name'], "profile_picture" => $requestedData['user_image'], "deviceToken" => $requestedData['device_token'], "message" => $requestedData['message'], "bookingData" => $requestedData['booking_data'], "distance" => $requestedData['distance']];
+
+        $fcmUrl = 'https://fcm.googleapis.com/fcm/send';
+
+        $notification = [
+            'title' => 'Booking Request',
+            'body' => $msg,
+            'sound' => 'default',
+            'badge' => '1'
+        ];
+
+        if (isset($requestedData['from_user_name'])) {
+            // if chat message to send , then title will be from user name
+            // $notification['title'] = $requestedData['from_user_name'];
+            $notification['title'] = 'New Booking Request';
+        }
+
+        $extraNotificationData = ["message" => $notification, "extra_data" => $requestedData, 'user' => $requestedData['user'], 'booking_id' => $requestedData['booking_id'], 'booking_data' => $requestedData['booking_data'], 'distance'    => $requestedData['distance']];
+
+        $fcmNotification = [
+            //'registration_ids' => $tokenList, //multple token array
+            'to'        => $deviceToken, //single token
+            'notification' => $notification,
+            'data' => $extraNotificationData,
+            'priority' => 'high'
+        ];
+
+        $headers = [
+            'Authorization: key=' . $API_ACCESS_KEY,
+            'Content-Type: application/json'
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $fcmUrl);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fcmNotification));
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        // echo $result;
+
+    }
+
+    public function sendNotificationIos($requestedData)
+    {
+        try {
+            $message = $requestedData['message'];
+            $deviceToken = $requestedData['device_token'];
+
+            $body['aps'] = array(
+                'alert' => trim($message),
+                'sound' => 'default',
+                'badge' => "+1",
+                'extra_data' => $requestedData,
+            );
+            // Encode the payload as JSON
+            $payload = json_encode($body);
+
+            $msg = chr(0) . pack('n', 32) . pack('H*', trim($deviceToken)) . pack('n', strlen($payload)) . $payload;
+            $ctx = stream_context_create();
+
+            // For sandbox
+            //$url = 'ssl://gateway.sandbox.push.apple.com:2195';
+            //stream_context_set_option($ctx, 'ssl', 'local_cert', public_path().'/notification/MFCertificates.pem');
+
+            // for production
+            $url = 'ssl://gateway.push.apple.com:2195';
+            $passphrase = '123';
+            stream_context_set_option($ctx, 'ssl', 'local_cert', public_path() . '/notification/VV_PushCert_Prod.pem');
+            stream_context_set_option($ctx, 'ssl', 'passphrase', $passphrase);
+
+            // Connection to APNS server
+            // $fp = stream_socket_client($url, $err, $errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
+            $fp = stream_socket_client($url, $err, $errstr, 60, STREAM_CLIENT_CONNECT, $ctx);
+
+            if (!$fp) {
+                return true;
+                //exit("Failed to connect: $err $errstr" . PHP_EOL);
+            }
+
+            // Send it to the server
+            try {
+                $result = fwrite($fp, $msg, strlen($msg));
+
+                stream_set_blocking($fp, 0);
+                return true;
+            } catch (Exception $ex) {
+                // try once again for socket busy error (fwrite(): SSL operation failed with code 1.
+                // OpenSSL Error messages:\nerror:1409F07F:SSL routines:SSL3_WRITE_PENDING)
+                sleep(1); //sleep for 1 seconds
+                $result = fwrite($fp, $msg, strlen($msg));
+
+                stream_set_blocking($fp, 0);
+                return true;
+            }
+
+
+            // if (!$result)
+            // {
+            //     //echo 'Message not delivered' . PHP_EOL;
+            // }else
+            // {
+            //     //echo 'Message successfully delivered' . PHP_EOL;
+
+            // }
+
+            // return $result;
+
+            // Close the connection to the server
+            fclose($fp);
+        } catch (Exception $eh) {
+            return true;
+        }
+    }
 }

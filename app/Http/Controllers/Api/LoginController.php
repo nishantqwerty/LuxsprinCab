@@ -40,6 +40,10 @@ class LoginController extends ApiController
                 if ($user->is_active == USER_ACTIVE) {
                     if (Auth::attempt($request->only($fieldType, 'password'))) {
                         $token = $user->createToken('Auth Token')->accessToken;
+                        $user->update([
+                            'device_type'   =>  isset($request->device_type) ? $request->device_type : '',
+                            'device_token'  =>  isset($request->device_token) ? $request->device_token : '',
+                        ]);
                         return $this->result_ok('User Logged In.', ['token' => $token, 'user' => Auth::user()]);
                     } else {
                         return $this->result_fail("Please check your email or password");
@@ -82,6 +86,8 @@ class LoginController extends ApiController
                 'is_active' =>  USER_ACTIVE,
                 'country_code' =>  $data['country_code'],
                 'country_name' =>  $data['country_name'],
+                'device_type'   =>  isset($data['device_type']) ? $data['device_type'] : '',  
+                'device_token'  =>  isset($data['device_token']) ? $data['device_token'] : '',
             );
             $otp = rand(1000, 9999);
             $userotp = Otp::where('phone_number', $data['phone_number'])->first();
@@ -90,8 +96,9 @@ class LoginController extends ApiController
                     if ($data['otp'] == $userotp->otp) {
                         $user = User::create($userdata);
                         if ($user) {
+                            $token = $user->createToken('Auth Token')->accessToken;
                             $userotp->delete();
-                            return $this->result_message('User Registered Successfully.');
+                            return $this->result_ok('User Registered Successfully.', ['token' => $token]);
                         } else {
                             return $this->result_fail('Something Went Wrong.');
                         }

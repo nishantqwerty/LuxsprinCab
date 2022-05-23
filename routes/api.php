@@ -34,6 +34,8 @@ Route::group(['namespace'   =>  'Api'], function () {
         Route::get('/location', 'LocationController@getLocation');
         Route::get('/driver-location', 'LocationController@GetDriverLocation');
         Route::post('/create-job', 'LocationController@createJob');
+        Route::post('/create-booking', 'BookingController@createBooking');
+        Route::post('/update-lat-long', 'BookingController@updateLatLong');
 
         Route::get('/home-screen', 'LocationController@GetDrivingDistance');
         Route::post('/save-booking', 'BookingController@saveBooking');

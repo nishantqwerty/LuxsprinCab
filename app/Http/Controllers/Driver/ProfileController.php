@@ -6,6 +6,7 @@ use App\Models\Otp;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
+use App\Models\Booking;
 use App\Models\RejectDocument;
 use Illuminate\Support\Facades\Validator;
 use Hash;
@@ -164,6 +165,24 @@ class ProfileController extends ApiController
                 'long'  =>  $long,
             ]);
             return $this->result_message('Location Updated Successfully.');
+        } else {
+            return $this->result_fail('Something Went Wrong.');
+        }
+    }
+
+    public function acceptReject($bookingId)
+    {
+        $booking = Booking::find($bookingId);
+        if ($booking) {
+            if($booking->driver_id == 0){
+                $booking->update([
+                    'driver_id' => auth('api')->user()->id,
+                ]);
+                $user = User::find(auth('api')->user()->id);
+                return $this->result_ok('Booking has been Accepted.',['driver_details' => $user]);
+            }else{
+                return $this->result_fail('Booking already accepted by another driver.');
+            }
         } else {
             return $this->result_fail('Something Went Wrong.');
         }
