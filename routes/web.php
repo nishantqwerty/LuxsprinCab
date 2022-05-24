@@ -97,5 +97,14 @@ Route::group(['namespace' => 'Admin'], function () {
             Route::get('/show-chat', 'MessageController@show')->name('show-chat');
             Route::post('/save-chat', 'MessageController@saveChat')->name('save-chat');
         });
+
+        Route::group(['prefix' => '/support'], function () {
+            Route::get('/', 'SupportController@index')->name('support');
+            Route::get('/add', 'SupportController@add')->name('add-faqs');
+            Route::post('/add', 'SupportController@save')->name('save-faqs');
+            Route::get('/edit/{id}', 'SupportController@edit')->name('edit-faqs');
+            Route::post('/edit/{id}', 'SupportController@update')->name('update-faqs');
+            Route::get('/delete/{id}', 'SupportController@delete')->name('delete-faq');
+        });
     });
 });

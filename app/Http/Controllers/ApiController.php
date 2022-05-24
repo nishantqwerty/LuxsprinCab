@@ -147,7 +147,7 @@ class ApiController extends Controller
             $notification['title'] = 'New Booking Request';
         }
 
-        $extraNotificationData = ["message" => $notification, "extra_data" => $requestedData, 'user' => $requestedData['user'], 'booking_id' => $requestedData['booking_id'], 'booking_data' => $requestedData['booking_data'], 'distance'    => $requestedData['distance']];
+        $extraNotificationData = ["message" => $notification, "extra_data" => $requestedData, 'booking_id' => $requestedData['booking_id'], 'booking_data' => $requestedData['booking_data'], 'distance'    => $requestedData['distance']];
 
         $fcmNotification = [
             //'registration_ids' => $tokenList, //multple token array

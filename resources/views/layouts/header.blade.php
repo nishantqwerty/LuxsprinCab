@@ -230,6 +230,19 @@
             @endif
               <i class="nav-icon fas fa-user"></i>
               <p>
+                Chat
+              </p>
+            </a>
+          </li>
+
+          <li class="nav-item menu-open">
+            @if(Request::Segment(2) == 'support' )
+              <a href="{{ route('support') }}" class="nav-link active ">
+            @else
+              <a href="{{ route('support') }}" class="nav-link ">
+            @endif
+              <i class="nav-icon fas fa-user"></i>
+              <p>
                 Support Messages
               </p>
             </a>
