@@ -106,5 +106,10 @@ Route::group(['namespace' => 'Admin'], function () {
             Route::post('/edit/{id}', 'SupportController@update')->name('update-faqs');
             Route::get('/delete/{id}', 'SupportController@delete')->name('delete-faq');
         });
+
+        Route::group(['prefix' => '/booking-reports'], function () {
+            Route::get('/', 'BookingReportController@index')->name('booking-reports');
+            Route::post('/data', 'BookingReportController@data')->name('/data');
+        });
     });
 });

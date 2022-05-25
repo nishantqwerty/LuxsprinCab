@@ -48,6 +48,7 @@ return array(
     'App\\Models\\Chat' => $baseDir . '/app/Models/Chat.php',
     'App\\Models\\Color' => $baseDir . '/app/Models/Color.php',
     'App\\Models\\DriverDocument' => $baseDir . '/app/Models/DriverDocument.php',
+    'App\\Models\\Faq' => $baseDir . '/app/Models/Faq.php',
     'App\\Models\\Otp' => $baseDir . '/app/Models/Otp.php',
     'App\\Models\\RejectDocument' => $baseDir . '/app/Models/RejectDocument.php',
     'App\\Models\\Route' => $baseDir . '/app/Models/Route.php',
