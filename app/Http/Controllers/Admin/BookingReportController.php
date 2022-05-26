@@ -25,12 +25,12 @@ class BookingReportController extends Controller
             return back()->with('error', 'Please Provide proper dates.');
         } else {
             if (isset($request->start_date) && isset($request->end_date)) {
-                $start_date = $request->start_date;
-                $end_date = $request->end_date;
+                $start_date = date('Y-m-d', strtotime($request->start_date));
+                $end_date = date('Y-m-d', strtotime($request->end_date));
                 $ride_category = $request->ride_category;
-                $total_booking = Booking::where('ride_type', $ride_category)->whereBetween('created_at', [$start_date, $end_date])->get()->count();
-                $completed_booking = Booking::where('is_completed', 1)->where('ride_type', $ride_category)->whereBetween('created_at', [$start_date, $end_date])->get()->count();
-                $cancelled_booking = Booking::where('is_cancelled', 1)->where('ride_type', $ride_category)->whereBetween('created_at', [$start_date, $end_date])->get()->count();
+                $total_booking = Booking::where('ride_type', $ride_category)->whereDate('created_at','>=', $start_date)->whereDate('created_at','<=',$end_date)->get()->count();
+                $completed_booking = Booking::where('is_completed', 1)->where('ride_type', $ride_category)->whereDate('created_at','>=', $start_date)->whereDate('created_at','<=',$end_date)->get()->count();
+                $cancelled_booking = Booking::where('is_cancelled', 1)->where('ride_type', $ride_category)->whereDate('created_at','>=', $start_date)->whereDate('created_at','<=',$end_date)->get()->count();
                 return view('admin.booking-reports.index', compact('start_date', 'end_date', 'ride_category', 'total_booking', 'completed_booking', 'cancelled_booking'));
             } else {
                 return redirect()->to('admin/booking-reports');

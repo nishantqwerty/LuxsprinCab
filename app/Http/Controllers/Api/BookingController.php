@@ -151,11 +151,12 @@ class BookingController extends ApiController
             if (!empty($details)) {
                 $booking = Booking::create($booking_data);
                 foreach ($details as $notify) {
-                    $user = User::find($notify['id']);
+                    $driver = User::find($notify['id']);
+                    $user = User::find(auth('api')->user()->id);
                     // return $user;
                     $msgdata = [
                         'id'    =>  $user->id,
-                        'device_token'  =>  $user->device_token,
+                        'device_token'  =>  $driver->device_token,
                         'message'       =>  'Booking Request',
                         'user_image'    =>  !empty($user->profie_picture)   ?   $user->profile_picture  :   'no_image',
                         'user_name'     =>  !empty($user->name)   ?   $user->name  :   'NULL',
@@ -163,9 +164,9 @@ class BookingController extends ApiController
                         'booking_data'  =>  $booking_data,
                         'distance'      =>  $notify['dist']
                     ];
-                    if ($user->device_type == 'android') {
+                    if ($driver->device_type == 'android') {
                         $sen = $this->sendNotificationAndroid($msgdata);
-                    }elseif($user->device_type == 'ios'){
+                    }elseif($driver->device_type == 'ios'){
                         $sen = $this->sendNotificationAndroid($msgdata);
                     }
                 }
