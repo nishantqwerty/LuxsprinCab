@@ -3,7 +3,7 @@
 @section('content')
     <link href="{{ asset('assets/css/components.min.css') }}" rel="stylesheet" type="text/css">
     <script type="text/javascript" src="{{ asset('assets/js/jquery.min.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+    {{-- <script type="text/javascript" src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script> --}}
     <script type="text/javascript" src="{{ asset('assets/js/echarts.min.js') }}"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.3/moment-with-locales.min.js"
@@ -36,180 +36,186 @@
         <!-- /.content-header -->
 
         <!-- Main content -->
-        <section class="content">
-            <div class="container-fluid">
-                <!-- Small boxes (Stat box) -->
-                <div class="row">
-                    <div class="col-lg-4 col-6">
-                        <!-- small box -->
-                        <div class="small-box bg-info">
-                            <div class="inner">
-                                <h3>
-                                    {{ $total_booking }}
-                                </h3>
-
-                                <p>Total Bookings</p>
-                            </div>
-                            <div class="icon">
-                                <i class="ion ion-person-add"></i>
-                            </div>
-                            {{-- <a href="{{ route('users') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a> --}}
+        <form action="{{ route('booking-reports-date') }}" method="post">
+            @csrf
+            <section class="content">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <input type="date" id="start_date" name="start_date"
+                                value="{{ isset($start_date) ? $start_date : 'dd-mm-yyyy' }}">
+                            {{-- <input type="text" id="daterange_textbox" name="date" class="form-control" readonly> --}}
                         </div>
-                    </div>
-                    <div class="col-lg-4 col-6">
-                        <!-- small box -->
-                        <div class="small-box bg-info">
-                            <div class="inner">
-                                <h3>
-                                    {{ $completed_booking }}
-                                </h3>
-
-                                <p>Completed Bookings</p>
-                            </div>
-                            <div class="icon">
-                                <i class="ion ion-person"></i>
-                            </div>
-                            {{-- <a href="{{ route('drivers') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a> --}}
+                        <div class="col-md-2">
+                            <input type="date" id="end_date" name="end_date"
+                                value="{{ isset($end_date) ? $end_date : 'dd-mm-yyyy' }}">
                         </div>
+                        <div class="col-md-2">
+                            <select name="ride_category" id="">
+                                @if (isset($ride_category))
+                                    <option value="private" @if ($ride_category == 'private') selected @endif>Private
+                                    </option>
+                                    <option value="sharing" @if ($ride_category == 'sharing') selected @endif>Sharing
+                                    </option>
+                                @else
+                                    <option value="private">Private</option>
+                                    <option value="sharing">Sharing</option>
+                                @endif
+                            </select>
+                        </div>
+                        {{-- <a class="btn btn-primary" href="{{ route('booking-reports') }}" role="button">Submit</a> --}}
+                        <input type="submit" name="" id="">
+                        <!-- Small boxes (Stat box) -->
                     </div>
+                    <div class="row">
+                        <div class="col-lg-4 col-6">
+                            <!-- small box -->
+                            <div class="small-box bg-info">
+                                <div class="inner">
+                                    <h3>
+                                        {{ $total_booking }}
+                                    </h3>
 
-                    <div class="col-lg-4 col-6">
-                        <!-- small box -->
-                        <div class="small-box bg-info">
-                            <div class="inner">
-                                <h3>
-                                    {{ $cancelled_booking }}
-                                </h3>
+                                    <p>Total Bookings</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-person-add"></i>
+                                </div>
+                                {{-- <a href="{{ route('users') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a> --}}
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-6">
+                            <!-- small box -->
+                            <div class="small-box bg-info">
+                                <div class="inner">
+                                    <h3>
+                                        {{ $completed_booking }}
+                                    </h3>
 
-                                <p>Cancelled Booking</p>
+                                    <p>Completed Bookings</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-person"></i>
+                                </div>
+                                {{-- <a href="{{ route('drivers') }}" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a> --}}
                             </div>
-                            <div class="icon">
-                                <i class="ion ion-person"></i>
-                            </div>
-                            {{-- <a href="{{ route('drivers') }}" class="small-box-footer">More info <i
+                        </div>
+
+                        <div class="col-lg-4 col-6">
+                            <!-- small box -->
+                            <div class="small-box bg-info">
+                                <div class="inner">
+                                    <h3>
+                                        {{ $cancelled_booking }}
+                                    </h3>
+
+                                    <p>Cancelled Booking</p>
+                                </div>
+                                <div class="icon">
+                                    <i class="ion ion-person"></i>
+                                </div>
+                                {{-- <a href="{{ route('drivers') }}" class="small-box-footer">More info <i
                                 class="fas fa-arrow-circle-right"></i></a> --}}
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <input type="text" id="daterange_textbox" class="form-control" readonly>
-                    </div>
-                    <div class="chart has-fixed-height" id="bars_basic"></div>
-                </div>
-                <!-- /.row (main row) -->
-                <div class="row">
-                    <div class="panel-body">
-                    </div>
 
-                </div>
-            </div><!-- /.container-fluid -->
-        </section>
+                        {{-- <div class="chart has-fixed-height" id="bars_basic"></div> --}}
+                        <div class="chart has-fixed-height" id="pie_basic"></div>
+                    </div>
+                    <!-- /.row (main row) -->
+                    <div class="row">
+                        <div class="panel-body">
+                        </div>
+
+                    </div>
+                </div><!-- /.container-fluid -->
+            </section>
+        </form>
         <!-- /.content -->
     </div>
+    <script>
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1; //January is 0!
+        var yyyy = today.getFullYear();
+        if (dd < 10) {
+            dd = '0' + dd
+        }
+        if (mm < 10) {
+            mm = '0' + mm
+        }
+
+        today = yyyy + '-' + mm + '-' + dd;
+        document.getElementById("start_date").setAttribute("max", today);
+        document.getElementById("end_date").setAttribute("max", today);
+    </script>
+
     <script type="text/javascript">
-        $(document).ready(function() {
+        var pie_basic_element = document.getElementById('pie_basic');
+        if (pie_basic_element) {
+            var pie_basic = echarts.init(pie_basic_element);
+            pie_basic.setOption({
 
-            fetch_data();
+                textStyle: {
+                    fontFamily: 'Roboto, Arial, Verdana, sans-serif',
+                    fontSize: 13
+                },
 
-            var sale_chart;
-
-            function fetch_data(start_date = '', end_date = '') {
-                var dataTable = $('#bookings').DataTable({
-                    "processing": true,
-                    "serverSide": true,
-                    "order": [],
-                    "ajax": {
-                        url: "{{ route('/data') }}",
-                        type: "POST",
-                        data: {
-                            action: 'fetch'
-                        },
-                        headers: {
-                            'X-CSRF-Token': '{{ csrf_token() }}',
-                        },
+                title: {
+                    text: 'Booking Data',
+                    left: 'center',
+                    textStyle: {
+                        fontSize: 17,
+                        fontWeight: 500
                     },
-                    "drawCallback": function(settings) {
-                        var sales_date = [];
-                        var sale = [];
-
-                        for (var count = 0; count < settings.aoData.length; count++) {
-                            sales_date.push(settings.aoData[count]._aData[2]);
-                            sale.push(parseFloat(settings.aoData[count]._aData[1]));
-                        }
-
-                        var chart_data = {
-                            labels: sales_date,
-                            datasets: [{
-                                label: 'Sales',
-                                backgroundColor: 'rgba(153, 102, 255)',
-                                color: '#fff',
-                                data: sale
-                            }]
-                        };
-
-                        var group_chart3 = $('#bar_chart');
-
-                        if (sale_chart) {
-                            sale_chart.destroy();
-                        }
-
-                        sale_chart = new Chart(group_chart3, {
-                            type: 'bar',
-                            data: chart_data
-                        });
+                    subtextStyle: {
+                        fontSize: 12
                     }
-                });
-            }
-
-            $('#daterange_textbox').daterangepicker({
-                ranges: {
-                    'Today': [moment(), moment()],
-                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                    'This Month': [moment().startOf('month'), moment().endOf('month')],
                 },
-                format: 'YYYY-MM-DD'
-            }, function(start, end) {
-                $('#order_Table').DataTable.destroy();
-                fetch_data(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
-            });
-        });
 
-        var bars_basic_element = document.getElementById('bars_basic');
-        if (bars_basic_element) {
-            var bars_basic = echarts.init(bars_basic_element);
-            bars_basic.setOption({
-                color: ['#3398DB'],
                 tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'shadow'
-                    }
+                    trigger: 'item',
+                    backgroundColor: 'rgba(0,0,0,0.75)',
+                    padding: [10, 15],
+                    textStyle: {
+                        fontSize: 13,
+                        fontFamily: 'Roboto, sans-serif'
+                    },
+                    formatter: "{a} <br/>{b}: {c} ({d}%)"
                 },
-                grid: {
-                    left: '3%',
-                    right: '4%',
-                    bottom: '3%',
-                    containLabel: true
+
+                legend: {
+                    orient: 'horizontal',
+                    bottom: '0%',
+                    left: 'center',
+                    data: ['Total Booking', 'Completed Booking', 'Cancelled Booking'],
+                    itemHeight: 8,
+                    itemWidth: 8
                 },
-                xAxis: [{
-                    type: 'category',
-                    data: ['Total Bookings', 'Completed Bookings', 'Cancelled Bookings'],
-                    axisTick: {
-                        alignWithLabel: true
-                    }
-                }],
-                yAxis: [{
-                    type: 'value'
-                }],
+
                 series: [{
-                    name: 'Total Bookings',
-                    type: 'bar',
-                    barWidth: '20%',
-                    data: [
-                        {{ $total_booking }},
-                        {{ $completed_booking }},
-                        {{ $cancelled_booking }}
+                    name: '',
+                    type: 'pie',
+                    radius: '70%',
+                    center: ['50%', '50%'],
+                    itemStyle: {
+                        normal: {
+                            borderWidth: 1,
+                            borderColor: '#fff'
+                        }
+                    },
+                    data: [{
+                            value: {{ $total_booking }},
+                            name: 'Total Booking'
+                        },
+                        {
+                            value: {{ $completed_booking }},
+                            name: 'Completed Booking'
+                        },
+                        {
+                            value: {{ $cancelled_booking }},
+                            name: 'Cancelled Booking'
+                        }
                     ]
                 }]
             });

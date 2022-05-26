@@ -109,7 +109,7 @@ Route::group(['namespace' => 'Admin'], function () {
 
         Route::group(['prefix' => '/booking-reports'], function () {
             Route::get('/', 'BookingReportController@index')->name('booking-reports');
-            Route::post('/data', 'BookingReportController@data')->name('/data');
+            Route::post('/', 'BookingReportController@date')->name('booking-reports-date');
         });
     });
 });
