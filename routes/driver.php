@@ -38,5 +38,6 @@ Route::group(['namespace'   =>  'Driver'], function () {
         Route::get('/update-location/{lat}/{long}', 'ProfileController@updateLocation');
         Route::get('/accept-reject/{booking_id}', 'ProfileController@acceptReject');
         Route::get('/complete-booking/{booking_id}', 'ProfileController@acceptReject');
+        Route::post('/cab-mode', 'CarController@cabMode');
     });
 });

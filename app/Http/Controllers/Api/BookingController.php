@@ -93,7 +93,7 @@ class BookingController extends ApiController
             $auth_user = User::find(auth('api')->user()->id);
             $lat1 = $data['lat1'];
             $long1 = $data['long1'];
-            $users = User::where('user_role', DRIVER)->where('is_online', DRIVER_ONLINE)->get();
+            $users = User::where('user_role', DRIVER)->where('is_online', DRIVER_ONLINE)->where('cab-mode', 'private')->where('in-ride', DRIVER_NOT_RIDING)->get();
             $data = [];
             foreach ($users as $user) {
                 $lat2 = $user->lat;
@@ -166,7 +166,7 @@ class BookingController extends ApiController
                     ];
                     if ($driver->device_type == 'android') {
                         $sen = $this->sendNotificationAndroid($msgdata);
-                    }elseif($driver->device_type == 'ios'){
+                    } elseif ($driver->device_type == 'ios') {
                         $sen = $this->sendNotificationAndroid($msgdata);
                     }
                 }

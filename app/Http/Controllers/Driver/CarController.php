@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Driver;
 
-use App\Http\Controllers\ApiController;
 use App\Models\Car;
-use App\Models\CarCategory;
-use App\Models\CarModel;
+use App\Models\User;
 use App\Models\Color;
+use App\Models\CarModel;
+use App\Models\CarCategory;
+use Illuminate\Http\Request;
+use App\Http\Controllers\ApiController;
+use Illuminate\Support\Facades\Validator;
 
 class CarController extends ApiController
 {
@@ -57,6 +60,31 @@ class CarController extends ApiController
             return $this->result_ok('Car Categories', $year);
         } else {
             return $this->result_fail('Something Went Wrong.');
+        }
+    }
+
+    public function cabMode(Request $request)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'mode'  => 'required',
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            if (!empty($errors)) {
+                foreach ($errors->all() as $error) {
+                    return $this->result_fail($error);
+                }
+            }
+        } else {
+            $user = User::find(auth('api')->user()->id);
+            if ($user) {
+                $user->update([
+                    'cab_mode'  =>  strtolower($data['mode'])
+                ]);
+            } else {
+                return $this->result_fail('Something Went Wrong.');
+            }
         }
     }
 }

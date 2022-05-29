@@ -85,7 +85,7 @@ class LocationController extends ApiController
         $auth_user = User::find(auth('api')->user()->id);
         $lat1 = $auth_user->lat;
         $long1 = $auth_user->long;
-        $users = User::where('user_role', DRIVER)->get();
+        $users = User::where('user_role', DRIVER)->where('is_online', DRIVER_ONLINE)->get();
         $data = [];
         foreach ($users as $user) {
             $lat2 = $user->lat;
