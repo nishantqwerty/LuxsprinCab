@@ -158,7 +158,7 @@ class BookingController extends ApiController
                         'id'    =>  $user->id,
                         'device_token'  =>  $driver->device_token,
                         'message'       =>  'Booking Request',
-                        'user_image'    =>  !empty($user->profie_picture)   ?   $user->profile_picture  :   'no_image',
+                        'user_image'    =>  !empty($user->image)   ?   $user->image  :   'no_image',
                         'user_name'     =>  !empty($user->name)   ?   $user->name  :   'NULL',
                         'booking_id'    =>  $booking->id,
                         'booking_data'  =>  $booking_data,
@@ -202,6 +202,24 @@ class BookingController extends ApiController
             } else {
                 return $this->result_fail('Something Went Wrong.');
             }
+        }
+    }
+
+    public function cancelBooking($bookingId)
+    {
+        $booking = Booking::where('id', $bookingId)->where('user_id', auth('api')->user()->id)->first();
+        if ($booking) {
+            if ($booking->is_cancelled == BOOKING_CANCEL) {
+                return $this->result_message('Booking Already Cancelled.');
+            } else {
+                $booking->update([
+                    'is_cancelled'  =>  BOOKING_CANCEL,
+                    'cancelled_by'  =>  USER,
+                ]);
+                return $this->result_message('Booking has been cancelled successfully.');
+            }
+        } else {
+            return $this->result_fail('Something Went Wrong.');
         }
     }
 }

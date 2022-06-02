@@ -34,3 +34,5 @@ define('DRIVER_UNDER_VERIFICATION', 6);
 
 define('ACCEPT_BOOKING', 1);
 define('REJECT_BOOKING', 2);
+
+define('BOOKING_CANCEL', 1);

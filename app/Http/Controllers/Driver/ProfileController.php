@@ -193,6 +193,16 @@ class ProfileController extends ApiController
                             'driver_id' => auth('api')->user()->id,
                         ]);
                         $user = User::find($booking->user_id);
+                        $driver = User::find(auth('api')->user()->id);
+                        $msgdata = [
+                            'id'            =>  $driver->id,
+                            'device_token'  =>  $user->device_token,
+                            'message'       =>  'Booking Accepted',
+                            'driver_image'  =>  !empty($driver->image)   ?   $driver->image  :   'no_image',
+                            'driver_name'   =>  !empty($driver->name)   ?   $driver->name  :   'NULL',
+                            'booking_id'    =>  $booking->id,
+                        ];
+                        $sen = $this->sendAcceptNotification($msgdata);
                         return $this->result_ok('Booking has been Accepted.', ['user_details' => $user]);
                     } else {
                         return $this->result_message('Booking has been rejected succesfully.');

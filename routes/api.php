@@ -39,5 +39,6 @@ Route::group(['namespace'   =>  'Api'], function () {
 
         Route::get('/home-screen', 'LocationController@GetDrivingDistance');
         Route::post('/save-booking', 'BookingController@saveBooking');
+        Route::get('/cancel-booking/{booking_id}', 'BookingController@cancelBooking');
     });
 });

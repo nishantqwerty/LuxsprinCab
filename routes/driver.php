@@ -40,5 +40,6 @@ Route::group(['namespace'   =>  'Driver'], function () {
         Route::get('/complete-booking/{booking_id}', 'ProfileController@acceptReject');
         Route::post('/cab-mode', 'CarController@cabMode');
         Route::get('/get-cab-mode', 'CarController@getCabMode');
+        Route::get('/cancel-booking/{booking_id}', 'CarController@cancelBooking');
     });
 });

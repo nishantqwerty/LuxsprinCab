@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Driver;
 use App\Models\Car;
 use App\Models\User;
 use App\Models\Color;
+use App\Models\Booking;
 use App\Models\CarModel;
 use App\Models\CarCategory;
 use Illuminate\Http\Request;
@@ -95,6 +96,23 @@ class CarController extends ApiController
             return $this->result_ok('User Cab Mode', $user);
         } else {
             return $this->result_fail('SOmething Went Wrong.');
+        }
+    }
+    public function cancelBooking($bookingId)
+    {
+        $booking = Booking::where('id', $bookingId)->where('driver_id', auth('api')->user()->id)->first();
+        if ($booking) {
+            if ($booking->is_cancelled == BOOKING_CANCEL) {
+                return $this->result_message('Booking Already Cancelled.');
+            } else {
+                $booking->update([
+                    'is_cancelled'  =>  BOOKING_CANCEL,
+                    'cancelled_by'  =>  DRIVER,
+                ]);
+                return $this->result_message('Booking has been cancelled successfully.');
+            }
+        } else {
+            return $this->result_fail('Something Went Wrong.');
         }
     }
 }
