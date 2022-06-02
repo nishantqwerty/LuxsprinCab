@@ -36,3 +36,7 @@ define('ACCEPT_BOOKING', 1);
 define('REJECT_BOOKING', 2);
 
 define('BOOKING_CANCEL', 1);
+
+define('RIDE_START', 1);
+define('RIDE_END', 2);
+define('RIDE_COMPLETE', 1);

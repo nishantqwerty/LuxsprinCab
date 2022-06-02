@@ -98,6 +98,7 @@ class CarController extends ApiController
             return $this->result_fail('SOmething Went Wrong.');
         }
     }
+
     public function cancelBooking($bookingId)
     {
         $booking = Booking::where('id', $bookingId)->where('driver_id', auth('api')->user()->id)->first();
@@ -113,6 +114,71 @@ class CarController extends ApiController
             }
         } else {
             return $this->result_fail('Something Went Wrong.');
+        }
+    }
+
+    public function rideStart(Request $request)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'booking_id'    =>  'required',
+            'ride_status'   =>  'required'
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            if (!empty($errors)) {
+                foreach ($errors->all() as $error) {
+                    return $this->result_fail($error);
+                }
+            }
+        } else {
+            $booking = Booking::find($data['booking_id']);
+            if ($booking) {
+                $driver = User::find(auth('api')->user()->id);
+                $user   =   User::find($booking->user_id);
+                if ($driver) {
+                    if ($data['status'] == RIDE_START) {
+                        $driver->update([
+                            'in-ride'   =>  DRIVER_RIDING
+                        ]);
+                        $userdata = [
+                            'id'    =>  $user->id,
+                            'message'   =>  'Ride Started',
+                            'device_token'  =>  $user->device_token,
+                        ];
+                        $driverdata = [
+                            'id'    =>  $driver->id,
+                            'message'   =>  'Ride Started',
+                            'device_token'  =>  $driver->device_token,
+                        ];
+                        $ride = $this->rideStartNotification($userdata);
+                        $driverride = $this->rideStartNotification($driverdata);
+                        return $this->result_message('Ride started.');
+                    } elseif ($data['status'] == RIDE_END) {
+                        $driver->update([
+                            'in-ride'   =>  DRIVER_NOT_RIDING
+                        ]);
+                        $booking->update([
+                            'is_completed'  =>  RIDE_COMPLETE
+                        ]);
+                        $userdata = [
+                            'id'    =>  $user->id,
+                            'message'   =>  'Your ride is compeleted',
+                            'device_token'  =>  $user->device_token,
+                        ];
+                        $driverdata = [
+                            'id'    =>  $driver->id,
+                            'message'   =>  'Ride Completed',
+                            'device_token'  =>  $driver->device_token,
+                        ];
+                        $ride = $this->rideStartNotification($userdata);
+                        $driverride = $this->rideStartNotification($driverdata);
+                        return $this->result_message('Ride ended.');
+                    }
+                }
+            } else {
+                return $this->result_fail('Something Went Wrong.');
+            }
         }
     }
 }
