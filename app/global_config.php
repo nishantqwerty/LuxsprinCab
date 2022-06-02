@@ -16,6 +16,9 @@ define('DRIVER_OFFLINE', 2);
 define('DRIVER_RIDING', 1);
 define('DRIVER_NOT_RIDING', 2);
 
+define('DRIVER_LOG_IN', 1);
+define('DRIVER_LOG_OUT', 2);
+
 define('USER_ACTIVE', 1);
 define('USER_INACTIVE', 2);
 
@@ -28,3 +31,6 @@ define('RESUBMIT_DOCUMENT', 3);
 define('DRIVER_DOCS_PENDING', 4);
 define('BANK_DETAILS_PENDING', 5);
 define('DRIVER_UNDER_VERIFICATION', 6);
+
+define('ACCEPT_BOOKING', 1);
+define('REJECT_BOOKING', 2);

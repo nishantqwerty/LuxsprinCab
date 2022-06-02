@@ -170,21 +170,39 @@ class ProfileController extends ApiController
         }
     }
 
-    public function acceptReject($bookingId)
+    public function acceptReject(Request $request)
     {
-        $booking = Booking::find($bookingId);
-        if ($booking) {
-            if($booking->driver_id == 0){
-                $booking->update([
-                    'driver_id' => auth('api')->user()->id,
-                ]);
-                $user = User::find(auth('api')->user()->id);
-                return $this->result_ok('Booking has been Accepted.',['driver_details' => $user]);
-            }else{
-                return $this->result_fail('Booking already accepted by another driver.');
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'booking_id'    =>  'required',
+            'status'        =>  'required'
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            if (!empty($errors)) {
+                foreach ($errors->all() as $error) {
+                    return $this->result_fail($error);
+                }
             }
         } else {
-            return $this->result_fail('Something Went Wrong.');
+            $booking = Booking::find($data['booking_id']);
+            if ($booking) {
+                if ($booking->driver_id == 0) {
+                    if ($data['status'] == ACCEPT_BOOKING) {
+                        $booking->update([
+                            'driver_id' => auth('api')->user()->id,
+                        ]);
+                        $user = User::find($booking->user_id);
+                        return $this->result_ok('Booking has been Accepted.', ['user_details' => $user]);
+                    } else {
+                        return $this->result_message('Booking has been rejected succesfully.');
+                    }
+                } else {
+                    return $this->result_fail('Booking already accepted by another driver.');
+                }
+            } else {
+                return $this->result_fail('Something Went Wrong.');
+            }
         }
     }
 }

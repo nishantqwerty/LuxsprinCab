@@ -87,4 +87,14 @@ class CarController extends ApiController
             }
         }
     }
+
+    public function getCabMode()
+    {
+        $user = User::select('cab-mode')->where('id', auth('api')->user()->id)->first();
+        if ($user) {
+            return $this->result_ok('User Cab Mode', $user);
+        } else {
+            return $this->result_fail('SOmething Went Wrong.');
+        }
+    }
 }

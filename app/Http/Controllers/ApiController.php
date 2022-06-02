@@ -136,7 +136,7 @@ class ApiController extends Controller
 
         $notification = [
             'title' => 'Booking Request',
-            'body' => $msg,
+            'body' => 'New Booking Request',
             'sound' => 'default',
             'badge' => '1'
         ];
@@ -153,7 +153,7 @@ class ApiController extends Controller
             //'registration_ids' => $tokenList, //multple token array
             'to'        => $deviceToken, //single token
             'notification' => $notification,
-            'data' => $extraNotificationData,
+            'data' => $msg,
             'priority' => 'high'
         ];
 

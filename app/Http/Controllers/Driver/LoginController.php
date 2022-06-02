@@ -43,6 +43,7 @@ class LoginController extends ApiController
                         $user->update([
                             'device_type'   =>  $data['device_type'],
                             'device_token'  =>  $data['device_token'],
+                            'is_logged_in'  =>  DRIVER_LOG_IN,
                         ]);
                         return $this->result_ok('User Logged In.', ['token' => $token, 'user' => Auth::user()]);
                     } else {
@@ -87,6 +88,7 @@ class LoginController extends ApiController
                 'country_code' =>  $data['country_code'],
                 'device_type'   =>  isset($data['device_type']) ? $data['device_type'] : '',
                 'device_token'  =>  isset($data['device_token']) ? $data['device_token'] : '',
+                'cab-mode'  =>  strtolower('private'),
             );
             $otp = rand(1000, 9999);
             $userotp = Otp::where('phone_number', $data['phone_number'])->first();
@@ -273,6 +275,9 @@ class LoginController extends ApiController
     {
         $user = auth('api')->user();
         if ($user) {
+            $user->update([
+                'is_logged_in'  =>  DRIVER_LOG_OUT,
+            ]);
             $user->token()->revoke();
             return $this->result_message("User logged Out.");
         } else {
