@@ -222,4 +222,18 @@ class BookingController extends ApiController
             return $this->result_fail('Something Went Wrong.');
         }
     }
+
+    public function sharingCab(Request $request)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'pickup_location'   =>  'required',
+            'drop_location'     =>  'required',
+            'pickup_lat'        =>  'required',
+            'pickup_long'       =>  'required',
+            'drop_lat'          =>  'required',
+            'drop_long'         =>  'required',
+            'car_category_id'   =>  'required',
+        ]);
+    }
 }

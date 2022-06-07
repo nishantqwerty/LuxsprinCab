@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers\Driver;
 
-use App\Models\Otp;
-use App\Models\User;
-use Illuminate\Http\Request;
-use App\Http\Controllers\ApiController;
-use App\Models\Booking;
-use App\Models\RejectDocument;
-use Illuminate\Support\Facades\Validator;
 use Hash;
+use App\Models\Otp;
+use App\Models\Chat;
+use App\Models\User;
+use App\Models\Booking;
+use App\Models\UserChat;
+use Illuminate\Http\Request;
+use App\Models\RejectDocument;
+use App\Http\Controllers\ApiController;
+use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends ApiController
 {
@@ -128,12 +130,65 @@ class ProfileController extends ApiController
 
     public function getProfile()
     {
-        $user = User::where('id',auth('api')->user()->id)->with('carDetail')->first();
+        $user = User::where('id', auth('api')->user()->id)->with('carDetail')->first();
         if ($user) {
             $user['image']  =   asset("storage/images/$user->image");
             return $this->result_ok('User Detail', $user);
         } else {
             return $this->result_fail('Something Went Wrong.');
+        }
+    }
+
+    public function getChat()
+    {
+        $chats = UserChat::where('chat_room_id', auth('api')->user()->id)->get();
+        if ($chats) {
+            return $this->result_ok($chats);
+        } else {
+            return $this->result_error("Something Went Wrong.");
+        }
+    }
+
+    public function sendMessage(Request $request)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'message'     =>  'required'
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            if (!empty($errors)) {
+                foreach ($errors->all() as $error) {
+                    return $this->result_fail($error);
+                }
+            }
+        } else {
+            $UserChat  = [
+                'message' => $data['msg'],
+                'chat_room_id' => auth('api')->user()->id,
+                'user_id' => auth('api')->user()->id,
+                'user_role' => DRIVER,
+            ];
+            $chat = UserChat::create($UserChat);
+
+            if ($chat) {
+                $update_chat = Chat::where('chat_room_id', auth('api')->user()->id)->first();
+                if ($update_chat) {
+                    $update_chat->update([
+                        'message'   => $data['msg']
+                    ]);
+                } else {
+                    $chat_data = [
+                        'message' => $data['msg'],
+                        'chat_room_id' => auth('api')->user()->id,
+                        'user_id' => auth('api')->user()->id,
+                    ];
+                    $chat = Chat::create($chat_data);
+                }
+                return $this->result_ok("Message Added");
+            } else {
+                return $this->result_fail("Something Went Wrong.");
+            }
         }
     }
 

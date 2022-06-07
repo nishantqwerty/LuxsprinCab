@@ -40,5 +40,11 @@ Route::group(['namespace'   =>  'Api'], function () {
         Route::get('/home-screen', 'LocationController@GetDrivingDistance');
         Route::post('/save-booking', 'BookingController@saveBooking');
         Route::get('/cancel-booking/{booking_id}', 'BookingController@cancelBooking');
+
+        Route::get('/getchat', 'ProfileController@getChat');
+        Route::post('/send-chat',  'ProfileController@sendMessage');
+        Route::get('/faqs', 'ProfileController@faqs');
+
+        Route::post('/share-cab', 'BookingController@sharingCab');
     });
 });

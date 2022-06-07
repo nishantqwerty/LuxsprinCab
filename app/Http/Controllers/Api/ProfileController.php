@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Faq;
 use App\Models\Otp;
+use App\Models\Chat;
 use App\Models\User;
+use App\Models\UserChat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -245,6 +248,72 @@ class ProfileController extends ApiController
                 echo "<br/>Country:: " . $second;
             } else if ($first != 'null' && $second == 'null' && $third == 'null' && $fourth == 'null' && $fifth == 'null') {
                 echo "<br/>Country:: " . $first;
+            }
+        }
+    }
+
+    public function getChat()
+    {
+        $chats = Chat::with('user')->get();
+        if ($chats) {
+            return $this->result_ok($chats);
+        } else {
+            return $this->result_("Something Went Wrong.");
+        }
+    }
+
+    public function faqs()
+    {
+        $faqs = Faq::get();
+        if ($faqs) {
+            return $this->result_ok($faqs);
+        } else {
+            return $this->result_("Something Went Wrong.");
+        }
+    }
+
+    public function sendMessage(Request $request)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'message'     =>  'required'
+        ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            if (!empty($errors)) {
+                foreach ($errors->all() as $error) {
+                    return $this->result_fail($error);
+                }
+            }
+        } else {
+
+            $UserChat  = [
+
+                'message' => $data['msg'],
+                'chat_room_id' => auth('api')->user()->id,
+                'user_id' => auth('api')->user()->id,
+                'user_role' => USER,
+            ];
+
+            $chat = UserChat::create($UserChat);
+            if ($chat) {
+                $update_chat = Chat::where('chat_room_id', auth('api')->user()->id)->first();
+                if ($update_chat) {
+                    $update_chat->update([
+                        'message'   => $data['msg']
+                    ]);
+                } else {
+                    $chat_data = [
+                        'message' => $data['msg'],
+                        'chat_room_id' => auth('api')->user()->id,
+                        'user_id' => auth('api')->user()->id,
+                    ];
+                    $chat = Chat::create($chat_data);
+                }
+                return $this->result_ok("Message Added");
+            } else {
+                return $this->result_fail("Something Went Wrong.");
             }
         }
     }

@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['namespace'   =>  'Driver'], function () {
@@ -42,5 +41,7 @@ Route::group(['namespace'   =>  'Driver'], function () {
         Route::get('/get-cab-mode', 'CarController@getCabMode');
         Route::get('/cancel-booking/{booking_id}', 'CarController@cancelBooking');
         Route::post('/ride-start', 'CarController@rideStart');
+        Route::get('/getchat', 'ProfileController@getChat');
+        Route::post('/send-message',  'ProfileController@sendMessage');
     });
 });
