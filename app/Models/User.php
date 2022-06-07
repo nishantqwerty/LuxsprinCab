@@ -37,4 +37,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function carDetail()
+    {
+        return $this->belongsTo(CarDetail::class, 'id', 'user_id');
+    }
 }

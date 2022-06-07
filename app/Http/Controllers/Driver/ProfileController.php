@@ -128,7 +128,7 @@ class ProfileController extends ApiController
 
     public function getProfile()
     {
-        $user = User::find(auth('api')->user()->id);
+        $user = User::where('id',auth('api')->user()->id)->with('carDetail')->first();
         if ($user) {
             $user['image']  =   asset("storage/images/$user->image");
             return $this->result_ok('User Detail', $user);

@@ -171,8 +171,8 @@ class CarController extends ApiController
                             'message'   =>  'Ride Completed',
                             'device_token'  =>  $driver->device_token,
                         ];
-                        $ride = $this->rideStartNotification($userdata);
-                        $driverride = $this->rideStartNotification($driverdata);
+                        $ride = $this->rideEndNotification($userdata);
+                        $driverride = $this->rideEndNotification($driverdata);
                         return $this->result_message('Ride ended.');
                     }
                 }
