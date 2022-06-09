@@ -106,10 +106,25 @@ class CarController extends ApiController
             if ($booking->is_cancelled == BOOKING_CANCEL) {
                 return $this->result_message('Booking Already Cancelled.');
             } else {
+                $driver = User::find(auth('api')->user()->id);
+                $user = User::find($booking->user_id);
                 $booking->update([
                     'is_cancelled'  =>  BOOKING_CANCEL,
                     'cancelled_by'  =>  DRIVER,
                 ]);
+                $msgDataDriver = [
+                    'id'    =>  $driver->id,
+                    'device_token'  =>  $driver->device_token,
+                    'message'   =>  'Your booking has been cancelled'
+                ];
+
+                $msgDataUser = [
+                    'id'    =>  $user->id,
+                    'device_token'  =>  $user->device_token,
+                    'message'   =>  'Your booking has been cancelled'
+                ];
+                $this->sendCancelNotificationDriver($msgDataDriver);
+                $user = $this->sendCancelNotificationUser($msgDataUser);
                 return $this->result_message('Booking has been cancelled successfully.');
             }
         } else {
@@ -137,7 +152,7 @@ class CarController extends ApiController
                 $driver = User::find(auth('api')->user()->id);
                 $user   =   User::find($booking->user_id);
                 if ($driver) {
-                    if ($data['status'] == RIDE_START) {
+                    if ($data['ride_status'] == RIDE_START) {
                         $driver->update([
                             'in-ride'   =>  DRIVER_RIDING
                         ]);
@@ -154,7 +169,7 @@ class CarController extends ApiController
                         $ride = $this->rideStartNotification($userdata);
                         $driverride = $this->rideStartNotification($driverdata);
                         return $this->result_message('Ride started.');
-                    } elseif ($data['status'] == RIDE_END) {
+                    } elseif ($data['ride_status'] == RIDE_END) {
                         $driver->update([
                             'in-ride'   =>  DRIVER_NOT_RIDING
                         ]);
@@ -175,6 +190,75 @@ class CarController extends ApiController
                         $driverride = $this->rideEndNotification($driverdata);
                         return $this->result_message('Ride ended.');
                     }
+                }
+            } else {
+                return $this->result_fail('Something Went Wrong.');
+            }
+        }
+    }
+
+    public function sendNotify(Request $request)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'booking_id'    =>  'required'
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            if (!empty($errors)) {
+                foreach ($errors->all() as $error) {
+                    return $this->result_fail($error);
+                }
+            }
+        } else {
+            $booking = Booking::where('id', $data['booking_id'])->where('driver_id', auth('api')->user()->id)->first();
+            if ($booking) {
+                $driver = User::find($booking->user_id);
+                if ($driver) {
+                    $msgData = [
+                        'id'    =>  $driver->id,
+                        'device_token'  =>  $driver->device_token,
+                        'message'   =>  'Driver Reached'
+                    ];
+                    $this->sendReachNotification($msgData);
+                    return $this->result_ok('Notification Sent.');
+                } else {
+                    return $this->result_fail('No driver found.');
+                }
+            } else {
+                return $this->result_fail('Something Went Wrong.');
+            }
+        }
+    }
+
+    public function sendCustomNotification(Request $request)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'message'    =>  'required',
+            'booking_id' =>  'required'
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            if (!empty($errors)) {
+                foreach ($errors->all() as $error) {
+                    return $this->result_fail($error);
+                }
+            }
+        } else {
+            $booking = Booking::where('id', $data['booking_id'])->where('driver_id', auth('api')->user()->id)->first();
+            if ($booking) {
+                $user = User::find($booking->user_id);
+                if ($user) {
+                    $msgData = [
+                        'id'    =>  $user->id,
+                        'device_token'  =>  $user->device_token,
+                        'message'   =>  $data['message']
+                    ];
+                    $this->sendNotification($msgData);
+                    return $this->result_message('Message Sent.');
+                } else {
+                    return $this->result_fail('No user found.');
                 }
             } else {
                 return $this->result_fail('Something Went Wrong.');

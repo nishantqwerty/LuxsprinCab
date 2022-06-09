@@ -309,6 +309,182 @@ class ApiController extends Controller
         // echo $result;
     }
 
+    public function sendReachNotification($requestedData)
+    {
+        // $API_ACCESS_KEY = 'AIzaSyBXh7HBXsLGzZDeomvWliryh7sgmHEMtm4';
+        $API_ACCESS_KEY = env('FIREBASE_SERVER_KEY');
+        // $API_ACCESS_KEY = 'AAAAQh48WTQ:APA91bEplmbgrGW-weJ799CibrhcBukNZUvVn6r3UNGdkjmYCl_exHOkya-AA4GPvOt6CDAhq2-zXyyRiuxbC3poYRGv0e3VY7Rg1ldf43B1w5ytYVqjF0mv56DcLChxJtwuWgf9avqG';
+
+        $message = $requestedData['message'];
+        $deviceToken = $requestedData['device_token'];
+
+        $fcmUrl = 'https://fcm.googleapis.com/fcm/send';
+
+        $notification = [
+            'title' => 'Driver Reached',
+            'body' => $message,
+            'sound' => 'default',
+            'badge' => '1'
+        ];
+
+        $fcmNotification = [
+            //'registration_ids' => $tokenList, //multple token array
+            'to'        => $deviceToken, //single token
+            'notification' => $notification,
+            'data' => 'Driver Reached to your location .',
+            'priority' => 'high'
+        ];
+
+        $headers = [
+            'Authorization: key=' . $API_ACCESS_KEY,
+            'Content-Type: application/json'
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $fcmUrl);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fcmNotification));
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        // echo $result;
+    }
+
+    public function sendCancelNotificationDriver($requestedData)
+    {
+        // $API_ACCESS_KEY = 'AIzaSyBXh7HBXsLGzZDeomvWliryh7sgmHEMtm4';
+        $API_ACCESS_KEY = env('FIREBASE_SERVER_KEY');
+        // $API_ACCESS_KEY = 'AAAAQh48WTQ:APA91bEplmbgrGW-weJ799CibrhcBukNZUvVn6r3UNGdkjmYCl_exHOkya-AA4GPvOt6CDAhq2-zXyyRiuxbC3poYRGv0e3VY7Rg1ldf43B1w5ytYVqjF0mv56DcLChxJtwuWgf9avqG';
+
+        $message = $requestedData['message'];
+        $deviceToken = $requestedData['device_token'];
+
+        $fcmUrl = 'https://fcm.googleapis.com/fcm/send';
+
+        $notification = [
+            'title' => 'Booking Cancelled',
+            'body' => $message,
+            'sound' => 'default',
+            'badge' => '1'
+        ];
+
+        $fcmNotification = [
+            //'registration_ids' => $tokenList, //multple token array
+            'to'        => $deviceToken, //single token
+            'notification' => $notification,
+            'data' => 'Booking has been cancelled .',
+            'priority' => 'high'
+        ];
+
+        $headers = [
+            'Authorization: key=' . $API_ACCESS_KEY,
+            'Content-Type: application/json'
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $fcmUrl);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fcmNotification));
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        // echo $result;
+    }
+
+    public function sendCancelNotificationUser($requestedData)
+    {
+        // $API_ACCESS_KEY = 'AIzaSyBXh7HBXsLGzZDeomvWliryh7sgmHEMtm4';
+        $API_ACCESS_KEY = env('FIREBASE_SERVER_KEY');
+        // $API_ACCESS_KEY = 'AAAAQh48WTQ:APA91bEplmbgrGW-weJ799CibrhcBukNZUvVn6r3UNGdkjmYCl_exHOkya-AA4GPvOt6CDAhq2-zXyyRiuxbC3poYRGv0e3VY7Rg1ldf43B1w5ytYVqjF0mv56DcLChxJtwuWgf9avqG';
+
+        $message = $requestedData['message'];
+        $deviceToken = $requestedData['device_token'];
+
+        $fcmUrl = 'https://fcm.googleapis.com/fcm/send';
+
+        $notification = [
+            'title' => 'Booking Cancelled',
+            'body' => $message,
+            'sound' => 'default',
+            'badge' => '1'
+        ];
+
+        $fcmNotification = [
+            //'registration_ids' => $tokenList, //multple token array
+            'to'        => $deviceToken, //single token
+            'notification' => $notification,
+            'data' => 'Booking has been cancelled.',
+            'priority' => 'high'
+        ];
+
+        $headers = [
+            'Authorization: key=' . $API_ACCESS_KEY,
+            'Content-Type: application/json'
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $fcmUrl);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fcmNotification));
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        // echo $result;
+    }
+
+    public function sendNotification($requestedData)
+    {
+        // $API_ACCESS_KEY = 'AIzaSyBXh7HBXsLGzZDeomvWliryh7sgmHEMtm4';
+        $API_ACCESS_KEY = env('FIREBASE_SERVER_KEY');
+        // $API_ACCESS_KEY = 'AAAAQh48WTQ:APA91bEplmbgrGW-weJ799CibrhcBukNZUvVn6r3UNGdkjmYCl_exHOkya-AA4GPvOt6CDAhq2-zXyyRiuxbC3poYRGv0e3VY7Rg1ldf43B1w5ytYVqjF0mv56DcLChxJtwuWgf9avqG';
+
+        $message = $requestedData['message'];
+        $deviceToken = $requestedData['device_token'];
+
+        $fcmUrl = 'https://fcm.googleapis.com/fcm/send';
+
+        $notification = [
+            'title' => 'Notification',
+            'body' => $message,
+            'sound' => 'default',
+            'badge' => '1'
+        ];
+
+        $fcmNotification = [
+            //'registration_ids' => $tokenList, //multple token array
+            'to'        => $deviceToken, //single token
+            'notification' => $notification,
+            'data' => 'New Notification Received.',
+            'priority' => 'high'
+        ];
+
+        $headers = [
+            'Authorization: key=' . $API_ACCESS_KEY,
+            'Content-Type: application/json'
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $fcmUrl);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fcmNotification));
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        // echo $result;
+    }
+
     public function sendNotificationIos($requestedData)
     {
         try {

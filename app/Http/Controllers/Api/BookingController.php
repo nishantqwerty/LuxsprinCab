@@ -212,10 +212,25 @@ class BookingController extends ApiController
             if ($booking->is_cancelled == BOOKING_CANCEL) {
                 return $this->result_message('Booking Already Cancelled.');
             } else {
+                $user = User::find(auth('api')->user()->id);
+                $driver = User::find($booking->driver_id);
                 $booking->update([
                     'is_cancelled'  =>  BOOKING_CANCEL,
                     'cancelled_by'  =>  USER,
                 ]);
+                $msgDataDriver = [
+                    'id'    =>  $driver->id,
+                    'device_token'    =>  $driver->device_token,
+                    'message'   =>  'Booking has been cancelled.'
+                ];
+
+                $msgDataUser = [
+                    'id'    =>  $user->id,
+                    'device_token'    =>  $user->device_token,
+                    'message'   =>  'Booking has been cancelled.'
+                ];
+                $this->sendCancelNotificationDriver($msgDataDriver);
+                $this->sendCancelNotificationUser($msgDataUser);
                 return $this->result_message('Booking has been cancelled successfully.');
             }
         } else {
@@ -234,6 +249,70 @@ class BookingController extends ApiController
             'drop_lat'          =>  'required',
             'drop_long'         =>  'required',
             'car_category_id'   =>  'required',
+            'fare'              =>  'required'
         ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            if (!empty($errors)) {
+                foreach ($errors->all() as $error) {
+                    return $this->result_fail($error);
+                }
+            }
+        } else {
+            $booking_data = [
+                'source'            =>  $data['pickup_location'],
+                'destination'       =>  $data['drop_location'],
+                'user_id'           =>  auth('api')->user()->id,
+                'car_category_id'   =>  $data['car_category_id'],
+                'fare'              =>  $data['fare'],
+                'lat1'              =>  $data['pickup_lat'],
+                'long1'             =>  $data['pickup_long'],
+                'lat2'              =>  $data['drop_lat'],
+                'long2'             =>  $data['drop_long'],
+                'ride_type'         =>  isset($data['ride_type']) ? $data['ride_type'] : 'sharing',
+                'booking_time'      =>  date('Y-m-d H:i')
+            ];
+
+            $auth_user = User::find(auth('api')->user()->id);
+            $lat1 = $data['pickup_lat'];
+            $long1 = $data['pickup_long'];
+            $users = User::where('user_role', DRIVER)->where('is_online', DRIVER_ONLINE)->where('cab-mode', 'sharing')->where('in-ride', DRIVER_NOT_RIDING)->where('is_logged_in', DRIVER_LOG_IN)->get();
+            $data = [];
+        }
+    }
+
+    public function sendCustomNotification(Request $request)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'message'    =>  'required',
+            'booking_id' =>  'required'
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            if (!empty($errors)) {
+                foreach ($errors->all() as $error) {
+                    return $this->result_fail($error);
+                }
+            }
+        } else {
+            $booking = Booking::where('id', $data['booking_id'])->where('user_id', auth('api')->user()->id)->first();
+            if ($booking) {
+                $driver = User::find($booking->driver_id);
+                if ($driver) {
+                    $msgData = [
+                        'id'    =>  $driver->id,
+                        'device_token'  =>  $driver->device_token,
+                        'message'   =>  $data['message']
+                    ];
+                    $this->sendNotification($msgData);
+                    return $this->result_message('Message Sent.');
+                } else {
+                    return $this->result_fail('No user found.');
+                }
+            } else {
+                return $this->result_fail('Something Went Wrong.');
+            }
+        }
     }
 }
