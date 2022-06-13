@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Models\Booking;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
+use App\Models\Route;
+use App\Models\Stops;
 use Illuminate\Support\Facades\Validator;
 
 class BookingController extends ApiController
@@ -238,6 +240,16 @@ class BookingController extends ApiController
         }
     }
 
+    public function getFare($bookingId)
+    {
+        $booking = Booking::find($bookingId);
+        if ($booking) {
+            return $this->result_ok($booking);
+        } else {
+            return $this->result_fail('Something Went Wrong.');
+        }
+    }
+
     public function sharingCab(Request $request)
     {
         $data = $request->all();
@@ -272,12 +284,6 @@ class BookingController extends ApiController
                 'ride_type'         =>  isset($data['ride_type']) ? $data['ride_type'] : 'sharing',
                 'booking_time'      =>  date('Y-m-d H:i')
             ];
-
-            $auth_user = User::find(auth('api')->user()->id);
-            $lat1 = $data['pickup_lat'];
-            $long1 = $data['pickup_long'];
-            $users = User::where('user_role', DRIVER)->where('is_online', DRIVER_ONLINE)->where('cab-mode', 'sharing')->where('in-ride', DRIVER_NOT_RIDING)->where('is_logged_in', DRIVER_LOG_IN)->get();
-            $data = [];
         }
     }
 

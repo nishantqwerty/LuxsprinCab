@@ -28,8 +28,10 @@ class RouteController extends Controller
             'name'      =>  'required',
             'source'    =>  'required',
             'dest'      =>  'required',
-            'lat'       =>  'required',
-            'long'      =>  'required',
+            'source_lat'       =>  'required',
+            'source_long'      =>  'required',
+            'dest_lat'       =>  'required',
+            'dest_long'      =>  'required',
         ]);
         if ($validator->fails()) {
             return back()->withErrors($validator->errors());
@@ -38,8 +40,10 @@ class RouteController extends Controller
                 'name'          =>  $data['name'],
                 'source'        =>  $data['source'],
                 'destination'   =>  $data['dest'],
-                'lat'           =>  $data['lat'],
-                'long'          =>  $data['long'],
+                'source_lat'    =>  $data['source_lat'],
+                'source_long'   =>  $data['source_long'],
+                'dest_lat'      =>  $data['dest_lat'],
+                'dest_long'     =>  $data['dest_long'],
             ];
             $routes = Route::create($route);
             if ($routes) {
@@ -76,7 +80,7 @@ class RouteController extends Controller
     {
         $route = Route::find($id);
         if ($route) {
-            $stops = Stops::where('route_id',$id)->get();
+            $stops = Stops::where('route_id', $id)->get();
             $route->delete();
             $stops->each->delete();
             return back()->with('success', 'Route Deleted Successfully.');
@@ -98,7 +102,7 @@ class RouteController extends Controller
         }
     }
 
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
         $data = $request->all();
         $validator = Validator::make($data, [
@@ -120,7 +124,7 @@ class RouteController extends Controller
             ];
             $routes = Route::find($id);
             if ($routes) {
-                $prev_stops = Stops::where('route_id',$routes->id)->get();
+                $prev_stops = Stops::where('route_id', $routes->id)->get();
                 $prev_stops->each->delete();
                 $routes->update($route);
                 $stop = [];

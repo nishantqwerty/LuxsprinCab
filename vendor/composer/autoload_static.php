@@ -649,6 +649,7 @@ class ComposerStaticInit4235b6580bf7a32e20f0b18fe8822284
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\Admin\\AuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/AuthController.php',
+        'App\\Http\\Controllers\\Admin\\BookingReportController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/BookingReportController.php',
         'App\\Http\\Controllers\\Admin\\CarsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/CarsController.php',
         'App\\Http\\Controllers\\Admin\\DashboardController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/DashboardController.php',
         'App\\Http\\Controllers\\Admin\\DriverController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/DriverController.php',

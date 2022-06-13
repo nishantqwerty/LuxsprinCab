@@ -18,8 +18,10 @@ class CreateRoutesTable extends Migration
             $table->string('name');
             $table->string('source');
             $table->string('destination');
-            $table->string('lat');
-            $table->string('long');
+            $table->string('source_lat');
+            $table->string('source_long');
+            $table->string('dest_lat');
+            $table->string('dest_long');
             $table->timestamps();
         });
     }

@@ -184,7 +184,7 @@ class ApiController extends Controller
 
         $message = $requestedData['message'];
         $deviceToken = $requestedData['device_token'];
-        $msg =  ["bookingId" => $requestedData['booking_id'], "driverId" => $requestedData['id'], "name"   =>  $requestedData['driver_name'], "profile_picture" => $requestedData['driver_image'], "deviceToken" => $requestedData['device_token'], "message" => $requestedData['message']];
+        $msg =  ["bookingId" => $requestedData['booking_id'], "driverId" => $requestedData['id'], "name"   =>  $requestedData['driver_name'], "profile_picture" => $requestedData['driver_image'], "deviceToken" => $requestedData['device_token'], "message" => $requestedData['message'], 'fare'   =>  $requestedData['fare']];
 
         $fcmUrl = 'https://fcm.googleapis.com/fcm/send';
 
@@ -218,7 +218,6 @@ class ApiController extends Controller
         $result = curl_exec($ch);
         curl_close($ch);
 
-        // echo $result;
     }
 
     public function rideStartNotification($requestedData)
@@ -243,7 +242,7 @@ class ApiController extends Controller
             //'registration_ids' => $tokenList, //multple token array
             'to'        => $deviceToken, //single token
             'notification' => $notification,
-            'data' => 'Ride has been started.',
+            // 'data' => 'Ride has been started.',
             'priority' => 'high'
         ];
 
@@ -331,7 +330,7 @@ class ApiController extends Controller
             //'registration_ids' => $tokenList, //multple token array
             'to'        => $deviceToken, //single token
             'notification' => $notification,
-            'data' => 'Driver Reached to your location .',
+            // 'data' => $message,
             'priority' => 'high'
         ];
 

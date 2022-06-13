@@ -256,9 +256,10 @@ class ProfileController extends ApiController
                             'driver_image'  =>  !empty($driver->image)   ?   $driver->image  :   'no_image',
                             'driver_name'   =>  !empty($driver->name)   ?   $driver->name  :   'NULL',
                             'booking_id'    =>  $booking->id,
+                            'fare'          =>  $booking->fare
                         ];
                         $sen = $this->sendAcceptNotification($msgdata);
-                        return $this->result_ok('Booking has been Accepted.', ['user_details' => $user]);
+                        return $this->result_ok('Booking has been Accepted.', ['user_details' => $user,'fare' => $msgdata['fare']]);
                     } else {
                         return $this->result_message('Booking has been rejected succesfully.');
                     }

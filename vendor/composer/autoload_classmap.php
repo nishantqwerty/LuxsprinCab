@@ -9,6 +9,7 @@ return array(
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
     'App\\Http\\Controllers\\Admin\\AuthController' => $baseDir . '/app/Http/Controllers/Admin/AuthController.php',
+    'App\\Http\\Controllers\\Admin\\BookingReportController' => $baseDir . '/app/Http/Controllers/Admin/BookingReportController.php',
     'App\\Http\\Controllers\\Admin\\CarsController' => $baseDir . '/app/Http/Controllers/Admin/CarsController.php',
     'App\\Http\\Controllers\\Admin\\DashboardController' => $baseDir . '/app/Http/Controllers/Admin/DashboardController.php',
     'App\\Http\\Controllers\\Admin\\DriverController' => $baseDir . '/app/Http/Controllers/Admin/DriverController.php',

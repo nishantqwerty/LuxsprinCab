@@ -40,6 +40,6 @@ class User extends Authenticatable
 
     public function carDetail()
     {
-        return $this->belongsTo(CarDetail::class, 'id', 'user_id');
+        return $this->belongsTo(CarDetail::class, 'id', 'user_id')->with(['brand','brandModel']);
     }
 }
