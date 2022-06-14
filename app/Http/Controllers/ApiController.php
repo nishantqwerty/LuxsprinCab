@@ -286,7 +286,7 @@ class ApiController extends Controller
             //'registration_ids' => $tokenList, //multple token array
             'to'        => $deviceToken, //single token
             'notification' => $notification,
-            'data' => 'Ride Completed.',
+            // 'data' => 'Ride Completed.',
             'priority' => 'high'
         ];
 
@@ -374,7 +374,7 @@ class ApiController extends Controller
             //'registration_ids' => $tokenList, //multple token array
             'to'        => $deviceToken, //single token
             'notification' => $notification,
-            'data' => 'Booking has been cancelled .',
+            // 'data' => 'Booking has been cancelled .',
             'priority' => 'high'
         ];
 
@@ -418,7 +418,7 @@ class ApiController extends Controller
             //'registration_ids' => $tokenList, //multple token array
             'to'        => $deviceToken, //single token
             'notification' => $notification,
-            'data' => 'Booking has been cancelled.',
+            // 'data' => 'Booking has been cancelled.',
             'priority' => 'high'
         ];
 
@@ -462,7 +462,7 @@ class ApiController extends Controller
             //'registration_ids' => $tokenList, //multple token array
             'to'        => $deviceToken, //single token
             'notification' => $notification,
-            'data' => 'New Notification Received.',
+            // 'data' => 'New Notification Received.',
             'priority' => 'high'
         ];
 

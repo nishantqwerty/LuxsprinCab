@@ -213,11 +213,11 @@ class CarController extends ApiController
         } else {
             $booking = Booking::where('id', $data['booking_id'])->where('driver_id', auth('api')->user()->id)->first();
             if ($booking) {
-                $driver = User::find($booking->user_id);
-                if ($driver) {
+                $User = User::find($booking->user_id);
+                if ($User) {
                     $msgData = [
-                        'id'    =>  $driver->id,
-                        'device_token'  =>  $driver->device_token,
+                        'id'    =>  $User->id,
+                        'device_token'  =>  $User->device_token,
                         'message'   =>  'Driver Reached'
                     ];
                     $this->sendReachNotification($msgData);
