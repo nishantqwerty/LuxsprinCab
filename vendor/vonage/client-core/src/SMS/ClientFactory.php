@@ -16,7 +16,6 @@ use Vonage\Client\APIResource;
 
 class ClientFactory
 {
-
     public function __invoke(ContainerInterface $container): Client
     {
         /** @var APIResource $api */
