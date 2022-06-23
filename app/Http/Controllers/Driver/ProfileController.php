@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Driver;
 
 use Hash;
+use App\Models\Faq;
 use App\Models\Otp;
 use App\Models\Chat;
 use App\Models\User;
@@ -164,7 +165,7 @@ class ProfileController extends ApiController
             }
         } else {
             $UserChat  = [
-                'message' => $data['msg'],
+                'message' => $data['message'],
                 'chat_room_id' => auth('api')->user()->id,
                 'user_id' => auth('api')->user()->id,
                 'user_role' => DRIVER,
@@ -175,11 +176,11 @@ class ProfileController extends ApiController
                 $update_chat = Chat::where('chat_room_id', auth('api')->user()->id)->first();
                 if ($update_chat) {
                     $update_chat->update([
-                        'message'   => $data['msg']
+                        'message'   => $data['message']
                     ]);
                 } else {
                     $chat_data = [
-                        'message' => $data['msg'],
+                        'message' => $data['message'],
                         'chat_room_id' => auth('api')->user()->id,
                         'user_id' => auth('api')->user()->id,
                     ];
@@ -269,6 +270,16 @@ class ProfileController extends ApiController
             } else {
                 return $this->result_fail('Something Went Wrong.');
             }
+        }
+    }
+
+    public function faqs()
+    {
+        $faqs = Faq::get();
+        if ($faqs) {
+            return $this->result_ok($faqs);
+        } else {
+            return $this->result_("Something Went Wrong.");
         }
     }
 }

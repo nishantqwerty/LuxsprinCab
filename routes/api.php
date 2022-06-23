@@ -47,6 +47,10 @@ Route::group(['namespace'   =>  'Api'], function () {
 
         Route::post('/share-cab', 'BookingController@sharingCab');
         Route::post('/send-custom-notification', 'BookingController@sendCustomNotification');
-        ROute::get('/get-fare/{booking_id}', 'BookingController@getFare');
+        Route::get('/get-fare/{booking_id}', 'BookingController@getFare');
+
+        Route::post('/submit-rating', 'ProfileController@submitRating');
+        Route::get('/all-rating', 'ProfileController@showAllRating');
+        Route::get('/booking-rating/{booking_id}', 'ProfileController@showBookingRating');
     });
 });

@@ -45,5 +45,6 @@ Route::group(['namespace'   =>  'Driver'], function () {
         Route::post('/send-message',  'ProfileController@sendMessage');
         Route::post('/send-notification',  'CarController@sendNotify');
         Route::post('/send-custom-notification', 'CarController@sendCustomNotification');
+        Route::get('/faqs', 'ProfileController@faqs');
     });
 });

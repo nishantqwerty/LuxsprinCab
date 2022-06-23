@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\ApiController;
+use App\Models\Booking;
+use App\Models\Rating;
 use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends ApiController
@@ -254,9 +256,9 @@ class ProfileController extends ApiController
 
     public function getChat()
     {
-        $chats = Chat::with('user')->get();
+        $chats = UserChat::where('chat_room_id', auth('api')->user()->id)->with('user')->get();
         if ($chats) {
-            return $this->result_ok($chats);
+            return $this->result_ok('User Chat', $chats);
         } else {
             return $this->result_("Something Went Wrong.");
         }
@@ -290,7 +292,7 @@ class ProfileController extends ApiController
 
             $UserChat  = [
 
-                'message' => $data['msg'],
+                'message' => $data['message'],
                 'chat_room_id' => auth('api')->user()->id,
                 'user_id' => auth('api')->user()->id,
                 'user_role' => USER,
@@ -301,20 +303,76 @@ class ProfileController extends ApiController
                 $update_chat = Chat::where('chat_room_id', auth('api')->user()->id)->first();
                 if ($update_chat) {
                     $update_chat->update([
-                        'message'   => $data['msg']
+                        'message'   => $data['message']
                     ]);
                 } else {
                     $chat_data = [
-                        'message' => $data['msg'],
+                        'message' => $data['message'],
                         'chat_room_id' => auth('api')->user()->id,
                         'user_id' => auth('api')->user()->id,
                     ];
                     $chat = Chat::create($chat_data);
                 }
-                return $this->result_ok("Message Added");
+                return $this->result_message("Message Added");
             } else {
                 return $this->result_fail("Something Went Wrong.");
             }
+        }
+    }
+
+    public function submitRating(Request $request)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'booking_id'    =>  'required',
+            'rating'        =>  'required',
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            if (!empty($errors)) {
+                foreach ($errors->all() as $error) {
+                    return $this->result_fail($error);
+                }
+            }
+        } else {
+            $booking = Booking::where('id', $data['booking_id'])->where('user_id', auth('api')->user()->id)->first();
+            if ($booking) {
+                $rating_data = [
+                    'user_id'       =>  auth('api')->user()->id,
+                    'booking_id'    =>  $data['booking_id'],
+                    'driver_id'     =>  $booking->driver_id,
+                    'rating'        =>  $data['rating'],
+                    'review'        =>  isset($data['review']) ? $data['review'] : NULL
+                ];
+                $rating = Rating::create($rating_data);
+                if ($rating) {
+                    return $this->result_message('Rating Submitted Successfully.');
+                } else {
+                    return $this->result_fail('Something Went Wrong.');
+                }
+            } else {
+                return $this->result_fail('Something Went Wrong.');
+            }
+        }
+    }
+
+    public function showAllRating()
+    {
+        $rating = Rating::where('user_id', auth('api')->user()->id)->get();
+        if ($rating) {
+            return $this->result_message('Ratings', $rating);
+        } else {
+            return $this->result_fail('Something Went Wrong.');
+        }
+    }
+
+    public function showBookingRating($id)
+    {
+        $rating = Rating::where('user_id', auth('api')->user()->id)->where('booking_id', $id)->first();
+        if ($rating) {
+            return $this->result_message('Ratings', $rating);
+        } else {
+            return $this->result_fail('Something Went Wrong.');
         }
     }
 }
