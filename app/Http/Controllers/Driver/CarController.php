@@ -156,6 +156,9 @@ class CarController extends ApiController
                         $driver->update([
                             'in-ride'   =>  DRIVER_RIDING
                         ]);
+                        $booking->update([
+                            'is_completed'  =>  RIDE_ONGOING
+                        ]);
                         $userdata = [
                             'id'    =>  $user->id,
                             'message'   =>  'Ride Started',

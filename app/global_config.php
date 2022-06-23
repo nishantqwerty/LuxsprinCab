@@ -40,3 +40,5 @@ define('BOOKING_CANCEL', 1);
 define('RIDE_START', 1);
 define('RIDE_END', 2);
 define('RIDE_COMPLETE', 1);
+define('RIDE_ONGOING', 2);
+define('RIDE_SCHEDULED', 1);

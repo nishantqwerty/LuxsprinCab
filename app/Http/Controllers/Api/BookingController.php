@@ -321,4 +321,34 @@ class BookingController extends ApiController
             }
         }
     }
+
+    public function completedTrips()
+    {
+        $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_completed', RIDE_COMPLETE)->with('driver')->get();
+        if ($booking) {
+            return $this->result_ok('Completed Booking', $booking);
+        } else {
+            return $this->result_fail('Something Went Wrong.');
+        }
+    }
+
+    public function upcomingTrips()
+    {
+        $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_scheduled', RIDE_SCHEDULED)->where('driver_id', 0)->get();
+        if ($booking) {
+            return $this->result_ok('Upcoming Booking', $booking);
+        } else {
+            return $this->result_fail('Something Went Wrong.');
+        }
+    }
+
+    public function ongoingTrips()
+    {
+        $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_completed', RIDE_ONGOING)->with('driver')->get();
+        if ($booking) {
+            return $this->result_ok('Ongoing Booking', $booking);
+        } else {
+            return $this->result_fail('Something Went Wrong.');
+        }
+    }
 }

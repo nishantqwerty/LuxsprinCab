@@ -52,5 +52,9 @@ Route::group(['namespace'   =>  'Api'], function () {
         Route::post('/submit-rating', 'ProfileController@submitRating');
         Route::get('/all-rating', 'ProfileController@showAllRating');
         Route::get('/booking-rating/{booking_id}', 'ProfileController@showBookingRating');
+
+        Route::get('/completed-trips', 'BookingController@completedTrips');
+        Route::get('/upcoming-trips', 'BookingController@upcomingTrips');
+        Route::get('/ongoing-trips', 'BookingController@ongoingTrips');
     });
 });
