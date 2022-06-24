@@ -268,7 +268,7 @@ class ProfileController extends ApiController
     {
         $faqs = Faq::get();
         if ($faqs) {
-            return $this->result_ok($faqs);
+            return $this->result_ok('faqs',$faqs);
         } else {
             return $this->result_("Something Went Wrong.");
         }

@@ -324,7 +324,7 @@ class BookingController extends ApiController
 
     public function completedTrips()
     {
-        $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_completed', RIDE_COMPLETE)->with('driver')->get();
+        $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_completed', RIDE_COMPLETE)->with(['driver','details'])->get();
         if ($booking) {
             return $this->result_ok('Completed Booking', $booking);
         } else {
@@ -344,7 +344,7 @@ class BookingController extends ApiController
 
     public function ongoingTrips()
     {
-        $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_completed', RIDE_ONGOING)->with('driver')->get();
+        $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_completed', RIDE_ONGOING)->with(['driver','details'])->get();
         if ($booking) {
             return $this->result_ok('Ongoing Booking', $booking);
         } else {

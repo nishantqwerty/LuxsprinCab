@@ -144,7 +144,7 @@ class ProfileController extends ApiController
     {
         $chats = UserChat::where('chat_room_id', auth('api')->user()->id)->get();
         if ($chats) {
-            return $this->result_ok($chats);
+            return $this->result_ok('Chats', $chats);
         } else {
             return $this->result_error("Something Went Wrong.");
         }
@@ -260,7 +260,7 @@ class ProfileController extends ApiController
                             'fare'          =>  $booking->fare
                         ];
                         $sen = $this->sendAcceptNotification($msgdata);
-                        return $this->result_ok('Booking has been Accepted.', ['user_details' => $user,'fare' => $msgdata['fare']]);
+                        return $this->result_ok('Booking has been Accepted.', ['user_details' => $user, 'fare' => $msgdata['fare']]);
                     } else {
                         return $this->result_message('Booking has been rejected succesfully.');
                     }
@@ -277,7 +277,7 @@ class ProfileController extends ApiController
     {
         $faqs = Faq::get();
         if ($faqs) {
-            return $this->result_ok($faqs);
+            return $this->result_ok('faqs', $faqs);
         } else {
             return $this->result_("Something Went Wrong.");
         }

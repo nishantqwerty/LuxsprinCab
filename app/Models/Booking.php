@@ -12,4 +12,13 @@ class Booking extends Model
     public function driver(){
         return $this->belongsTo(User::class,'driver_id','id');
     }
+
+    public function user(){
+        return $this->belongsTo(User::class,'user_id','id');
+    }
+    
+    public function details(){
+        return $this->belongsTo(DriverDocument::class,'driver_id','user_id');
+
+    }
 }
