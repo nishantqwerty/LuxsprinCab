@@ -9,6 +9,7 @@ use App\Models\Chat;
 use App\Models\User;
 use App\Models\Booking;
 use App\Models\UserChat;
+use App\Models\CancelReason;
 use Illuminate\Http\Request;
 use App\Models\RejectDocument;
 use App\Http\Controllers\ApiController;
@@ -280,6 +281,16 @@ class ProfileController extends ApiController
             return $this->result_ok('faqs', $faqs);
         } else {
             return $this->result_("Something Went Wrong.");
+        }
+    }
+
+    public function cancelReason()
+    {
+        $reasons = CancelReason::where('user_role', DRIVER)->get();
+        if ($reasons) {
+            return $this->result_ok('Cancellation Reasons', $reasons);
+        } else {
+            return $this->result_fail('Something Went Wrong.');
         }
     }
 }

@@ -51,6 +51,7 @@ return array(
     'App\\Models\\DriverDocument' => $baseDir . '/app/Models/DriverDocument.php',
     'App\\Models\\Faq' => $baseDir . '/app/Models/Faq.php',
     'App\\Models\\Otp' => $baseDir . '/app/Models/Otp.php',
+    'App\\Models\\Rating' => $baseDir . '/app/Models/Rating.php',
     'App\\Models\\RejectDocument' => $baseDir . '/app/Models/RejectDocument.php',
     'App\\Models\\Route' => $baseDir . '/app/Models/Route.php',
     'App\\Models\\Stops' => $baseDir . '/app/Models/Stops.php',

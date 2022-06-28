@@ -691,6 +691,7 @@ class ComposerStaticInit4235b6580bf7a32e20f0b18fe8822284
         'App\\Models\\DriverDocument' => __DIR__ . '/../..' . '/app/Models/DriverDocument.php',
         'App\\Models\\Faq' => __DIR__ . '/../..' . '/app/Models/Faq.php',
         'App\\Models\\Otp' => __DIR__ . '/../..' . '/app/Models/Otp.php',
+        'App\\Models\\Rating' => __DIR__ . '/../..' . '/app/Models/Rating.php',
         'App\\Models\\RejectDocument' => __DIR__ . '/../..' . '/app/Models/RejectDocument.php',
         'App\\Models\\Route' => __DIR__ . '/../..' . '/app/Models/Route.php',
         'App\\Models\\Stops' => __DIR__ . '/../..' . '/app/Models/Stops.php',

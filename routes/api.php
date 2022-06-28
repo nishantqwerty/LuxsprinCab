@@ -56,5 +56,8 @@ Route::group(['namespace'   =>  'Api'], function () {
         Route::get('/completed-trips', 'BookingController@completedTrips');
         Route::get('/upcoming-trips', 'BookingController@upcomingTrips');
         Route::get('/ongoing-trips', 'BookingController@ongoingTrips');
+
+        Route::get('/trip-details/{bookingId}', 'BookingController@tripDetails');
+        Route::get('/cancellaton-reasons','ProfileController@cancelReason');
     });
 });

@@ -49,5 +49,7 @@ Route::group(['namespace'   =>  'Driver'], function () {
         Route::get('/completed-trips', 'CarController@completedTrips');
         Route::get('/upcoming-trips', 'CarController@upcomingTrips');
         Route::get('/ongoing-trips', 'CarController@ongoingTrips');
+        Route::get('/trip-details/{bookingId}', 'BookingController@tripDetails');
+        Route::get('/cancellaton-reasons','ProfileController@cancelReason');
     });
 });

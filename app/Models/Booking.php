@@ -21,4 +21,14 @@ class Booking extends Model
         return $this->belongsTo(DriverDocument::class,'driver_id','user_id');
 
     }
+
+    public function rating(){
+        return $this->belongsTo(Rating::class,'driver_id','driver_id');
+
+    }
+
+    public function cardetails(){
+        return $this->belongsTo(CarDetail::class,'driver_id','user_id')->with(['category','brand','brandModel']);
+
+    }
 }

@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\ApiController;
 use App\Models\Booking;
+use App\Models\CancelReason;
 use App\Models\Rating;
 use Illuminate\Support\Facades\Validator;
 
@@ -268,7 +269,7 @@ class ProfileController extends ApiController
     {
         $faqs = Faq::get();
         if ($faqs) {
-            return $this->result_ok('faqs',$faqs);
+            return $this->result_ok('faqs', $faqs);
         } else {
             return $this->result_("Something Went Wrong.");
         }
@@ -371,6 +372,16 @@ class ProfileController extends ApiController
         $rating = Rating::where('user_id', auth('api')->user()->id)->where('booking_id', $id)->first();
         if ($rating) {
             return $this->result_message('Ratings', $rating);
+        } else {
+            return $this->result_fail('Something Went Wrong.');
+        }
+    }
+
+    public function cancelReason()
+    {
+        $reasons = CancelReason::where('user_role', USER)->get();
+        if ($reasons) {
+            return $this->result_ok('Cancellation Reasons', $reasons);
         } else {
             return $this->result_fail('Something Went Wrong.');
         }

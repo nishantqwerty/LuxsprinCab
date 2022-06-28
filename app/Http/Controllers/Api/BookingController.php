@@ -324,7 +324,7 @@ class BookingController extends ApiController
 
     public function completedTrips()
     {
-        $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_completed', RIDE_COMPLETE)->with(['driver','details'])->get();
+        $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_completed', RIDE_COMPLETE)->with(['driver', 'details', 'cardetails'])->get();
         if ($booking) {
             return $this->result_ok('Completed Booking', $booking);
         } else {
@@ -344,9 +344,19 @@ class BookingController extends ApiController
 
     public function ongoingTrips()
     {
-        $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_completed', RIDE_ONGOING)->with(['driver','details'])->get();
+        $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_completed', RIDE_ONGOING)->with(['driver', 'details', 'cardetails'])->get();
         if ($booking) {
             return $this->result_ok('Ongoing Booking', $booking);
+        } else {
+            return $this->result_fail('Something Went Wrong.');
+        }
+    }
+
+    public function tripDetails($bookingId)
+    {
+        $booking = Booking::where('id', $bookingId)->where('user_id', auth('api')->user()->id)->with(['driver', 'details', 'cardetails','rating'])->first();
+        if ($booking) {
+            return $this->result_ok('Trip Detail', $booking);
         } else {
             return $this->result_fail('Something Went Wrong.');
         }
