@@ -89,6 +89,7 @@ class LoginController extends ApiController
                 'device_type'   =>  isset($data['device_type']) ? $data['device_type'] : '',
                 'device_token'  =>  isset($data['device_token']) ? $data['device_token'] : '',
                 'cab-mode'  =>  strtolower('private'),
+                'in-ride'  =>  DRIVER_NOT_RIDING,
             );
             $otp = rand(1000, 9999);
             $userotp = Otp::where('phone_number', $data['phone_number'])->first();

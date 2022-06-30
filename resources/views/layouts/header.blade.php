@@ -69,7 +69,6 @@
         .slider.round:before {
             border-radius: 50%;
         }
-
     </style>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -105,8 +104,8 @@
 
         <!-- Preloader -->
         <div class="preloader flex-column justify-content-center align-items-center">
-            <img class="animation__shake" src="{{ asset('dist/img/AdminLTELogo.png') }}" alt="AdminLTELogo" height="60"
-                width="60">
+            <img class="animation__shake" src="{{ asset('dist/img/AdminLTELogo.png') }}" alt="AdminLTELogo"
+                height="60" width="60">
         </div>
 
         <!-- Navbar -->
@@ -256,6 +255,19 @@
                             <i class="nav-icon fas fa-user"></i>
                             <p>
                                 Support Messages
+                            </p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item menu-open">
+                            @if (Request::Segment(2) == 'cancellation')
+                                <a href="{{ route('cancellation') }}" class="nav-link active ">
+                                @else
+                                    <a href="{{ route('cancellation') }}" class="nav-link ">
+                            @endif
+                            <i class="nav-icon fas fa-user"></i>
+                            <p>
+                                Cancellation Messages
                             </p>
                             </a>
                         </li>

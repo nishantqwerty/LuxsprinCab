@@ -107,6 +107,15 @@ Route::group(['namespace' => 'Admin'], function () {
             Route::get('/delete/{id}', 'SupportController@delete')->name('delete-faq');
         });
 
+        Route::group(['prefix' => '/cancellation'], function () {
+            Route::get('/', 'CancellationController@index')->name('cancellation');
+            Route::get('/add', 'CancellationController@add')->name('add-message');
+            Route::post('/add', 'CancellationController@save')->name('save-message');
+            Route::get('/edit/{id}', 'CancellationController@edit')->name('edit-message');
+            Route::post('/edit/{id}', 'CancellationController@update')->name('update-message');
+            Route::get('/delete/{id}', 'CancellationController@delete')->name('delete-message');
+        });
+
         Route::group(['prefix' => '/booking-reports'], function () {
             Route::get('/', 'BookingReportController@index')->name('booking-reports');
             Route::post('/', 'BookingReportController@date')->name('booking-reports-date');

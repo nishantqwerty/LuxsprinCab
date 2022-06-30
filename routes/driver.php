@@ -39,7 +39,7 @@ Route::group(['namespace'   =>  'Driver'], function () {
         Route::get('/complete-booking/{booking_id}', 'ProfileController@acceptReject');
         Route::post('/cab-mode', 'CarController@cabMode');
         Route::get('/get-cab-mode', 'CarController@getCabMode');
-        Route::get('/cancel-booking/{booking_id}', 'CarController@cancelBooking');
+        Route::post('/cancel-booking', 'CarController@cancelBooking');
         Route::post('/ride-start', 'CarController@rideStart');
         Route::get('/getchat', 'ProfileController@getChat');
         Route::post('/send-message',  'ProfileController@sendMessage');
@@ -49,7 +49,7 @@ Route::group(['namespace'   =>  'Driver'], function () {
         Route::get('/completed-trips', 'CarController@completedTrips');
         Route::get('/upcoming-trips', 'CarController@upcomingTrips');
         Route::get('/ongoing-trips', 'CarController@ongoingTrips');
-        Route::get('/trip-details/{bookingId}', 'BookingController@tripDetails');
+        Route::get('/trip-details/{bookingId}', 'CarController@tripDetails');
         Route::get('/cancellaton-reasons','ProfileController@cancelReason');
     });
 });

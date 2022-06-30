@@ -207,36 +207,51 @@ class BookingController extends ApiController
         }
     }
 
-    public function cancelBooking($bookingId)
+    public function cancelBooking(Request $request)
     {
-        $booking = Booking::where('id', $bookingId)->where('user_id', auth('api')->user()->id)->first();
-        if ($booking) {
-            if ($booking->is_cancelled == BOOKING_CANCEL) {
-                return $this->result_message('Booking Already Cancelled.');
-            } else {
-                $user = User::find(auth('api')->user()->id);
-                $driver = User::find($booking->driver_id);
-                $booking->update([
-                    'is_cancelled'  =>  BOOKING_CANCEL,
-                    'cancelled_by'  =>  USER,
-                ]);
-                $msgDataDriver = [
-                    'id'    =>  $driver->id,
-                    'device_token'    =>  $driver->device_token,
-                    'message'   =>  'Booking has been cancelled.'
-                ];
-
-                $msgDataUser = [
-                    'id'    =>  $user->id,
-                    'device_token'    =>  $user->device_token,
-                    'message'   =>  'Booking has been cancelled.'
-                ];
-                $this->sendCancelNotificationDriver($msgDataDriver);
-                $this->sendCancelNotificationUser($msgDataUser);
-                return $this->result_message('Booking has been cancelled successfully.');
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'booking_id'    =>  'required'
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            if (!empty($errors)) {
+                foreach ($errors->all() as $error) {
+                    return $this->result_fail($error);
+                }
             }
         } else {
-            return $this->result_fail('Something Went Wrong.');
+            $booking = Booking::where('id', $data['booking_id'])->where('user_id', auth('api')->user()->id)->first();
+            if ($booking) {
+                if ($booking->is_cancelled == BOOKING_CANCEL) {
+                    return $this->result_message('Booking Already Cancelled.');
+                } else {
+                    $user = User::find(auth('api')->user()->id);
+                    $driver = User::find($booking->driver_id);
+                    $arr = $data['cancellation_reason'];
+                    $res = implode(",", $arr);
+                    $booking->update([
+                        'is_cancelled'  =>  BOOKING_CANCEL,
+                        'cancelled_by'  =>  USER,
+                        'cancellation_reasons' => $res
+                    ]);
+                    $msgDataDriver = [
+                        'id'    =>  $driver->id,
+                        'device_token'    =>  $driver->device_token,
+                        'message'   =>  'Booking has been cancelled.'
+                    ];
+                    $msgDataUser = [
+                        'id'    =>  $user->id,
+                        'device_token'    =>  $user->device_token,
+                        'message'   =>  'Booking has been cancelled.'
+                    ];
+                    $this->sendCancelNotificationDriver($msgDataDriver);
+                    $this->sendCancelNotificationUser($msgDataUser);
+                    return $this->result_message('Booking has been cancelled successfully.');
+                }
+            } else {
+                return $this->result_fail('Something Went Wrong.');
+            }
         }
     }
 
@@ -354,7 +369,7 @@ class BookingController extends ApiController
 
     public function tripDetails($bookingId)
     {
-        $booking = Booking::where('id', $bookingId)->where('user_id', auth('api')->user()->id)->with(['driver', 'details', 'cardetails','rating'])->first();
+        $booking = Booking::where('id', $bookingId)->where('user_id', auth('api')->user()->id)->with(['driver', 'details', 'cardetails', 'rating'])->first();
         if ($booking) {
             return $this->result_ok('Trip Detail', $booking);
         } else {
