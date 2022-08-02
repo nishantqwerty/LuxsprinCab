@@ -59,5 +59,6 @@ Route::group(['namespace'   =>  'Api'], function () {
 
         Route::get('/trip-details/{bookingId}', 'BookingController@tripDetails');
         Route::get('/cancellaton-reasons', 'ProfileController@cancelReason');
+
     });
 });

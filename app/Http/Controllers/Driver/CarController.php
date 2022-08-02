@@ -81,8 +81,9 @@ class CarController extends ApiController
             $user = User::find(auth('api')->user()->id);
             if ($user) {
                 $user->update([
-                    'cab_mode'  =>  strtolower($data['mode'])
+                    'cab-mode'  =>  strtolower($data['mode'])
                 ]);
+                return $this->result_message('Cab Mode Updated.');
             } else {
                 return $this->result_fail('Something Went Wrong.');
             }

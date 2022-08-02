@@ -7,13 +7,16 @@
  * /       /
  */
 
-namespace Twilio\Rest\Insights\V1;
+namespace Twilio\Rest\Supersim\V1\Sim;
 
 use Twilio\Http\Response;
 use Twilio\Page;
 use Twilio\Version;
 
-class AnnotationPage extends Page {
+/**
+ * PLEASE NOTE that this class contains beta products that are subject to change. Use them with caution.
+ */
+class SimIpAddressPage extends Page {
     /**
      * @param Version $version Version that contains the resource
      * @param Response $response Response from the API
@@ -28,10 +31,10 @@ class AnnotationPage extends Page {
 
     /**
      * @param array $payload Payload response from the API
-     * @return AnnotationInstance \Twilio\Rest\Insights\V1\AnnotationInstance
+     * @return SimIpAddressInstance \Twilio\Rest\Supersim\V1\Sim\SimIpAddressInstance
      */
-    public function buildInstance(array $payload): AnnotationInstance {
-        return new AnnotationInstance($this->version, $payload);
+    public function buildInstance(array $payload): SimIpAddressInstance {
+        return new SimIpAddressInstance($this->version, $payload, $this->solution['simSid']);
     }
 
     /**
@@ -40,6 +43,6 @@ class AnnotationPage extends Page {
      * @return string Machine friendly representation
      */
     public function __toString(): string {
-        return '[Twilio.Insights.V1.AnnotationPage]';
+        return '[Twilio.Supersim.V1.SimIpAddressPage]';
     }
 }
