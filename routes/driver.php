@@ -36,6 +36,7 @@ Route::group(['namespace'   =>  'Driver'], function () {
         Route::get('/get-status', 'ProfileController@getStatus');
         Route::get('/update-location/{lat}/{long}', 'ProfileController@updateLocation');
         Route::post('/accept-reject', 'ProfileController@acceptReject');
+        Route::post('/accept-reject-sharing', 'ProfileController@acceptRejectSharing');
         Route::get('/complete-booking/{booking_id}', 'ProfileController@acceptReject');
         Route::post('/cab-mode', 'CarController@cabMode');
         Route::get('/get-cab-mode', 'CarController@getCabMode');

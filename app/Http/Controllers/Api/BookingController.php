@@ -336,6 +336,8 @@ class BookingController extends ApiController
                     // } else {
                     //     return $miles;
                     // }
+                }else{
+                    return $this->result_fail('No nearby Drivers');
                 }
             }
             if (!empty($data['id'])) {

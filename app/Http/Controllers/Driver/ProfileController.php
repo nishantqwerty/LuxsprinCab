@@ -274,6 +274,53 @@ class ProfileController extends ApiController
         }
     }
 
+    public function acceptRejectSharing(Request $request)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'booking_id'    =>  'required',
+            'status'        =>  'required'
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            if (!empty($errors)) {
+                foreach ($errors->all() as $error) {
+                    return $this->result_fail($error);
+                }
+            }
+        } else {
+            $booking = Booking::find($data['booking_id']);
+            if ($booking) {
+                if ($booking->driver_id == 0) {
+                    if ($data['status'] == ACCEPT_BOOKING) {
+                        $booking->update([
+                            'driver_id' => auth('api')->user()->id,
+                        ]);
+                        $user = User::find($booking->user_id);
+                        $driver = User::find(auth('api')->user()->id);
+                        $msgdata = [
+                            'id'            =>  $driver->id,
+                            'device_token'  =>  $user->device_token,
+                            'message'       =>  'Booking Accepted',
+                            'driver_image'  =>  !empty($driver->image)   ?   $driver->image  :   'no_image',
+                            'driver_name'   =>  !empty($driver->name)   ?   $driver->name  :   'NULL',
+                            'booking_id'    =>  $booking->id,
+                            'fare'          =>  $booking->fare
+                        ];
+                        $sen = $this->sendAcceptNotification($msgdata);
+                        return $this->result_ok('Booking has been Accepted.', ['user_details' => $user, 'fare' => $msgdata['fare']]);
+                    } else {
+                        return $this->result_message('Booking has been rejected succesfully.');
+                    }
+                } else {
+                    return $this->result_fail('Booking already accepted by another driver.');
+                }
+            } else {
+                return $this->result_fail('Something Went Wrong.');
+            }
+        }
+    }
+
     public function faqs()
     {
         $faqs = Faq::get();
