@@ -126,7 +126,7 @@ class CarController extends ApiController
                     $booking->update([
                         'is_cancelled'  =>  BOOKING_CANCEL,
                         'cancelled_by'  =>  DRIVER,
-                        'cancellation_reason' => $res
+                        'cancellation_reasons' => $res
                     ]);
                     $msgDataDriver = [
                         'id'    =>  $driver->id,

@@ -173,7 +173,7 @@ class BookingController extends ApiController
                         $sen = $this->sendNotificationAndroid($msgdata);
                     }
                 }
-                return $this->result_ok('Nearby Drivers', ['boking_id' => $booking->id, 'drivers' => $details]);
+                return $this->result_ok('Nearby Drivers', ['booking_id' => $booking->id, 'drivers' => $details]);
             } else {
                 return $this->result_fail('No nearby driver found.');
             }
@@ -223,6 +223,7 @@ class BookingController extends ApiController
             }
         } else {
             $booking = Booking::where('id', $data['booking_id'])->where('user_id', auth('api')->user()->id)->first();
+            // return $data['cancellation_reason'];
             if ($booking) {
                 if ($booking->is_cancelled == BOOKING_CANCEL) {
                     return $this->result_message('Booking Already Cancelled.');
@@ -278,7 +279,7 @@ class BookingController extends ApiController
             'long1'             =>  'required',
             'lat2'              =>  'required',
             'long2'             =>  'required',
-            'seats'             =>  'required'
+            'seats'             =>  'required'  
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors();
@@ -305,7 +306,7 @@ class BookingController extends ApiController
             $auth_user = User::find(auth('api')->user()->id);
             $lat1 = $request['lat1'];
             $long1 = $request['long1'];
-            $users = User::where('user_role', DRIVER)->where('is_online', DRIVER_ONLINE)->where('cab-mode', 'private')->where('in-ride', DRIVER_NOT_RIDING)->where('is_logged_in', DRIVER_LOG_IN)->get();
+            $users = User::where('user_role', DRIVER)->where('is_online', DRIVER_ONLINE)->where('cab-mode', 'sharing')->where('in-ride', DRIVER_NOT_RIDING)->where('is_logged_in', DRIVER_LOG_IN)->get();
             $data = [];
             foreach ($users as $user) {
                 $seats = CarDetail::where('user_id', $user->id)->first();
@@ -336,8 +337,6 @@ class BookingController extends ApiController
                     // } else {
                     //     return $miles;
                     // }
-                }else{
-                    return $this->result_fail('No nearby Drivers');
                 }
             }
             if (!empty($data['id'])) {
@@ -393,7 +392,6 @@ class BookingController extends ApiController
             }
         }
     }
-
     public function sendCustomNotification(Request $request)
     {
         $data = $request->all();

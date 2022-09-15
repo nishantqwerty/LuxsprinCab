@@ -24,6 +24,7 @@ Route::group(['namespace'   =>  'Api'], function () {
     Route::post('/reset-password', 'LoginController@resetPassword');
 
     Route::group(['middleware' => 'auth:api'], function () {
+        Route::get('/all-users', 'ProfileController@allUsers');
         Route::get('/dashboard', 'ProfileController@dashboard');
         Route::get('/logout', 'LoginController@logout');
         Route::get('/delete-account', 'LoginController@deleteAccount');
@@ -59,6 +60,7 @@ Route::group(['namespace'   =>  'Api'], function () {
 
         Route::get('/trip-details/{bookingId}', 'BookingController@tripDetails');
         Route::get('/cancellaton-reasons', 'ProfileController@cancelReason');
-
+        Route::post('/panic-mode', 'ProfileController@panic');
+        Route::post('/transaction', 'ProfileController@transaction');
     });
 });

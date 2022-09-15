@@ -7,6 +7,7 @@ use App\Models\Faq;
 use App\Models\Otp;
 use App\Models\Chat;
 use App\Models\User;
+use App\Models\Panic;
 use App\Models\Booking;
 use App\Models\UserChat;
 use App\Models\CancelReason;
@@ -338,6 +339,35 @@ class ProfileController extends ApiController
             return $this->result_ok('Cancellation Reasons', $reasons);
         } else {
             return $this->result_fail('Something Went Wrong.');
+        }
+    }
+
+    public function panic(Request $request)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'lat'        =>  'required',
+            'long'        =>  'required',
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            if (!empty($errors)) {
+                foreach ($errors->all() as $error) {
+                    return $this->result_fail($error);
+                }
+            }
+        } else {
+            $user = [
+                'user_id' => auth('api')->user()->id,
+                'lat'       =>  $data['lat'],
+                'long'       =>  $data['long'],
+            ];
+            $panic = Panic::create($user);
+            if ($panic) {
+                return $this->result_ok('Emergency Reported');
+            } else {
+                return $this->result_fail('Something Went Wrong.');
+            }
         }
     }
 }

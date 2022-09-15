@@ -13,11 +13,22 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\ApiController;
 use App\Models\Booking;
 use App\Models\CancelReason;
+use App\Models\Panic;
 use App\Models\Rating;
 use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends ApiController
 {
+    public function allUsers()
+    {
+        $users = User::where('user_role', USER)->get();
+        if ($users) {
+            return $this->result_ok($users);
+        } else {
+            return $this->result_fail('Something Went Wrong.');
+        }
+    }
+
     public function dashboard()
     {
         $user = User::find(auth('api')->user()->id);
@@ -384,6 +395,35 @@ class ProfileController extends ApiController
             return $this->result_ok('Cancellation Reasons', $reasons);
         } else {
             return $this->result_fail('Something Went Wrong.');
+        }
+    }
+
+    public function panic(Request $request)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'lat'        =>  'required',
+            'long'        =>  'required',
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            if (!empty($errors)) {
+                foreach ($errors->all() as $error) {
+                    return $this->result_fail($error);
+                }
+            }
+        } else {
+            $user = [
+                'user_id' => auth('api')->user()->id,
+                'lat'       =>  $data['lat'],
+                'long'       =>  $data['long'],
+            ];
+            $panic = Panic::create($user);
+            if ($panic) {
+                return $this->result_ok('Emergency Reported');
+            } else {
+                return $this->result_fail('Something Went Wrong.');
+            }
         }
     }
 }
