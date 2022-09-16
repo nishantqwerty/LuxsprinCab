@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'c7d53c3a28ea86f62d3f075f59a543117ca39075',
+        'reference' => '5fbfc5a9334f2ce193d3da9eecac593def7bd9d9',
         'name' => 'laravel/laravel',
         'dev' => true,
     ),
@@ -436,7 +436,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'c7d53c3a28ea86f62d3f075f59a543117ca39075',
+            'reference' => '5fbfc5a9334f2ce193d3da9eecac593def7bd9d9',
             'dev_requirement' => false,
         ),
         'laravel/passport' => array(
@@ -937,8 +937,8 @@
         'psr/log-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '1.0|2.0',
-                1 => '1.0.0 || 2.0.0 || 3.0.0',
+                0 => '1.0.0 || 2.0.0 || 3.0.0',
+                1 => '1.0|2.0',
             ),
         ),
         'psr/simple-cache' => array(
@@ -1141,6 +1141,15 @@
             'aliases' => array(),
             'reference' => 'c6c1022351a901512170118436c764e473f6de8c',
             'dev_requirement' => true,
+        ),
+        'stripe/stripe-php' => array(
+            'pretty_version' => 'v9.5.0',
+            'version' => '9.5.0.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../stripe/stripe-php',
+            'aliases' => array(),
+            'reference' => 'e3ea7f8ea7d6e96ef4253e3c5290d548fb89835c',
+            'dev_requirement' => false,
         ),
         'swiftmailer/swiftmailer' => array(
             'pretty_version' => 'v6.3.0',

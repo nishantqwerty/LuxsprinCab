@@ -120,5 +120,10 @@ Route::group(['namespace' => 'Admin'], function () {
             Route::get('/', 'BookingReportController@index')->name('booking-reports');
             Route::post('/', 'BookingReportController@date')->name('booking-reports-date');
         });
+
+        Route::group(['prefix' => '/panic'], function () {
+            Route::get('/', 'PanicController@index')->name('panic');
+            Route::post('/', 'BookingReportController@date')->name('booking-reports-date');
+        });
     });
 });

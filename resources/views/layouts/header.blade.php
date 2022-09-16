@@ -220,7 +220,7 @@
                             </a>
                         </li>
 
-                        <li class="nav-item menu-open">
+                        {{-- <li class="nav-item menu-open">
                             @if (Request::Segment(2) == 'route-stops')
                                 <a href="{{ route('route-stops') }}" class="nav-link active ">
                                 @else
@@ -231,7 +231,7 @@
                                 Routes and Stops
                             </p>
                             </a>
-                        </li>
+                        </li> --}}
 
                         <li class="nav-item menu-open">
                             @if (Request::Segment(2) == 'messages')
@@ -281,6 +281,19 @@
                             <i class="nav-icon fas fa-user"></i>
                             <p>
                                 Booking Reports
+                            </p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item menu-open">
+                            @if (Request::Segment(2) == 'panic')
+                                <a href="{{ route('panic') }}" class="nav-link active ">
+                                @else
+                                    <a href="{{ route('panic') }}" class="nav-link ">
+                            @endif
+                            <i class="nav-icon fas fa-user"></i>
+                            <p>
+                                Panic Management
                             </p>
                             </a>
                         </li>

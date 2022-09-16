@@ -15,7 +15,9 @@ use App\Models\Booking;
 use App\Models\CancelReason;
 use App\Models\Panic;
 use App\Models\Rating;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Validator;
+use Twilio\Rest\Serverless\V1\Service\FunctionInstance;
 
 class ProfileController extends ApiController
 {
@@ -422,6 +424,45 @@ class ProfileController extends ApiController
             if ($panic) {
                 return $this->result_ok('Emergency Reported');
             } else {
+                return $this->result_fail('Something Went Wrong.');
+            }
+        }
+    }
+
+    public function transaction(Request $request)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'trans_id'        =>  'required',
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            if (!empty($errors)) {
+                foreach ($errors->all() as $error) {
+                    return $this->result_fail($error);
+                }
+            }
+        } else {
+            $stripe = new \Stripe\StripeClient(env('STRIPE_SECRETKEY'));
+            $charge =  $stripe->paymentIntents->retrieve(
+                $data['trans_id'],
+                []
+            );
+            $trans_data = [
+                'user_id' => auth('api')->user()->id,
+                'payment_id' => $charge['id'],
+                'amount'    =>  $charge['amount'],
+                'customer_id' => $charge['customer'],
+                'payment_method'    =>  $charge['payment_method'],
+                'status'    =>  $charge['status'],
+                'receipt_url'   => $charge['charges']['data'][0]['receipt_url'],
+                'is_refunded'   =>  0
+            ];
+
+            $transaction = Transaction::create($trans_data);
+            if($transaction){
+                return $this->result_message('Transaction Added.');
+            }else{
                 return $this->result_fail('Something Went Wrong.');
             }
         }
