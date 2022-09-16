@@ -286,6 +286,19 @@
                         </li>
 
                         <li class="nav-item menu-open">
+                            @if (Request::Segment(2) == 'transaction')
+                                <a href="{{ route('transaction') }}" class="nav-link active ">
+                                @else
+                                    <a href="{{ route('transaction') }}" class="nav-link ">
+                            @endif
+                            <i class="nav-icon fas fa-user"></i>
+                            <p>
+                                Transactions
+                            </p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item menu-open">
                             @if (Request::Segment(2) == 'panic')
                                 <a href="{{ route('panic') }}" class="nav-link active ">
                                 @else

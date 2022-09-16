@@ -123,7 +123,11 @@ Route::group(['namespace' => 'Admin'], function () {
 
         Route::group(['prefix' => '/panic'], function () {
             Route::get('/', 'PanicController@index')->name('panic');
-            Route::post('/', 'BookingReportController@date')->name('booking-reports-date');
+        });
+
+        Route::group(['prefix' => '/transaction'], function () {
+            Route::get('/', 'TransactionController@index')->name('transaction');
+            Route::get('/refund/{id}', 'TransactionController@refund')->name('refund');
         });
     });
 });
