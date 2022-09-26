@@ -21,7 +21,7 @@ Route::get('/', function () {
 // Route::redirect('/api/reset-password/{token}', 'api/reset-password/{token}')->name('api/reset-password');
 Route::group(['namespace' => 'Admin'], function () {
 
-
+    Route::get('/cancel','OrangeController@cancel');
     Route::get('/admin', 'AuthController@login');
     Route::get('/admin/login', 'AuthController@login_post')->name('login');
     Route::post('/admin/login', 'AuthController@login_attempt')->name('login-attempt');

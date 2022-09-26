@@ -23,6 +23,7 @@ Route::group(['namespace'   =>  'Api'], function () {
     Route::post('/verify-otp', 'LoginController@verifyOtp');
     Route::post('/reset-password', 'LoginController@resetPassword');
 
+
     Route::group(['middleware' => 'auth:api'], function () {
         Route::get('/all-users', 'ProfileController@allUsers');
         Route::get('/dashboard', 'ProfileController@dashboard');
@@ -62,5 +63,7 @@ Route::group(['namespace'   =>  'Api'], function () {
         Route::get('/cancellaton-reasons', 'ProfileController@cancelReason');
         Route::post('/panic-mode', 'ProfileController@panic');
         Route::post('/transaction', 'ProfileController@transaction');
+
+        Route::post('orange-money-payment','OrangeController@payment');
     });
 });

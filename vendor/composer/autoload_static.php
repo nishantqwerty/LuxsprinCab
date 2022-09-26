@@ -171,6 +171,7 @@ class ComposerStaticInit4235b6580bf7a32e20f0b18fe8822284
             'Illuminate\\Support\\' => 19,
             'Illuminate\\Foundation\\Auth\\' => 27,
             'Illuminate\\' => 11,
+            'Ibracilinks\\OrangeMoney\\' => 24,
         ),
         'H' => 
         array (
@@ -534,6 +535,10 @@ class ComposerStaticInit4235b6580bf7a32e20f0b18fe8822284
         array (
             0 => __DIR__ . '/..' . '/laravel/framework/src/Illuminate',
         ),
+        'Ibracilinks\\OrangeMoney\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/ibracilinks/orange-money/src',
+        ),
         'Http\\Message\\' => 
         array (
             0 => __DIR__ . '/..' . '/php-http/message-factory/src',
@@ -660,9 +665,11 @@ class ComposerStaticInit4235b6580bf7a32e20f0b18fe8822284
         'App\\Http\\Controllers\\Admin\\DashboardController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/DashboardController.php',
         'App\\Http\\Controllers\\Admin\\DriverController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/DriverController.php',
         'App\\Http\\Controllers\\Admin\\MessageController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/MessageController.php',
+        'App\\Http\\Controllers\\Admin\\PanicController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/PanicController.php',
         'App\\Http\\Controllers\\Admin\\ProfileController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/ProfileController.php',
         'App\\Http\\Controllers\\Admin\\RouteController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/RouteController.php',
         'App\\Http\\Controllers\\Admin\\SupportController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/SupportController.php',
+        'App\\Http\\Controllers\\Admin\\TransactionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/TransactionController.php',
         'App\\Http\\Controllers\\Admin\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/UserController.php',
         'App\\Http\\Controllers\\ApiController' => __DIR__ . '/../..' . '/app/Http/Controllers/ApiController.php',
         'App\\Http\\Controllers\\Api\\BookingController' => __DIR__ . '/../..' . '/app/Http/Controllers/Api/BookingController.php',
@@ -703,6 +710,7 @@ class ComposerStaticInit4235b6580bf7a32e20f0b18fe8822284
         'App\\Models\\RejectDocument' => __DIR__ . '/../..' . '/app/Models/RejectDocument.php',
         'App\\Models\\Route' => __DIR__ . '/../..' . '/app/Models/Route.php',
         'App\\Models\\Stops' => __DIR__ . '/../..' . '/app/Models/Stops.php',
+        'App\\Models\\Transaction' => __DIR__ . '/../..' . '/app/Models/Transaction.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Models\\UserChat' => __DIR__ . '/../..' . '/app/Models/UserChat.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
@@ -1835,6 +1843,10 @@ class ComposerStaticInit4235b6580bf7a32e20f0b18fe8822284
         'Http\\Message\\ResponseFactory' => __DIR__ . '/..' . '/php-http/message-factory/src/ResponseFactory.php',
         'Http\\Message\\StreamFactory' => __DIR__ . '/..' . '/php-http/message-factory/src/StreamFactory.php',
         'Http\\Message\\UriFactory' => __DIR__ . '/..' . '/php-http/message-factory/src/UriFactory.php',
+        'Ibracilinks\\OrangeMoney\\Api' => __DIR__ . '/..' . '/ibracilinks/orange-money/src/Api.php',
+        'Ibracilinks\\OrangeMoney\\Facades\\OrangeMoney' => __DIR__ . '/..' . '/ibracilinks/orange-money/src/Facades/OrangeMoney.php',
+        'Ibracilinks\\OrangeMoney\\OrangeMoney' => __DIR__ . '/..' . '/ibracilinks/orange-money/src/OrangeMoney.php',
+        'Ibracilinks\\OrangeMoney\\Providers\\OrangeMoneyServiceProvider' => __DIR__ . '/..' . '/ibracilinks/orange-money/src/Providers/OrangeMoneyServiceProvider.php',
         'Illuminate\\Auth\\Access\\AuthorizationException' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Auth/Access/AuthorizationException.php',
         'Illuminate\\Auth\\Access\\Events\\GateEvaluated' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Auth/Access/Events/GateEvaluated.php',
         'Illuminate\\Auth\\Access\\Gate' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Auth/Access/Gate.php',

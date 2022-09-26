@@ -5,7 +5,7 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '5fbfc5a9334f2ce193d3da9eecac593def7bd9d9',
+        'reference' => '70949fa88ad4a9830350fe3e5d272ddf71e5ae3f',
         'name' => 'laravel/laravel',
         'dev' => true,
     ),
@@ -219,6 +219,17 @@
             'aliases' => array(),
             'reference' => '8c3d0a3f6af734494ad8f6fbbee0ba92422859f3',
             'dev_requirement' => true,
+        ),
+        'ibracilinks/orange-money' => array(
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../ibracilinks/orange-money',
+            'aliases' => array(
+                0 => '9999999-dev',
+            ),
+            'reference' => '37b2a7a96dc5a42d596ded86816e3e2eed3b7be7',
+            'dev_requirement' => false,
         ),
         'illuminate/auth' => array(
             'dev_requirement' => false,
@@ -436,7 +447,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '5fbfc5a9334f2ce193d3da9eecac593def7bd9d9',
+            'reference' => '70949fa88ad4a9830350fe3e5d272ddf71e5ae3f',
             'dev_requirement' => false,
         ),
         'laravel/passport' => array(

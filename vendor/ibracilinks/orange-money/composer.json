@@ -1,0 +1,29 @@
+{
+    "name": "ibracilinks/orangemoney",
+    "description": "A laravel package for Orange Money Web Payment API.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ibraci Links",
+            "email": "hello@ibracilinks.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Ibracilinks\\OrangeMoney\\": "src/"
+        }
+    },
+    "extra": {
+      "laravel": {
+        "providers": [
+            "Ibracilinks\\OrangeMoney\\Providers\\OrangeMoneyServiceProvider"
+        ],
+        "aliases": {
+            "OrangeMoney": "Ibracilinks\\OrangeMoney\\Facades\\OrangeMoney"
+        }
+      }
+    }
+}

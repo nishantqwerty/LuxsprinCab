@@ -1674,6 +1674,57 @@
             "install-path": "../hamcrest/hamcrest-php"
         },
         {
+            "name": "ibracilinks/orange-money",
+            "version": "dev-master",
+            "version_normalized": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Ibracilinks/OrangeMoney.git",
+                "reference": "37b2a7a96dc5a42d596ded86816e3e2eed3b7be7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Ibracilinks/OrangeMoney/zipball/37b2a7a96dc5a42d596ded86816e3e2eed3b7be7",
+                "reference": "37b2a7a96dc5a42d596ded86816e3e2eed3b7be7",
+                "shasum": ""
+            },
+            "time": "2020-05-19T11:24:40+00:00",
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Ibracilinks\\OrangeMoney\\Providers\\OrangeMoneyServiceProvider"
+                    ],
+                    "aliases": {
+                        "OrangeMoney": "Ibracilinks\\OrangeMoney\\Facades\\OrangeMoney"
+                    }
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Ibracilinks\\OrangeMoney\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ibraci Links",
+                    "email": "hello@ibracilinks.com"
+                }
+            ],
+            "description": "A laravel package for Orange Money Web Payment API.",
+            "support": {
+                "issues": "https://github.com/Ibracilinks/OrangeMoney/issues",
+                "source": "https://github.com/Ibracilinks/OrangeMoney/tree/master"
+            },
+            "install-path": "../ibracilinks/orange-money"
+        },
+        {
             "name": "laminas/laminas-diactoros",
             "version": "2.14.0",
             "version_normalized": "2.14.0.0",
