@@ -141,7 +141,12 @@ Route::group(['namespace' => 'Admin'], function () {
 
         Route::group(['prefix' => '/transaction'], function () {
             Route::get('/', 'TransactionController@index')->name('transaction');
-            Route::get('/refund/{id}', 'TransactionController@refund')->name('refund');
+            Route::get('/refund', 'TransactionController@refund')->name('refund');
+        });
+
+        Route::group(['prefix' => '/commission'], function () {
+            Route::get('/', 'CommissionController@index')->name('commission');
+            Route::post('/save', 'CommissionController@save')->name('save-percent');
         });
     });
 });

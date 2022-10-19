@@ -15,7 +15,8 @@ class TransactionController extends Controller
         return view('admin.transaction.index', compact('transactions'));
     }
 
-    public function refund($id){
+    public function refund(){
+        $id = $_GET['id'];
         $stripe = new \Stripe\StripeClient(env('STRIPE_SECRETKEY'));
          $charge =  $stripe->refunds->create([
             'charge' => $id,

@@ -338,6 +338,19 @@
                         </li>
 
                         <li class="nav-item menu-open">
+                            @if (Request::Segment(2) == 'commission')
+                                <a href="{{ route('commission') }}" class="nav-link active ">
+                                @else
+                                    <a href="{{ route('commission') }}" class="nav-link ">
+                            @endif
+                            <i class="nav-icon fas fa-user"></i>
+                            <p>
+                                Commission
+                            </p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item menu-open">
                             <a href="{{ route('logout') }}" class="nav-link ">
                                 <i class="nav-icon fa fa-power-off"></i>
                                 <p>
