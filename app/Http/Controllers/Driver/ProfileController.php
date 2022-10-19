@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Panic;
 use App\Models\Booking;
 use App\Models\UserChat;
+use App\Models\Transaction;
 use App\Models\CancelReason;
 use Illuminate\Http\Request;
 use App\Models\RejectDocument;
@@ -364,10 +365,59 @@ class ProfileController extends ApiController
             ];
             $panic = Panic::create($user);
             if ($panic) {
-                return $this->result_ok('Emergency Reported');
+                return $this->result_message('Emergency Reported');
             } else {
                 return $this->result_fail('Something Went Wrong.');
             }
+        }
+    }
+
+    public function myEarning(Request $request)
+    {
+        $user = Transaction::where('driver_id', auth('api')->user()->id)->get();
+        if (isset($request->date_from) && isset($request->date_to)) {
+            $date_from = date('Y-m-d', strtotime($request->date_from));
+            $date_to = date('Y-m-d', strtotime($request->date_to));
+            
+            $user = Transaction::where('driver_id', auth('api')->user()->id)->whereDate('created_at', '>=', $date_from)->whereDate('created_at', '<=', $date_to)->get();
+        }
+        if ($user) {
+            $usertotal = $user->sum('amount');
+            return $this->result_ok('Earnings',['details'=>$user,'total_amount' => $usertotal]);
+        } else {
+            return $this->result_fail('Something Went Wrong.');
+        }
+    }
+
+    public function bookingEarning($id)
+    {
+        $user = Booking::where('id', $id)->where('driver_id', auth('api')->user()->id)->with('transaction')->first();
+        if ($user) {
+            return $this->result_ok('Booking Payment',$user);
+        } else {
+            return $this->result_fail('Something Went Wrong.');
+        }
+    }
+
+    public function bookingReport(Request $request)
+    {
+        $user = Booking::where('driver_id', auth('api')->user()->id)->get();
+        if ($user) {
+            if (isset($request->date_from) && isset($request->date_to)) {
+                $date_from = date('Y-m-d', strtotime($request->date_from));
+                $date_to = date('Y-m-d', strtotime($request->date_to));
+
+                $successful_booking = Booking::where('driver_id', auth('api')->user()->id)->where('is_cancelled', 0)->whereDate('created_at', '>=', $date_from)->whereDate('created_at', '<=', $date_to);
+                $cancelled_booking = Booking::where('driver_id', auth('api')->user()->id)->where('is_cancelled', BOOKING_CANCEL)->whereDate('created_at', '>=', $date_from)->whereDate('created_at', '<=', $date_to);
+            } else {
+                $successful_booking = Booking::where('driver_id', auth('api')->user()->id)->where('is_cancelled', 0);
+                $cancelled_booking = Booking::where('driver_id', auth('api')->user()->id)->where('is_cancelled', BOOKING_CANCEL);
+            }
+            $data['successfull_booking'] = $successful_booking->get()->count();
+            $data['cancelled_booking'] = $cancelled_booking->get()->count();
+            return $this->result_ok('Report',$data);
+        } else {
+            return $this->result_fail('Something Went Wrong.');
         }
     }
 }

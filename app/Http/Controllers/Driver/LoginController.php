@@ -108,11 +108,12 @@ class LoginController extends ApiController
                     }
                 }
             } else {
-                if (mb_substr($data['phone_number'], 0, 1) == 1) {
-                    $this->us_otp($data['phone_number'], $otp);
-                } else {
-                    $this->otp($data['phone_number'], $otp);
-                }
+                // if (mb_substr($data['phone_number'], 0, 1) == 1) {
+                //     $this->us_otp($data['phone_number'], $otp);
+                // } else {
+                //     $this->otp($data['phone_number'], $otp);
+                // }
+                $this->us_otp($data['phone_number'], $otp);
                 // $this->otp($data['phone_number'], $otp);
                 $otp = Otp::create([
                     'phone_number'  =>  $data['phone_number'],

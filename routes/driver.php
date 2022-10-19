@@ -53,5 +53,8 @@ Route::group(['namespace'   =>  'Driver'], function () {
         Route::get('/trip-details/{bookingId}', 'CarController@tripDetails');
         Route::get('/cancellaton-reasons','ProfileController@cancelReason');
         Route::post('/panic-mode', 'ProfileController@panic');
+        Route::get('/all-earnings', 'ProfileController@myEarning');
+        Route::get('/booking-earn/{id}', 'ProfileController@bookingEarning');
+        Route::get('/booking-report', 'ProfileController@bookingReport');
     });
 });

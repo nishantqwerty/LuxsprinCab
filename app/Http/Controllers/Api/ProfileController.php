@@ -434,6 +434,9 @@ class ProfileController extends ApiController
         $data = $request->all();
         $validator = Validator::make($data, [
             'trans_id'        =>  'required',
+            'booking_id'      =>    'required',
+            'driver_id'      =>    'required',
+            'payment_mode'      =>    'required',
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors();
@@ -450,10 +453,13 @@ class ProfileController extends ApiController
             );
             $trans_data = [
                 'user_id' => auth('api')->user()->id,
+                'booking_id' => $data['booking_id'],
+                'driver_id' => $data['driver_id'],
                 'payment_id' => $charge['id'],
                 'amount'    =>  $charge['amount'],
                 'customer_id' => $charge['customer'],
                 'payment_method'    =>  $charge['payment_method'],
+                'payment_mode'    =>  $request->payment_mode,
                 'status'    =>  $charge['status'],
                 'receipt_url'   => $charge['charges']['data'][0]['receipt_url'],
                 'is_refunded'   =>  0
@@ -465,6 +471,15 @@ class ProfileController extends ApiController
             }else{
                 return $this->result_fail('Something Went Wrong.');
             }
+        }
+    }
+
+    public function myTransaction(){
+        $user = Transaction::where('user_id',auth('api')->user()->id)->get();
+        if($user){
+            return $this->result_ok('My Transaction',$user);
+        }else{
+            return $this->result_fail('Something Went Wrong.');
         }
     }
 }

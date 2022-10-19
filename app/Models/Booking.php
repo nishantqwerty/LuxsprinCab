@@ -27,6 +27,11 @@ class Booking extends Model
 
     }
 
+    public function transaction(){
+        return $this->belongsTo(Transaction::class,'id','booking_id');
+
+    }
+
     public function cardetails(){
         return $this->belongsTo(CarDetail::class,'driver_id','user_id')->with(['category','brand','brandModel']);
 

@@ -286,6 +286,19 @@
                         </li>
 
                         <li class="nav-item menu-open">
+                            @if (Request::Segment(2) == 'transaction-reports')
+                                <a href="{{ route('transaction-reports') }}" class="nav-link active ">
+                                @else
+                                    <a href="{{ route('transaction-reports') }}" class="nav-link ">
+                            @endif
+                            <i class="nav-icon fas fa-user"></i>
+                            <p>
+                                Transaction Reports
+                            </p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item menu-open">
                             @if (Request::Segment(2) == 'transaction')
                                 <a href="{{ route('transaction') }}" class="nav-link active ">
                                 @else
@@ -307,6 +320,19 @@
                             <i class="nav-icon fas fa-user"></i>
                             <p>
                                 Panic Management
+                            </p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item menu-open">
+                            @if (Request::Segment(2) == 'promo')
+                                <a href="{{ route('promo') }}" class="nav-link active ">
+                                @else
+                                    <a href="{{ route('promo') }}" class="nav-link ">
+                            @endif
+                            <i class="nav-icon fas fa-user"></i>
+                            <p>
+                                Promo Code Management
                             </p>
                             </a>
                         </li>

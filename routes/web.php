@@ -107,6 +107,15 @@ Route::group(['namespace' => 'Admin'], function () {
             Route::get('/delete/{id}', 'SupportController@delete')->name('delete-faq');
         });
 
+        Route::group(['prefix' => '/promo'], function () {
+            Route::get('/', 'PromoController@index')->name('promo');
+            Route::get('/add', 'PromoController@add')->name('add-promo');
+            Route::post('/add', 'PromoController@save')->name('save-promo');
+            Route::get('/edit/{id}', 'PromoController@edit')->name('edit-faqs');
+            Route::post('/edit/{id}', 'PromoController@update')->name('update-faqs');
+            Route::get('/delete/{id}', 'PromoController@delete')->name('delete-faq');
+        });
+
         Route::group(['prefix' => '/cancellation'], function () {
             Route::get('/', 'CancellationController@index')->name('cancellation');
             Route::get('/add', 'CancellationController@add')->name('add-message');
@@ -119,6 +128,11 @@ Route::group(['namespace' => 'Admin'], function () {
         Route::group(['prefix' => '/booking-reports'], function () {
             Route::get('/', 'BookingReportController@index')->name('booking-reports');
             Route::post('/', 'BookingReportController@date')->name('booking-reports-date');
+        });
+
+        Route::group(['prefix' => '/transaction-reports'], function () {
+            Route::get('/', 'TransactionReportController@index')->name('transaction-reports');
+            Route::post('/', 'TransactionReportController@date')->name('transaction-reports-date');
         });
 
         Route::group(['prefix' => '/panic'], function () {

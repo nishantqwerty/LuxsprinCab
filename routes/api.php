@@ -63,6 +63,7 @@ Route::group(['namespace'   =>  'Api'], function () {
         Route::get('/cancellaton-reasons', 'ProfileController@cancelReason');
         Route::post('/panic-mode', 'ProfileController@panic');
         Route::post('/transaction', 'ProfileController@transaction');
+        Route::get('/my-transaction', 'ProfileController@myTransaction');
 
         Route::post('orange-money-payment','OrangeController@payment');
     });
