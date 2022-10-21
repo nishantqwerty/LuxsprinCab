@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\ApiController;
 use App\Models\Booking;
 use App\Models\CancelReason;
+use App\Models\Commission;
+use App\Models\DriverTotal;
 use App\Models\Panic;
 use App\Models\Rating;
 use App\Models\Transaction;
@@ -464,21 +466,37 @@ class ProfileController extends ApiController
                 'receipt_url'   => $charge['charges']['data'][0]['receipt_url'],
                 'is_refunded'   =>  0
             ];
-
             $transaction = Transaction::create($trans_data);
-            if($transaction){
+
+            $total_trans = Transaction::where('driver_id', $data['driver_id'])->where('payment_done', 0)->get()->sum('amount');
+            $commission = Commission::first();
+            $total_amount = DriverTotal::where('driver_id', $data['driver_id'])->first();
+            
+            if (empty($total_amount)) {
+                DriverTotal::create([
+                    'driver_id' => $data['driver_id'],
+                    'amount'    => ($total_trans ) - (($total_trans ) *  (($commission->commission) / 100)),
+                ]);
+            } else {
+                $total_amount->update([
+                    'amount'    => ($total_trans ) - (($total_trans ) *  (($commission->commission) / 100))
+                ]);
+            }
+
+            if ($transaction) {
                 return $this->result_message('Transaction Added.');
-            }else{
+            } else {
                 return $this->result_fail('Something Went Wrong.');
             }
         }
     }
 
-    public function myTransaction(){
-        $user = Transaction::where('user_id',auth('api')->user()->id)->get();
-        if($user){
-            return $this->result_ok('My Transaction',$user);
-        }else{
+    public function myTransaction()
+    {
+        $user = Transaction::where('user_id', auth('api')->user()->id)->get();
+        if ($user) {
+            return $this->result_ok('My Transaction', $user);
+        } else {
             return $this->result_fail('Something Went Wrong.');
         }
     }

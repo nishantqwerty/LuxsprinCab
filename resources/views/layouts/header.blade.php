@@ -351,6 +351,19 @@
                         </li>
 
                         <li class="nav-item menu-open">
+                            @if (Request::Segment(2) == 'payout')
+                                <a href="{{ route('payout') }}" class="nav-link active ">
+                                @else
+                                    <a href="{{ route('payout') }}" class="nav-link ">
+                            @endif
+                            <i class="nav-icon fas fa-user"></i>
+                            <p>
+                                Payout
+                            </p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item menu-open">
                             <a href="{{ route('logout') }}" class="nav-link ">
                                 <i class="nav-icon fa fa-power-off"></i>
                                 <p>

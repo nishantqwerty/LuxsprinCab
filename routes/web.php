@@ -148,5 +148,9 @@ Route::group(['namespace' => 'Admin'], function () {
             Route::get('/', 'CommissionController@index')->name('commission');
             Route::post('/save', 'CommissionController@save')->name('save-percent');
         });
+
+        Route::group(['prefix' => '/payout'], function () {
+            Route::get('/', 'PayoutController@index')->name('payout');
+        });
     });
 });
