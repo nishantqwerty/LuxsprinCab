@@ -188,6 +188,6 @@ class Api
             'body' => $b
         ];
 
-        return $this->post('orange-money-webpay/dev/v1/transactionstatus', $options);
+        return $this->post('orange-money-webpay/cm/v1/transactionstatus', $options);
     }
 }

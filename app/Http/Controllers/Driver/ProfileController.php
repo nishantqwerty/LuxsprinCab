@@ -419,5 +419,27 @@ class ProfileController extends ApiController
         } else {
             return $this->result_fail('Something Went Wrong.');
         }
+    } 
+
+    public function earningReport(Request $request)
+    {
+        $user = Transaction::where('driver_id', auth('api')->user()->id)->get();
+        if ($user) {
+            if (isset($request->date_from) && isset($request->date_to)) {
+                $date_from = date('Y-m-d', strtotime($request->date_from));
+                $date_to = date('Y-m-d', strtotime($request->date_to));
+
+                $successful_booking = Transaction::where('driver_id', auth('api')->user()->id)->where('payment_status', 1)->whereDate('created_at', '>=', $date_from)->whereDate('created_at', '<=', $date_to);;
+                $cancelled_booking = Transaction::where('driver_id', auth('api')->user()->id)->where('payment_status', 0)->whereDate('created_at', '>=', $date_from)->whereDate('created_at', '<=', $date_to);;
+            } else {
+                $successful_booking = Transaction::where('driver_id', auth('api')->user()->id)->where('payment_status', 1);
+                $cancelled_booking = Transaction::where('driver_id', auth('api')->user()->id)->where('payment_status', 0);
+            }
+            $data['payment_done'] = $successful_booking->get()->sum('amount');
+            $data['payment_on_hold'] = $cancelled_booking->get()->sum('amount');
+            return $this->result_ok('Earning Report',$data);
+        } else {
+            return $this->result_fail('Something Went Wrong.');
+        }
     }
 }

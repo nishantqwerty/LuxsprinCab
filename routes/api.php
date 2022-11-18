@@ -66,5 +66,7 @@ Route::group(['namespace'   =>  'Api'], function () {
         Route::get('/my-transaction', 'ProfileController@myTransaction');
 
         Route::post('orange-money-payment','OrangeController@payment');
+        Route::post('payment-status','OrangeController@checkStatus');
+        Route::post('cancel-trip','BookingController@cancelTrip');
     });
 });

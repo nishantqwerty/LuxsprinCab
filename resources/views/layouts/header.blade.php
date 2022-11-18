@@ -351,6 +351,19 @@
                         </li>
 
                         <li class="nav-item menu-open">
+                            @if (Request::Segment(2) == 'cancel-commission')
+                                <a href="{{ route('cancel-commission') }}" class="nav-link active ">
+                                @else
+                                    <a href="{{ route('cancel-commission') }}" class="nav-link ">
+                            @endif
+                            <i class="nav-icon fas fa-user"></i>
+                            <p>
+                                Cancellation Commission
+                            </p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item menu-open">
                             @if (Request::Segment(2) == 'payout')
                                 <a href="{{ route('payout') }}" class="nav-link active ">
                                 @else

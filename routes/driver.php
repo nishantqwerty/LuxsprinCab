@@ -56,5 +56,6 @@ Route::group(['namespace'   =>  'Driver'], function () {
         Route::get('/all-earnings', 'ProfileController@myEarning');
         Route::get('/booking-earn/{id}', 'ProfileController@bookingEarning');
         Route::get('/booking-report', 'ProfileController@bookingReport');
+        Route::get('/earning-report', 'ProfileController@earningReport');
     });
 });

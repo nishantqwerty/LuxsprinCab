@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Booking;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
+use App\Models\CancelCommission;
 use App\Models\CarDetail;
 use App\Models\Route;
 use App\Models\Stops;
@@ -169,8 +170,10 @@ class BookingController extends ApiController
                     ];
                     if ($driver->device_type == 'android') {
                         $sen = $this->sendNotificationAndroid($msgdata);
+                        print_r($sen);
                     } elseif ($driver->device_type == 'ios') {
                         $sen = $this->sendNotificationAndroid($msgdata);
+                        print_r($sen);
                     }
                 }
                 return $this->result_ok('Nearby Drivers', ['booking_id' => $booking->id, 'drivers' => $details]);
@@ -279,7 +282,7 @@ class BookingController extends ApiController
             'long1'             =>  'required',
             'lat2'              =>  'required',
             'long2'             =>  'required',
-            'seats'             =>  'required'  
+            'seats'             =>  'required'
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors();
@@ -464,6 +467,47 @@ class BookingController extends ApiController
             return $this->result_ok('Trip Detail', $booking);
         } else {
             return $this->result_fail('Something Went Wrong.');
+        }
+    }
+
+    public function cancelTrip(Request $request)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'bookingId'     =>  'required',
+            'fare'          =>  'required',
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            if (!empty($errors)) {
+                foreach ($errors->all() as $error) {
+                    return $this->result_fail($error);
+                }
+            }
+        } else {
+            $cance_charge = CancelCommission::first();
+            if($cance_charge){
+                $booking = Booking::where('id',$data['bookingId'])->where('user_id',auth('api')->user()->id)->first();
+                if($booking){
+                    $booking->update([
+                        'is_cancelled' => BOOKING_CANCEL,
+                        'cancelled_by' => USER
+                    ]);
+                    $user = User::find(auth('api')->user()->id);
+                    if($user){
+                        $user->update([
+                            'outstanding_amount' => $data['fare'] * ($cance_charge['commission'] / 100)
+                        ]);
+                    }else{
+                        return $this->result_message('No User Found');
+                    }
+                }else{
+                    return $this->result_message('No Booking Found');
+                }
+                return $this->result_message('Booking Cancelled');
+            }else{
+                return $this->result_fail('Something Went Wrong.');
+            }
         }
     }
 }
