@@ -165,10 +165,12 @@ class CarController extends ApiController
         } else {
             $booking = Booking::find($data['booking_id']);
             if ($booking) {
+                
                 $driver = User::find(auth('api')->user()->id);
                 $user   =   User::find($booking->user_id);
                 if ($driver) {
                     if ($data['ride_status'] == RIDE_START) {
+                        
                         $driver->update([
                             'in-ride'   =>  DRIVER_RIDING
                         ]);

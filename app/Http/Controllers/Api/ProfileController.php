@@ -472,6 +472,12 @@ class ProfileController extends ApiController
             $commission = Commission::first();
             $total_amount = DriverTotal::where('driver_id', $data['driver_id'])->first();
             
+            $user = User::find(auth('api')->user()->id);
+            if($user){
+                $user->update([
+                    'outstanding_amount' => 0
+                ]);
+            }
             if (empty($total_amount)) {
                 DriverTotal::create([
                     'driver_id' => $data['driver_id'],

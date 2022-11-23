@@ -7,6 +7,7 @@ use App\Models\Booking;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 use App\Models\CancelCommission;
+use App\Models\CancellationEarning;
 use App\Models\CarDetail;
 use App\Models\Route;
 use App\Models\Stops;
@@ -489,14 +490,23 @@ class BookingController extends ApiController
             if($cance_charge){
                 $booking = Booking::where('id',$data['bookingId'])->where('user_id',auth('api')->user()->id)->first();
                 if($booking){
+                    $arr = $data['cancellation_reason'];
+                    $res = implode(",", $arr);
                     $booking->update([
                         'is_cancelled' => BOOKING_CANCEL,
-                        'cancelled_by' => USER
+                        'cancelled_by' => USER,
+                        'cancellation_reasons' => $res
                     ]);
                     $user = User::find(auth('api')->user()->id);
                     if($user){
                         $user->update([
                             'outstanding_amount' => $data['fare'] * ($cance_charge['commission'] / 100)
+                        ]);
+
+                        $cancellation = CancellationEarning::create([
+                            'driver_id' => $booking->driver_id,
+                            'user_id'   => auth('api')->user()->id,
+                            'amount' => $data['fare'] * ($cance_charge['commission'] / 100),
                         ]);
                     }else{
                         return $this->result_message('No User Found');

@@ -15,6 +15,7 @@ use App\Models\CancelReason;
 use Illuminate\Http\Request;
 use App\Models\RejectDocument;
 use App\Http\Controllers\ApiController;
+use App\Models\CancellationEarning;
 use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends ApiController
@@ -409,12 +410,16 @@ class ProfileController extends ApiController
 
                 $successful_booking = Booking::where('driver_id', auth('api')->user()->id)->where('is_cancelled', 0)->whereDate('created_at', '>=', $date_from)->whereDate('created_at', '<=', $date_to);
                 $cancelled_booking = Booking::where('driver_id', auth('api')->user()->id)->where('is_cancelled', BOOKING_CANCEL)->whereDate('created_at', '>=', $date_from)->whereDate('created_at', '<=', $date_to);
+                $pending_booking = Booking::where('driver_id', auth('api')->user()->id)->where('is_completed', RIDE_ONGOING)->whereDate('created_at', '>=', $date_from)->whereDate('created_at', '<=', $date_to);
             } else {
                 $successful_booking = Booking::where('driver_id', auth('api')->user()->id)->where('is_cancelled', 0);
                 $cancelled_booking = Booking::where('driver_id', auth('api')->user()->id)->where('is_cancelled', BOOKING_CANCEL);
+                $pending_booking = Booking::where('driver_id', auth('api')->user()->id)->where('is_completed', RIDE_ONGOING);
             }
             $data['successfull_booking'] = $successful_booking->get()->count();
             $data['cancelled_booking'] = $cancelled_booking->get()->count();
+            $data['pending_booking'] = $pending_booking->get()->count();
+            $data['total'] = $data['pending_booking'] + $data['successfull_booking'] + $data['cancelled_booking'];
             return $this->result_ok('Report',$data);
         } else {
             return $this->result_fail('Something Went Wrong.');
@@ -431,12 +436,16 @@ class ProfileController extends ApiController
 
                 $successful_booking = Transaction::where('driver_id', auth('api')->user()->id)->where('payment_status', 1)->whereDate('created_at', '>=', $date_from)->whereDate('created_at', '<=', $date_to);;
                 $cancelled_booking = Transaction::where('driver_id', auth('api')->user()->id)->where('payment_status', 0)->whereDate('created_at', '>=', $date_from)->whereDate('created_at', '<=', $date_to);;
+                $cancellation_charges = CancellationEarning::where('driver_id', auth('api')->user()->id)->whereDate('created_at', '>=', $date_from)->whereDate('created_at', '<=', $date_to);;
             } else {
                 $successful_booking = Transaction::where('driver_id', auth('api')->user()->id)->where('payment_status', 1);
                 $cancelled_booking = Transaction::where('driver_id', auth('api')->user()->id)->where('payment_status', 0);
+                $cancellation_charges = CancellationEarning::where('driver_id', auth('api')->user()->id);
             }
             $data['payment_done'] = $successful_booking->get()->sum('amount');
             $data['payment_on_hold'] = $cancelled_booking->get()->sum('amount');
+            $data['earning_from_cancellation'] = $cancellation_charges->get()->sum('amount');
+            $data['total'] = $data['payment_done'] + $data['payment_on_hold'] + $data['earning_from_cancellation'];
             return $this->result_ok('Earning Report',$data);
         } else {
             return $this->result_fail('Something Went Wrong.');
