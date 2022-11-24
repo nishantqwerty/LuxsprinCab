@@ -273,6 +273,19 @@
                         </li>
 
                         <li class="nav-item menu-open">
+                            @if (Request::Segment(2) == 'rating-messages')
+                                <a href="{{ route('rating-messages') }}" class="nav-link active ">
+                                @else
+                                    <a href="{{ route('rating-messages') }}" class="nav-link ">
+                            @endif
+                            <i class="nav-icon fas fa-user"></i>
+                            <p>
+                                Rating Messages
+                            </p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item menu-open">
                             @if (Request::Segment(2) == 'booking-reports')
                                 <a href="{{ route('booking-reports') }}" class="nav-link active ">
                                 @else

@@ -92,6 +92,15 @@ Route::group(['namespace' => 'Admin'], function () {
             Route::get('/delete/{id}', 'RouteController@delete')->name('delete-routes');
         });
 
+        Route::group(['prefix' => '/rating-messages'], function () {
+            Route::get('/', 'RatingMessageController@index')->name('rating-messages');
+            Route::get('/add-message', 'RatingMessageController@add')->name('add-route-message');
+            Route::post('/add-message', 'RatingMessageController@save')->name('save-route-message');
+            Route::get('/edit-message/{id}', 'RatingMessageController@edit')->name('edit-route-message');
+            Route::post('/edit-message/{id}', 'RatingMessageController@update')->name('update-route-message');
+            Route::get('/delete/{id}', 'RatingMessageController@delete')->name('delete-route-message');
+        });
+
         Route::group(['prefix' => '/messages'], function () {
             Route::get('/', 'MessageController@index')->name('messages');
             Route::get('/show-chat', 'MessageController@show')->name('show-chat');

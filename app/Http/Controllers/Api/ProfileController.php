@@ -17,6 +17,7 @@ use App\Models\Commission;
 use App\Models\DriverTotal;
 use App\Models\Panic;
 use App\Models\Rating;
+use App\Models\RatingMessage;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Validator;
 use Twilio\Rest\Serverless\V1\Service\FunctionInstance;
@@ -397,6 +398,16 @@ class ProfileController extends ApiController
         $reasons = CancelReason::where('user_role', USER)->get();
         if ($reasons) {
             return $this->result_ok('Cancellation Reasons', $reasons);
+        } else {
+            return $this->result_fail('Something Went Wrong.');
+        }
+    }
+
+    public function RatingMessages()
+    {
+        $reasons = RatingMessage::get();
+        if ($reasons) {
+            return $this->result_ok('Rating Messages', $reasons);
         } else {
             return $this->result_fail('Something Went Wrong.');
         }

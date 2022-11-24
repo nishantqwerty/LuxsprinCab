@@ -17,7 +17,9 @@ class BookingController extends ApiController
 {
     public function saveBooking(Request $request)
     {
+
         $data = $request->all();
+
         $validator = Validator::make($data, [
             'source'            =>  'required',
             'destination'       =>  'required',
@@ -433,7 +435,7 @@ class BookingController extends ApiController
 
     public function completedTrips()
     {
-        $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_completed', RIDE_COMPLETE)->with(['driver', 'details', 'cardetails'])->get();
+        $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_completed', RIDE_COMPLETE)->with(['driver', 'details', 'cardetails'])->orderBy('created_at', 'DESC')->get();
         if ($booking) {
             return $this->result_ok('Completed Booking', $booking);
         } else {
@@ -443,7 +445,9 @@ class BookingController extends ApiController
 
     public function upcomingTrips()
     {
-        $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_scheduled', RIDE_SCHEDULED)->where('driver_id', 0)->get();
+        // $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_scheduled', RIDE_SCHEDULED)->where('driver_id', 0)->get();
+        $booking = Booking::where('is_scheduled', RIDE_SCHEDULED)->where('driver_id', 0)->orderBy('created_at', 'DESC')->get();
+        // return $booking;die;
         if ($booking) {
             return $this->result_ok('Upcoming Booking', $booking);
         } else {
@@ -487,9 +491,9 @@ class BookingController extends ApiController
             }
         } else {
             $cance_charge = CancelCommission::first();
-            if($cance_charge){
-                $booking = Booking::where('id',$data['bookingId'])->where('user_id',auth('api')->user()->id)->first();
-                if($booking){
+            if ($cance_charge) {
+                $booking = Booking::where('id', $data['bookingId'])->where('user_id', auth('api')->user()->id)->first();
+                if ($booking) {
                     $arr = $data['cancellation_reason'];
                     $res = implode(",", $arr);
                     $booking->update([
@@ -498,7 +502,7 @@ class BookingController extends ApiController
                         'cancellation_reasons' => $res
                     ]);
                     $user = User::find(auth('api')->user()->id);
-                    if($user){
+                    if ($user) {
                         $user->update([
                             'outstanding_amount' => $data['fare'] * ($cance_charge['commission'] / 100)
                         ]);
@@ -508,14 +512,14 @@ class BookingController extends ApiController
                             'user_id'   => auth('api')->user()->id,
                             'amount' => $data['fare'] * ($cance_charge['commission'] / 100),
                         ]);
-                    }else{
+                    } else {
                         return $this->result_message('No User Found');
                     }
-                }else{
+                } else {
                     return $this->result_message('No Booking Found');
                 }
                 return $this->result_message('Booking Cancelled');
-            }else{
+            } else {
                 return $this->result_fail('Something Went Wrong.');
             }
         }
