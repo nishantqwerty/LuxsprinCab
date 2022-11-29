@@ -25,7 +25,9 @@ class CancellationController extends Controller
         $data = $request->all();
         $validator = Validator::make($data, [
             'role'      =>  'required',
-            'reason'    =>  'required'
+            'reason'    =>  'required',
+            "reason.*" =>"required"
+
         ]);
         if ($validator->fails()) {
             return back()->withErrors($validator->errors());

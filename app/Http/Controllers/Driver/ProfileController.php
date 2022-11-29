@@ -374,8 +374,9 @@ class ProfileController extends ApiController
     }
 
     public function myEarning(Request $request)
-    {
-        $user = Transaction::where('driver_id', auth('api')->user()->id)->get();
+    { 
+        // $user=auth('api')->user()->id;       
+        $user = Transaction::where('driver_id', auth('api')->user()->id)->orderBy('created_at', 'DESC')->get();
         if (isset($request->date_from) && isset($request->date_to)) {
             $date_from = date('Y-m-d', strtotime($request->date_from));
             $date_to = date('Y-m-d', strtotime($request->date_to));

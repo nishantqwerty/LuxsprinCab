@@ -434,8 +434,10 @@ class BookingController extends ApiController
     }
 
     public function completedTrips()
-    {
-        $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_completed', RIDE_COMPLETE)->with(['driver', 'details', 'cardetails'])->orderBy('created_at', 'DESC')->get();
+    {          
+        $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_completed', RIDE_COMPLETE)->with(['driver', 'details', 'cardetails'])->orderBy('booking_time', 'DESC')->get(['booking_time']);
+       return $booking;
+       
         if ($booking) {
             return $this->result_ok('Completed Booking', $booking);
         } else {
@@ -444,10 +446,10 @@ class BookingController extends ApiController
     }
 
     public function upcomingTrips()
-    {
-        // $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_scheduled', RIDE_SCHEDULED)->where('driver_id', 0)->get();
-        $booking = Booking::where('is_scheduled', RIDE_SCHEDULED)->where('driver_id', 0)->orderBy('created_at', 'DESC')->get();
-        // return $booking;die;
+    { 
+        $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_scheduled', RIDE_SCHEDULED)->where('driver_id', 0)->orderBy('created_at', 'DESC')->get();
+       
+  
         if ($booking) {
             return $this->result_ok('Upcoming Booking', $booking);
         } else {

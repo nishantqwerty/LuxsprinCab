@@ -22,16 +22,22 @@ class RatingMessageController extends Controller
     }
 
     public function save(Request $request)
-    {
+    {   
         $data = $request->all();
-        $validator = Validator::make($data, [
-            'reason'    =>  'required'
+        // return $data;
+        $validator = Validator::make($data, [       
+          
+            "reason"    =>  "required|array|min:1",
+            "reason.*" =>"required"
+
         ]);
+
         if ($validator->fails()) {
-            return back()->withErrors($validator->errors());
+            
+            return redirect()->back()->withErrors($validator->errors());
         } else {
             if (!empty($data)) {
-                
+
                 foreach ($data['reason'] as $reas) {
                     $cancel = new RatingMessage();
                     $cancel->messages    =   $reas;
@@ -39,7 +45,7 @@ class RatingMessageController extends Controller
                 }
                 return redirect()->to('admin/rating-messages')->with('success', 'Reason Added Successfully.');
             } else {
-                return back()->with('error', 'Something Went Wrong.');
+                return  redirect()->back()->with('error', 'Something Went Wrong.');
             }
         }
     }
@@ -54,20 +60,21 @@ class RatingMessageController extends Controller
     {
         $data = $request->all();
         $validator = Validator::make($data, [
-            'role'      =>  'required',
+
             'reason'    =>  'required'
         ]);
         if ($validator->fails()) {
             return back()->withErrors($validator->errors());
         } else {
+
             $reason = RatingMessage::find($id);
+
             if ($reason) {
                 $reason->update([
-                    'user_role' =>  $data['role'],
-                    
-                    'reasons'   =>  $data['reason']
+                    'messages'   =>  $data['reason']
                 ]);
-                return redirect()->to('admin/cancellation')->with('success', 'Reason Updated Successfully.');
+
+                return redirect()->to('admin/rating-messages')->with('success', 'Reason Updated Successfully.');
             } else {
                 return back()->with('error', 'Something Went Wrong.');
             }
@@ -76,12 +83,12 @@ class RatingMessageController extends Controller
 
     public function delete($id)
     {
-        $reason = CancelReason::find($id);
+        $reason = RatingMessage::find($id);
         if ($reason) {
             $reason->delete();
-            return back()->with('success', 'Reason Deleted Successfully.');
+            return redirect()->back()->with('success', 'Reason Deleted Successfully.');
         } else {
-            return back()->with('error', 'Something Went Wrong.');
+            return redirect()->back()->with('error', 'Something Went Wrong.');
         }
     }
 }

@@ -114,7 +114,7 @@
             var i = 1;
             $('#addBtn').click(function() {
                 $('.row-add').append(
-                    '<div class="row"><div class = "col-md-12"><input type="text" name="reason[]" placeholder="Enter Cancellation Reasons" ><span class="fa fa-trash remove" id="remove_' +
+                    '<div class="row"><div class = "col-md-12"><input type="text" name="reason[]" placeholder="Enter Rating Reasons" ><span class="fa fa-trash remove" id="remove_' +
                     i + '" ></span></div></div>');
                 i++;
             });

@@ -288,8 +288,8 @@ class CarController extends ApiController
     }
 
     public function completedTrips()
-    {
-        $booking = Booking::where('driver_id', auth('api')->user()->id)->where('is_completed', RIDE_COMPLETE)->with(['user', 'cardetails'])->orderBy('created_at', 'DESC')->get();
+    { 
+        $booking = Booking::where('driver_id', auth('api')->user()->id)->where('is_completed', RIDE_COMPLETE)->with(['user', 'cardetails'])->orderBy('booking_time', 'DESC')->get();
         if ($booking) {
             return $this->result_ok('Completed Booking', $booking);
         } else {
