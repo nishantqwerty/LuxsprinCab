@@ -45,6 +45,6 @@ class User extends Authenticatable
 
     public function transaction()
     {
-        return $this->belongsTo(Transaction::class, 'id', 'driver_id');
+        return $this->belongsTo(Transaction::class, 'id', 'driver_id')->sum('amount');
     }
 }

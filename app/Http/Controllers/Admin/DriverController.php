@@ -22,7 +22,7 @@ class DriverController extends Controller
     public function index()
     {
         $section = $this->section;
-        $users = User::where('user_role', DRIVER)->whereIn('is_validated',[DRIVER_APPROVED,RESUBMIT_DOCUMENT,DRIVER_UNDER_VERIFICATION])->get();
+        $users = User::where('user_role', DRIVER)->whereIn('is_validated',[DRIVER_APPROVED,RESUBMIT_DOCUMENT,DRIVER_UNDER_VERIFICATION])->paginate(RECORDS_PER_PAGE);
         return view('admin.' . $this->view . '.index', compact('users', 'section'));
     }
 

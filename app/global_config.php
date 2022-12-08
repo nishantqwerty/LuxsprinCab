@@ -6,7 +6,7 @@ define('DRIVER', 3);
 
 define('PASSWORD_RESET_REQUEST', 1);
 define('PASSWORD_CHANGED', 0);
-
+define('RECORDS_PER_PAGE',10);
 define('DRIVER_ACTIVE', 1);
 define('DRIVER_INACTIVE', 2);
 

@@ -21,9 +21,10 @@ class UserController extends Controller
     }
 
     public function index()
-    {
+    { 
         $section = $this->section;
-        $users = User::where('user_role', USER)->get();
+        $users = User::where('user_role', USER)->paginate(RECORDS_PER_PAGE);
+
         return view('admin.' . $this->view . '.index', compact('users', 'section'));
     }
 

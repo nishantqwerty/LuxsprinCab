@@ -140,12 +140,15 @@ class LocationController extends ApiController
     }
 
     public function getLocation(Request $request)
-    {
+    {   
         $lat = $request->lat;
         $long = $request->long;
         $geolocation = $lat . ',' . $long;
+       
         $request = 'https://maps.googleapis.com/maps/api/geocode/json?key=' . env('PLACES_API') . '&latlng=' . $geolocation . '&sensor=false';
+        
         $file_contents = file_get_contents($request);
+        
         $json_decode = json_decode($file_contents);
         if (isset($json_decode->results[0])) {
             $response = array();

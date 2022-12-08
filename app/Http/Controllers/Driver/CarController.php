@@ -165,12 +165,10 @@ class CarController extends ApiController
         } else {
             $booking = Booking::find($data['booking_id']);
             if ($booking) {
-                
                 $driver = User::find(auth('api')->user()->id);
                 $user   =   User::find($booking->user_id);
                 if ($driver) {
                     if ($data['ride_status'] == RIDE_START) {
-                        
                         $driver->update([
                             'in-ride'   =>  DRIVER_RIDING
                         ]);
@@ -254,6 +252,7 @@ class CarController extends ApiController
 
     public function sendCustomNotification(Request $request)
     {
+        
         $data = $request->all();
         $validator = Validator::make($data, [
             'message'    =>  'required',
@@ -288,8 +287,8 @@ class CarController extends ApiController
     }
 
     public function completedTrips()
-    { 
-        $booking = Booking::where('driver_id', auth('api')->user()->id)->where('is_completed', RIDE_COMPLETE)->with(['user', 'cardetails'])->orderBy('booking_time', 'DESC')->get();
+    {
+        $booking = Booking::where('driver_id', auth('api')->user()->id)->where('is_completed', RIDE_COMPLETE)->with(['user', 'cardetails'])->get();
         if ($booking) {
             return $this->result_ok('Completed Booking', $booking);
         } else {
@@ -299,7 +298,7 @@ class CarController extends ApiController
 
     public function upcomingTrips()
     {
-        $booking = Booking::where('driver_id', auth('api')->user()->id)->where('is_scheduled', RIDE_SCHEDULED)->orderBy('created_at', 'DESC')->get();
+        $booking = Booking::where('driver_id', auth('api')->user()->id)->where('is_scheduled', RIDE_SCHEDULED)->get();
         if ($booking) {
             return $this->result_ok('Upcoming Booking', $booking);
         } else {

@@ -11,18 +11,18 @@ class TransactionController extends Controller
 {
     public function index()
     {
-        $transactions = Transaction::with('user')->get();
+        // $transactions = Transaction::with('user')->get();
+        $transactions = Transaction::with('user')->paginate(RECORDS_PER_PAGE);
         return view('admin.transaction.index', compact('transactions'));
     }
 
-    public function refund()
-    {
+    public function refund(){
         $id = $_GET['id'];
         $stripe = new \Stripe\StripeClient(env('STRIPE_SECRETKEY'));
-        $charge =  $stripe->refunds->create([
+         $charge =  $stripe->refunds->create([
             'charge' => $id,
-        ]);
-        if ($charge) {
+          ]);
+        if($charge){
             $user = Transaction::where('charge_id', $id)->first();
             if ($user) {
                 $refund_transaction = [
@@ -40,9 +40,9 @@ class TransactionController extends Controller
                 ];
                 Transaction::create($refund_transaction);
             }
-            return redirect()->back()->with('success', 'Amount Refunded Successfully.');
-        } else {
-            return redirect()->back()->with('error', 'Something Went Wrong.');
+            return redirect()->back()->with('success','Amount Refunded Successfully.');
+        }else{
+            return redirect()->back()->with('error','Something Went Wrong.');
         }
     }
 }
