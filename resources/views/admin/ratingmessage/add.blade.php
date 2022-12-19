@@ -91,6 +91,12 @@
                             @csrf
 
                             <label for="title">Reason</label>
+                            <select name="role">
+                                <option value={{ USER }}>User</option>
+                                <option value={{ DRIVER }}>Driver</option>
+                            </select>
+
+                            <label for="title">Reason</label>
                             <input type="text" name="reason[]" placeholder="Enter Rating Reasons"
                                 value="{{ old('reason') }}">
                             @if ($errors->has('reason'))

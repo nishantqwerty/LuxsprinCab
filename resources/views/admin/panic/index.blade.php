@@ -30,6 +30,7 @@
                     <table class="table table-striped table-hover table-reflow">
                         <thead>
                             <tr>
+                                <th><strong> Booking Id: </strong></th>
                                 <th><strong> User Name: </strong></th>
                                 <th><strong> User Number: </strong></th>
                                 <th><strong> Lat & Long: </strong></th>
@@ -41,10 +42,11 @@
                         <tbody>
                             @foreach ($panic as $pnc)
                                 <tr>
+                                    <td> {{ $pnc->booking_id }} </td>
                                     <td> {{ $pnc->user->name }} </td>
                                     <td> {{ $pnc->user->phone_number }} </td>
                                     <td><a target="_blank" href="https://www.google.com/maps/search/?api=1&query={{ $pnc->lat.','.$pnc->long }}"> {{ $pnc->lat.' , '.$pnc->long }}</a></td>
-                                    <td> {{ !empty($pnc->user->car_detail) ? $pnc->user->car_detail->car_number : 'No Car' }} </td>
+                                    <td> {{ $pnc->booking->cardetails->car_number }} </td>
                                     <td> {{ date('Y-m-d H:i:s',strtotime($pnc->created_at)) }} </td>
                                 </tr>
                             @endforeach

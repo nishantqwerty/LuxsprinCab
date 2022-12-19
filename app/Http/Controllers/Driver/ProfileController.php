@@ -8,14 +8,16 @@ use App\Models\Otp;
 use App\Models\Chat;
 use App\Models\User;
 use App\Models\Panic;
+use App\Models\Rating;
 use App\Models\Booking;
 use App\Models\UserChat;
 use App\Models\Transaction;
 use App\Models\CancelReason;
 use Illuminate\Http\Request;
+use App\Models\RatingMessage;
 use App\Models\RejectDocument;
-use App\Http\Controllers\ApiController;
 use App\Models\CancellationEarning;
+use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Validator;
 
 class ProfileController extends ApiController
@@ -130,6 +132,74 @@ class ProfileController extends ApiController
             } else {
                 return $this->result_fail('Something Went Wrong.');
             }
+        }
+    }
+
+    public function submitRating(Request $request)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'booking_id'    =>  'required',
+            'rating'        =>  'required',
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            if (!empty($errors)) {
+                foreach ($errors->all() as $error) {
+                    return $this->result_fail($error);
+                }
+            }
+        } else {
+            $booking = Booking::where('id', $data['booking_id'])->where('driver_id', auth('api')->user()->id)->first();
+            if ($booking) {
+                $arr = $data['review'];
+                    $res = implode(",", $arr);
+                $rating_data = [
+                    'user_id'       =>  $booking->user_id,
+                    'booking_id'    =>  $data['booking_id'],
+                    'driver_id'     =>  auth('api')->user()->id,
+                    'rating'        =>  $data['rating'],
+                    'review'        =>  $res
+                ];
+                $rating = Rating::create($rating_data);
+                if ($rating) {
+                    return $this->result_message('Rating Submitted Successfully.');
+                } else {
+                    return $this->result_fail('Something Went Wrong.');
+                }
+            } else {
+                return $this->result_fail('Something Went Wrong.');
+            }
+        }
+    }
+
+    public function showAllRating()
+    {
+        $rating = Rating::where('driver_id', auth('api')->user()->id)->orderBy('created_at', 'DESC')->get();
+        if ($rating) {
+            return $this->result_message('Ratings', $rating);
+        } else {
+            return $this->result_fail('Something Went Wrong.');
+        }
+    }
+
+    public function RatingMessages()
+    {
+        $reasons = RatingMessage::select('id','messages','created_at','updated_at')->where('role',DRIVER)->get();
+        if ($reasons) {
+            return $this->result_ok('Rating Messages', $reasons);
+        } else {
+            return $this->result_fail('Something Went Wrong.');
+        }
+    }
+
+    public function showBookingRating($id)
+    {
+        $rating = Rating::where('driver_id', auth('api')->user()->id)->where('booking_id', $id)->first();
+        if ($rating) {
+            return $this->result_message('Ratings', $rating);
+        } else {
+            return $this->result_fail('Something Went Wrong.');
         }
     }
 
@@ -403,7 +473,7 @@ class ProfileController extends ApiController
 
     public function bookingReport(Request $request)
     {
-        $user = Booking::where('driver_id', auth('api')->user()->id)->get();
+        $user = Booking::where('driver_id', auth('api')->user()->id)->orderBy('created_at', 'DESC')->get();
         if ($user) {
             if (isset($request->date_from) && isset($request->date_to)) {
                 $date_from = date('Y-m-d', strtotime($request->date_from));
@@ -429,7 +499,7 @@ class ProfileController extends ApiController
 
     public function earningReport(Request $request)
     {
-        $user = Transaction::where('driver_id', auth('api')->user()->id)->get();
+        $user = Transaction::where('driver_id', auth('api')->user()->id)->orderBy('created_at', 'DESC')->get();
         if ($user) {
             if (isset($request->date_from) && isset($request->date_to)) {
                 $date_from = date('Y-m-d', strtotime($request->date_from));

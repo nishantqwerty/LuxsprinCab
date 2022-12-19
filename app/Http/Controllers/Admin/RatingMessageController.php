@@ -24,7 +24,7 @@ class RatingMessageController extends Controller
     public function save(Request $request)
     {   
         $data = $request->all();
-        // return $data;
+        
         $validator = Validator::make($data, [       
           
             "reason"    =>  "required|array|min:1",
@@ -41,6 +41,7 @@ class RatingMessageController extends Controller
                 foreach ($data['reason'] as $reas) {
                     $cancel = new RatingMessage();
                     $cancel->messages    =   $reas;
+                    $cancel->role    =   $data['role'];
                     $cancel->save();
                 }
                 return redirect()->to('admin/rating-messages')->with('success', 'Reason Added Successfully.');
@@ -71,7 +72,8 @@ class RatingMessageController extends Controller
 
             if ($reason) {
                 $reason->update([
-                    'messages'   =>  $data['reason']
+                    'messages'   =>  $data['reason'],
+                    'role'       =>  $data['role']
                 ]);
 
                 return redirect()->to('admin/rating-messages')->with('success', 'Reason Updated Successfully.');

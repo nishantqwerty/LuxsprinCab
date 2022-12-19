@@ -283,7 +283,7 @@ class ProfileController extends ApiController
 
     public function faqs()
     {
-        $faqs = Faq::get();
+        $faqs = Faq::orderBy('created_at', 'DESC')->get();
         if ($faqs) {
             return $this->result_ok('faqs', $faqs);
         } else {
@@ -354,12 +354,14 @@ class ProfileController extends ApiController
         } else {
             $booking = Booking::where('id', $data['booking_id'])->where('user_id', auth('api')->user()->id)->first();
             if ($booking) {
+                $arr = $data['review'];
+                    $res = implode(",", $arr);
                 $rating_data = [
                     'user_id'       =>  auth('api')->user()->id,
                     'booking_id'    =>  $data['booking_id'],
                     'driver_id'     =>  $booking->driver_id,
                     'rating'        =>  $data['rating'],
-                    'review'        =>  isset($data['review']) ? $data['review'] : NULL
+                    'review'        =>  $res
                 ];
                 $rating = Rating::create($rating_data);
                 if ($rating) {
@@ -375,7 +377,7 @@ class ProfileController extends ApiController
 
     public function showAllRating()
     {
-        $rating = Rating::where('user_id', auth('api')->user()->id)->get();
+        $rating = Rating::where('user_id', auth('api')->user()->id)->orderBy('created_at', 'DESC')->get();
         if ($rating) {
             return $this->result_message('Ratings', $rating);
         } else {
@@ -395,7 +397,7 @@ class ProfileController extends ApiController
 
     public function cancelReason()
     {
-        $reasons = CancelReason::where('user_role', USER)->get();
+        $reasons = CancelReason::where('user_role', USER)->orderBy('created_at', 'DESC')->get();
         if ($reasons) {
             return $this->result_ok('Cancellation Reasons', $reasons);
         } else {
@@ -405,7 +407,7 @@ class ProfileController extends ApiController
 
     public function RatingMessages()
     {
-        $reasons = RatingMessage::get();
+        $reasons = RatingMessage::select('id','messages','created_at','updated_at')->where('role',USER)->get();
         if ($reasons) {
             return $this->result_ok('Rating Messages', $reasons);
         } else {
@@ -419,6 +421,7 @@ class ProfileController extends ApiController
         $validator = Validator::make($data, [
             'lat'        =>  'required',
             'long'        =>  'required',
+            'booking_id'        =>  'required',
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors();
@@ -430,6 +433,7 @@ class ProfileController extends ApiController
         } else {
             $user = [
                 'user_id' => auth('api')->user()->id,
+                'booking_id' => $data['booking_id'],
                 'lat'       =>  $data['lat'],
                 'long'       =>  $data['long'],
             ];
@@ -464,6 +468,7 @@ class ProfileController extends ApiController
                 $data['trans_id'],
                 []
             );
+            // return $charge;
             $trans_data = [
                 'user_id' => auth('api')->user()->id,
                 'booking_id' => $data['booking_id'],
@@ -477,6 +482,7 @@ class ProfileController extends ApiController
                 'receipt_url'   => $charge['charges']['data'][0]['receipt_url'],
                 'is_refunded'   =>  0
             ];
+            
             $transaction = Transaction::create($trans_data);
 
             $total_trans = Transaction::where('driver_id', $data['driver_id'])->where('payment_done', 0)->get()->sum('amount');
@@ -510,7 +516,7 @@ class ProfileController extends ApiController
 
     public function myTransaction()
     {
-        $user = Transaction::where('user_id', auth('api')->user()->id)->get();
+        $user = Transaction::where('user_id', auth('api')->user()->id)->orderBy('created_at', 'DESC')->get();
         if ($user) {
             return $this->result_ok('My Transaction', $user);
         } else {

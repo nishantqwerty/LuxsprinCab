@@ -450,8 +450,8 @@ class BookingController extends ApiController
 
     public function upcomingTrips()
     {
-        // $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_scheduled', RIDE_SCHEDULED)->where('driver_id', 0)->get();
-        $booking = Booking::where('is_scheduled', RIDE_SCHEDULED)->where('driver_id', 0)->orderBy('created_at', 'DESC')->get();
+        $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_scheduled', RIDE_SCHEDULED)->where('driver_id', 0)->orderBy('created_at', 'DESC')->get();
+        // $booking = Booking::where('is_scheduled', RIDE_SCHEDULED)->where('driver_id', 0)->orderBy('created_at', 'DESC')->get();
         // return $booking;die;
         if ($booking) {
             return $this->result_ok('Upcoming Booking', $booking);

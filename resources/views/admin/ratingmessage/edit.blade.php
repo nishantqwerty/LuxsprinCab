@@ -93,7 +93,10 @@
                             enctype="multipart/form-data">
                             @csrf
 
-                          
+                            <select name="role">
+                                <option value="{{ USER }}" {{ $reason->role == USER ? 'selected' : '' }}>User</option>
+                                <option value="{{ DRIVER }}" {{ $reason->role == DRIVER ? 'selected' : '' }}>Driver</option>
+                            </select>
                             <label for="title">Reason</label>
                             <input type="text" name="reason" placeholder="Enter Rating Reasons"
                                 value="{{ $reason->messages }}">

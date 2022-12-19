@@ -57,5 +57,10 @@ Route::group(['namespace'   =>  'Driver'], function () {
         Route::get('/booking-earn/{id}', 'ProfileController@bookingEarning');
         Route::get('/booking-report', 'ProfileController@bookingReport');
         Route::get('/earning-report', 'ProfileController@earningReport');
+
+        Route::post('/submit-rating', 'ProfileController@submitRating');
+        Route::get('/all-rating', 'ProfileController@showAllRating');
+        Route::get('/booking-rating/{booking_id}', 'ProfileController@showBookingRating');
+        Route::get('/rating-messages', 'ProfileController@RatingMessages');
     });
 });

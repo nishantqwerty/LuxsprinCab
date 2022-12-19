@@ -35,6 +35,7 @@
                     <table class="table table-striped table-hover table-reflow">
                         <thead>
                             <tr>
+                                <th><strong> User Role: </strong></th>
                                 <th><strong> Reasons: </strong></th>
                                 <th><strong> Action: </strong></th>
                             </tr>
@@ -42,6 +43,13 @@
                         <tbody>
                             @foreach ($reasons as $reason)
                                 <tr>
+                                    <td>
+                                        @if ($reason->role == USER)
+                                            User 
+                                        @else 
+                                            Driver
+                                        @endif
+                                    </td>
                                     <td> {{ $reason->messages }} </td>
                                     <td>
                                         <a href="{{ route('edit-route-message', ['id' => $reason->id]) }}"> <i

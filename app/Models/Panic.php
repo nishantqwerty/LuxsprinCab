@@ -13,4 +13,9 @@ class Panic extends Model
         return $this->belongsTo(User::class,'user_id','id')->with('carDetail');
     }
     
+    public function booking(){
+        return $this->belongsTo(Booking::class,'booking_id','id')->with('cardetails');
+
+    }
+    
 }

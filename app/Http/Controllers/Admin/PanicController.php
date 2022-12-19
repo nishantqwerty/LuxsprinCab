@@ -11,7 +11,7 @@ class PanicController extends Controller
 {
     public function index()
     {
-        $panic = Panic::with('user')->get();
+        $panic = Panic::with(['user','booking'])->get();
         return view('admin.panic.index', compact('panic'));
     }
 }

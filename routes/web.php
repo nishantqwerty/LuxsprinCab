@@ -165,6 +165,9 @@ Route::group(['namespace' => 'Admin'], function () {
 
         Route::group(['prefix' => '/payout'], function () {
             Route::get('/', 'PayoutController@index')->name('payout');
+            Route::post('/payment', 'PayoutController@stripe')->name('payment');
+            // Route::post('/payment', 'PayoutController@stripe')->name('payment');
+
         });
     });
 });
