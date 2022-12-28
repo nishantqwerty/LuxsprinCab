@@ -40,11 +40,20 @@ class User extends Authenticatable
 
     public function carDetail()
     {
-        return $this->belongsTo(CarDetail::class, 'id', 'user_id')->with(['brand','brandModel']);
+        return $this->belongsTo(CarDetail::class, 'id', 'user_id')->with(['brand', 'brandModel']);
     }
 
     public function transaction()
     {
         return $this->belongsTo(Transaction::class, 'id', 'driver_id');
     }
+
+    // public function getImageAttribute($value)
+    // {
+    //     $this->image = $value;
+    //     if (!empty($value)) {
+    //     } else {
+    //         return asset('dist/img/no_image.png');
+    //     }
+    // }
 }

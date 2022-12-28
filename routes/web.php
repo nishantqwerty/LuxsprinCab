@@ -169,5 +169,7 @@ Route::group(['namespace' => 'Admin'], function () {
             // Route::post('/payment', 'PayoutController@stripe')->name('payment');
 
         });
+
+        
     });
 });

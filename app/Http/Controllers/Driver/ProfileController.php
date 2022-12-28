@@ -207,7 +207,11 @@ class ProfileController extends ApiController
     {
         $user = User::where('id', auth('api')->user()->id)->with('carDetail')->first();
         if ($user) {
-            $user['image']  =   asset("storage/images/$user->image");
+            if(!empty($user['image'])){
+                $user['image']  =   asset("storage/images/$user->image");
+            }else{
+                $user['image']  =   asset("dist/img/no_image.png");
+            }
             return $this->result_ok('User Detail', $user);
         } else {
             return $this->result_fail('Something Went Wrong.');
@@ -520,6 +524,35 @@ class ProfileController extends ApiController
             return $this->result_ok('Earning Report',$data);
         } else {
             return $this->result_fail('Something Went Wrong.');
+        }
+    }
+
+    public function tokenUpdate(Request $request)
+    {
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            'device_type'        =>  'required',
+            'device_token'        =>  'required',
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            if (!empty($errors)) {
+                foreach ($errors->all() as $error) {
+                    return $this->result_fail($error);
+                }
+            }
+        } else {
+            $token = User::find(auth('api')->user()->id);
+
+            if ($token) {
+                $token->update([
+                    'device_type' => $request['device_type'],
+                    'device_token' => $request['device_token'],
+                ]);
+                return $this->result_message('Token Updated');
+            } else {
+                return $this->result_fail('Something Went Wrong.');
+            }
         }
     }
 }

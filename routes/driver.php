@@ -14,6 +14,7 @@ Route::group(['namespace'   =>  'Driver'], function () {
 
 
     Route::group(['middleware' => 'auth:api'], function () {
+        Route::post('/token-update', 'ProfileController@tokenUpdate');
         Route::get('/logout', 'LoginController@logout');
         Route::get('/delete-Account', 'LoginController@deleteAccount');
         Route::get('/online-offline/{id}', 'DashboardController@onlineOffline');

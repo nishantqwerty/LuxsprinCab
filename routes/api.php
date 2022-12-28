@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['namespace'   =>  'Api'], function () {
-
+    Route::get('/test','BookingController@sendRequest');
     Route::post('/login', 'LoginController@login');
     Route::post('/register', 'LoginController@register');
     Route::post('/forgot-username', 'LoginController@forgotUsername');
@@ -25,6 +25,7 @@ Route::group(['namespace'   =>  'Api'], function () {
 
 
     Route::group(['middleware' => 'auth:api'], function () {
+        Route::post('/token-update', 'ProfileController@tokenUpdate');
         Route::get('/all-users', 'ProfileController@allUsers');
         Route::get('/dashboard', 'ProfileController@dashboard');
         Route::get('/logout', 'LoginController@logout');
