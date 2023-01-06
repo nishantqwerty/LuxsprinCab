@@ -281,7 +281,8 @@ class DashboardController extends ApiController
                 'color'         =>  $data['color'],
                 'car_number'    =>  $data['car_number'],
                 'capacity'      =>  $data['capacity'],
-                'vin'           =>  $data['vin']
+                'vin'           =>  $data['vin'],
+                'available_seats'      =>  $data['capacity'],
             ];
 
             $license_details = [

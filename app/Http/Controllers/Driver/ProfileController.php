@@ -11,6 +11,7 @@ use App\Models\Panic;
 use App\Models\Rating;
 use App\Models\Booking;
 use App\Models\UserChat;
+use App\Models\CarDetail;
 use App\Models\Transaction;
 use App\Models\CancelReason;
 use Illuminate\Http\Request;
@@ -328,6 +329,7 @@ class ProfileController extends ApiController
                         ]);
                         $user = User::find($booking->user_id);
                         $driver = User::find(auth('api')->user()->id);
+                       
                         $msgdata = [
                             'id'            =>  $driver->id,
                             'device_token'  =>  $user->device_token,
@@ -373,6 +375,11 @@ class ProfileController extends ApiController
                         $booking->update([
                             'driver_id' => auth('api')->user()->id,
                         ]);
+                        $car_detail = CarDetail::where('user_id',auth('api')->user()->id)->first();
+                        $car_detail->update([
+                            'available_seats'   =>  $car_detail->available_seats - $booking->seats
+                        ]);
+
                         $user = User::find($booking->user_id);
                         $driver = User::find(auth('api')->user()->id);
                         $msgdata = [
