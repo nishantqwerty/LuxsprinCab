@@ -355,7 +355,7 @@ class ProfileController extends ApiController
             $booking = Booking::where('id', $data['booking_id'])->where('user_id', auth('api')->user()->id)->first();
             if ($booking) {
                 $arr = $data['review'];
-                $res = implode(",", $arr);
+                    $res = implode(",", $arr);
                 $rating_data = [
                     'user_id'       =>  auth('api')->user()->id,
                     'booking_id'    =>  $data['booking_id'],
@@ -407,7 +407,7 @@ class ProfileController extends ApiController
 
     public function RatingMessages()
     {
-        $reasons = RatingMessage::select('id', 'messages', 'created_at', 'updated_at')->where('role', USER)->get();
+        $reasons = RatingMessage::select('id','messages','created_at','updated_at')->where('role',USER)->get();
         if ($reasons) {
             return $this->result_ok('Rating Messages', $reasons);
         } else {
@@ -482,15 +482,15 @@ class ProfileController extends ApiController
                 'receipt_url'   => $charge['charges']['data'][0]['receipt_url'],
                 'is_refunded'   =>  0
             ];
-
+            
             $transaction = Transaction::create($trans_data);
 
             $total_trans = Transaction::where('driver_id', $data['driver_id'])->where('payment_done', 0)->get()->sum('amount');
             $commission = Commission::first();
             $total_amount = DriverTotal::where('driver_id', $data['driver_id'])->first();
-
+            
             $user = User::find(auth('api')->user()->id);
-            if ($user) {
+            if($user){
                 $user->update([
                     'outstanding_amount' => 0
                 ]);
@@ -498,11 +498,11 @@ class ProfileController extends ApiController
             if (empty($total_amount)) {
                 DriverTotal::create([
                     'driver_id' => $data['driver_id'],
-                    'amount'    => ($total_trans) - (($total_trans) *  (($commission->commission) / 100)),
+                    'amount'    => ($total_trans ) - (($total_trans ) *  (($commission->commission) / 100)),
                 ]);
             } else {
                 $total_amount->update([
-                    'amount'    => ($total_trans) - (($total_trans) *  (($commission->commission) / 100))
+                    'amount'    => ($total_trans ) - (($total_trans ) *  (($commission->commission) / 100))
                 ]);
             }
 

@@ -10,6 +10,7 @@ use App\Models\CarModel;
 use App\Models\CarCategory;
 use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
+use App\Models\CarDetail;
 use Illuminate\Support\Facades\Validator;
 
 class CarController extends ApiController
@@ -175,6 +176,12 @@ class CarController extends ApiController
                         $booking->update([
                             'is_completed'  =>  RIDE_ONGOING
                         ]);
+                        if($booking->ride_type == 'sharing'){
+                            $car_detail = CarDetail::where('user_id',$booking->driver_id)->first();
+                            $car_detail->update([
+                                'available_seats'   =>  $car_detail->available_seats + $booking->seats
+                            ]);
+                        }
                         $userdata = [
                             'id'    =>  $user->id,
                             'message'   =>  'Ride Started',

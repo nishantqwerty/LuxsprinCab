@@ -332,7 +332,7 @@ class ProfileController extends ApiController
                             'id'            =>  $driver->id,
                             'device_token'  =>  $user->device_token,
                             'message'       =>  'Booking Accepted',
-                            'driver_image'  =>  !empty($driver->image)   ?   $driver->image  :   'no_image',
+                            'driver_image'  =>  !empty($driver->image)   ?    asset('storage/images/' . $driver->image)  :   'no_image',
                             'driver_name'   =>  !empty($driver->name)   ?   $driver->name  :   'NULL',
                             'booking_id'    =>  $booking->id,
                             'fare'          =>  $booking->fare
@@ -379,7 +379,7 @@ class ProfileController extends ApiController
                             'id'            =>  $driver->id,
                             'device_token'  =>  $user->device_token,
                             'message'       =>  'Booking Accepted',
-                            'driver_image'  =>  !empty($driver->image)   ?   $driver->image  :   'no_image',
+                            'driver_image'  =>  !empty($driver->image)   ?   asset('storage/images/' . $driver->image)  :   'no_image',
                             'driver_name'   =>  !empty($driver->name)   ?   $driver->name  :   'NULL',
                             'booking_id'    =>  $booking->id,
                             'fare'          =>  $booking->fare
@@ -424,6 +424,7 @@ class ProfileController extends ApiController
         $validator = Validator::make($data, [
             'lat'        =>  'required',
             'long'        =>  'required',
+            'booking_id'        =>  'required',
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors();
@@ -437,6 +438,7 @@ class ProfileController extends ApiController
                 'user_id' => auth('api')->user()->id,
                 'lat'       =>  $data['lat'],
                 'long'       =>  $data['long'],
+                'booking_id' => $data['booking_id'],
             ];
             $panic = Panic::create($user);
             if ($panic) {
