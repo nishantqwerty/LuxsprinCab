@@ -11,8 +11,9 @@ use App\Models\BookingSeat;
 use Illuminate\Http\Request;
 use App\Models\CancelCommission;
 use App\Models\CancellationEarning;
-use App\Http\Controllers\ApiController;
+use App\Http\Controllers\ApiController; 
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class BookingController extends ApiController
 {
@@ -63,6 +64,12 @@ class BookingController extends ApiController
         }
     }
 
+    public function updateBooking(){
+        $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_scheduled', RIDE_SCHEDULED)->where('is_completed', 0)->get();
+        print_r(json_decode($booking['0']['booking_time']));
+            
+    }
+
     public function createBooking(Request $request)
     {
         $data = $request->all();
@@ -95,7 +102,7 @@ class BookingController extends ApiController
                 'lat2'              =>  $data['lat2'],
                 'long2'             =>  $data['long2'],
                 'ride_type'         =>  isset($data['ride_type']) ? $data['ride_type'] : 'private',
-                'booking_time'      =>  date('Y-m-d H:i')
+                'booking_time'      =>  date('Y-m-d H:i',strtotime('+5 hours +30 minutes')),
             ];
 
             $auth_user = User::find(auth('api')->user()->id);
@@ -174,6 +181,7 @@ class BookingController extends ApiController
                     ];
                     if ($driver->device_type == 'android') {
                         $sen = $this->sendNotificationAndroid($msgdata);
+                        //Log::channel('sharing')->info('Notification details.', ['driver' => $this->sendNotificationAndroid($msgdata)]);
                     } elseif ($driver->device_type == 'ios') {
                         $sen = $this->sendNotificationAndroid($msgdata);
                     }
@@ -388,6 +396,13 @@ class BookingController extends ApiController
                         'cancelled_by'  =>  USER,
                         'cancellation_reasons' => $res
                     ]);
+                    // if($booking->ride_type == 'sharing'){
+                    //     $car_detail = CarDetail::where('user_id',$booking->driver_id)->first();
+                    //     $car_detail->update([
+                    //                     'available_seats'   =>  $car_detail->available_seats + $booking->seats
+                    //                 ]);
+                    // }
+
                     $msgDataDriver = [
                         'id'    =>  $driver->id,
                         'device_token'    =>  $driver->device_token,
@@ -418,135 +433,142 @@ class BookingController extends ApiController
         }
     }
 
-    public function sharingCab(Request $request)
-    {
-        $request = $request->all();
-        $validator = Validator::make($request, [
-            'source'            =>  'required',
-            'destination'       =>  'required',
-            'car_category_id'   =>  'required',
-            'fare'              =>  'required',
-            'lat1'              =>  'required',
-            'long1'             =>  'required',
-            'lat2'              =>  'required',
-            'long2'             =>  'required',
-            'seats'             =>  'required'
-        ]);
-        if ($validator->fails()) {
-            $errors = $validator->errors();
-            if (!empty($errors)) {
-                foreach ($errors->all() as $error) {
-                    return $this->result_fail($error);
-                }
-            }
-        } else {
-            $booking_data = [
-                'source'            =>  $request['source'],
-                'destination'       =>  $request['destination'],
-                'user_id'           =>  auth('api')->user()->id,
-                'car_category_id'   =>  $request['car_category_id'],
-                'fare'              =>  $request['fare'],
-                'lat1'              =>  $request['lat1'],
-                'long1'             =>  $request['long1'],
-                'lat2'              =>  $request['lat2'],
-                'long2'             =>  $request['long2'],
-                'ride_type'         =>  isset($request['ride_type']) ? $request['ride_type'] : 'sharing',
-                'booking_time'      =>  date('Y-m-d H:i'),
-                'seats'      =>  $request['seats'],
-            ];
+    // public function sharingCab(Request $request)
+    // {
+    //     $request = $request->all();
+    //     $validator = Validator::make($request, [
+    //         'source'            =>  'required',
+    //         'destination'       =>  'required',
+    //         'car_category_id'   =>  'required',
+    //         'fare'              =>  'required',
+    //         'lat1'              =>  'required',
+    //         'long1'             =>  'required',
+    //         'lat2'              =>  'required',
+    //         'long2'             =>  'required',
+    //         'seats'             =>  'required'
+    //     ]);
+    //     if ($validator->fails()) {
+    //         $errors = $validator->errors();
+    //         if (!empty($errors)) {
+    //             foreach ($errors->all() as $error) {
+    //                 return $this->result_fail($error);
+    //             }
+    //         }
+    //     } else {
+    //         $booking_data = [
+    //             'source'            =>  $request['source'],
+    //             'destination'       =>  $request['destination'],
+    //             'user_id'           =>  auth('api')->user()->id,
+    //             'car_category_id'   =>  $request['car_category_id'],
+    //             'fare'              =>  $request['fare'],
+    //             'lat1'              =>  $request['lat1'],
+    //             'long1'             =>  $request['long1'],
+    //             'lat2'              =>  $request['lat2'],
+    //             'long2'             =>  $request['long2'],
+    //             'ride_type'         =>  isset($request['ride_type']) ? $request['ride_type'] : 'sharing',
+    //             'booking_time'      =>  date('Y-m-d H:i',strtotime('+5 hours +30 minutes')),
+    //             'seats'      =>  $request['seats'],
+    //         ];
 
-            $auth_user = User::find(auth('api')->user()->id);
-            $lat1 = $request['lat1'];
-            $long1 = $request['long1'];
-            $users = User::where('user_role', DRIVER)->where('is_online', DRIVER_ONLINE)->where('cab-mode', 'sharing')->where('in-ride', DRIVER_NOT_RIDING)->where('is_logged_in', DRIVER_LOG_IN)->get();
-            $data = [];
-            foreach ($users as $user) {
-                $seats = CarDetail::where('user_id', $user->id)->first();
-                if ($seats->available_seats >= $request['seats']) {
-                    $lat2 = $user->lat;
-                    $long2 = $user->long;
-                    $theta = $long1 - $long2;
-                    $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
-                    $dist = acos($dist);
-                    $dist = rad2deg($dist);
-                    // return $dist;
-                    //in KMs
-                    $miles = $dist * 60 * 1.1515 * 1.609344;
-                    // return $miles;
-                    $seats->update([
-                        'available_seats' => $seats->capacity - $request['seats']
-                    ]);
-                    if ($miles <= env('DISTANCE')) {
-                        $data['id'][]      =   $user->id;
-                        $data['name'][]    =   $user->name;
-                        $data['lat'][]     =   $lat2;
-                        $data['long'][]    =   $long2;
-                        $data['dist'][]    =   $miles;
-                    }
-                    $unit = strtoupper('N');
+    //         $auth_user = User::find(auth('api')->user()->id);
+    //         $lat1 = $request['lat1'];
+    //         $long1 = $request['long1'];
+    //         $users = User::where('user_role', DRIVER)->where('is_online', DRIVER_ONLINE)->where('cab-mode', 'sharing')->where('is_logged_in', DRIVER_LOG_IN)->get();
 
-                    // if ($unit == "K") {
-                    //     return ($miles * 1.609344);
-                    // } else if ($unit == "N") {
-                    //     return ($miles * 0.8684);
-                    // } else {
-                    //     return $miles;
-                    // }
-                }
-            }
-            if (!empty($data['id'])) {
-                foreach ($data['id'] as $key_id => $id) {
-                    $details[$key_id]['id'] = $id;
-                }
-            }
-            if (!empty($data['name'])) {
-                foreach ($data['name'] as $key => $name) {
-                    $details[$key]['driver_name'] = $name;
-                }
-            }
-            if (!empty($data['lat'])) {
-                foreach ($data['lat'] as $key1 => $lat) {
-                    $details[$key1]['lat'] = $lat;
-                }
-            }
-            if (!empty($data['long'])) {
-                foreach ($data['long'] as $key2 => $long) {
-                    $details[$key2]['long'] = $long;
-                }
-            }
-            if (!empty($data['dist'])) {
-                foreach ($data['dist'] as $key3 => $dist) {
-                    $details[$key3]['dist'] = round($dist, 1) . ' km';
-                }
-            }
-            if (!empty($details)) {
-                $booking = Booking::create($booking_data);
-                foreach ($details as $notify) {
-                    $driver = User::find($notify['id']);
-                    $user = User::find(auth('api')->user()->id);
-                    // return $user;
-                    $msgdata = [
-                        'id'    =>  $user->id,
-                        'device_token'  =>  $driver->device_token,
-                        'message'       =>  'Booking Request',
-                        'user_image'    =>  !empty($user->image)   ?    asset('storage/images/' . $user->image)  :   'no_image',
-                        'user_name'     =>  !empty($user->name)   ?   $user->name  :   'NULL',
-                        'booking_id'    =>  $booking->id,
-                        'booking_data'  =>  $booking_data,
-                        'distance'      =>  $notify['dist']
-                    ];
-                    if ($driver->device_type == 'android') {
-                        $sen = $this->sendNotificationAndroid($msgdata);
-                    } elseif ($driver->device_type == 'ios') {
-                        $sen = $this->sendNotificationAndroid($msgdata);
-                    }
-                }
-                return $this->result_ok('Nearby Drivers', ['boking_id' => $booking->id, 'drivers' => $details]);
-            } else {
-                return $this->result_fail('No nearby driver found.');
-            }
-        }
-    }
+    //         $data = [];
+           
+    //         foreach ($users as $user) {
+    //             $seats = CarDetail::where('user_id', $user->id)->first();
+    //             if ($seats->available_seats >= $request['seats']) {
+    //                 $lat2 = $user->lat;
+    //                 $long2 = $user->long;
+    //                 $theta = $long1 - $long2;
+    //                 $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+    //                 $dist = acos($dist);
+    //                 $dist = rad2deg($dist);
+    //                 // return $dist;
+    //                 //in KMs
+    //                 $miles = $dist * 60 * 1.1515 * 1.609344;
+                    
+    //                 // $seats->update([
+    //                 //     'available_seats' => $seats->available_seats - $request['seats']
+    //                 // ]);
+    //                 if ($miles <= env('DISTANCE')) {
+    //                     $data['id'][]      =   $user->id;
+    //                     $data['name'][]    =   $user->name;
+    //                     $data['lat'][]     =   $lat2;
+    //                     $data['long'][]    =   $long2;
+    //                     $data['dist'][]    =   $miles;
+    //                 }
+    //                 $unit = strtoupper('N');
+
+    //                 // if ($unit == "K") {
+    //                 //     return ($miles * 1.609344);
+    //                 // } else if ($unit == "N") {
+    //                 //     return ($miles * 0.8684);
+    //                 // } else {
+    //                 //     return $miles;
+    //                 // }
+    //             }
+    //             else {
+    //                     return $this->result_fail('No nearby driver found.');
+    //         }
+    //         }
+            
+    //         if (!empty($data['id'])) {
+    //             foreach ($data['id'] as $key_id => $id) {
+    //                 $details[$key_id]['id'] = $id;
+    //             }
+    //         }
+    //         if (!empty($data['name'])) {
+    //             foreach ($data['name'] as $key => $name) {
+    //                 $details[$key]['driver_name'] = $name;
+    //             }
+    //         }
+    //         if (!empty($data['lat'])) {
+    //             foreach ($data['lat'] as $key1 => $lat) {
+    //                 $details[$key1]['lat'] = $lat;
+    //             }
+    //         }
+    //         if (!empty($data['long'])) {
+    //             foreach ($data['long'] as $key2 => $long) {
+    //                 $details[$key2]['long'] = $long;
+    //             }
+    //         }
+    //         if (!empty($data['dist'])) {
+    //             foreach ($data['dist'] as $key3 => $dist) {
+    //                 $details[$key3]['dist'] = round($dist, 1) . ' km';
+    //             }
+    //         }
+    //         if (!empty($details)) {
+                
+    //             $booking = Booking::create($booking_data);
+    //             foreach ($details as $notify) {
+    //                 $driver = User::find($notify['id']);
+    //                 $user = User::find(auth('api')->user()->id);
+    //                 // return $user;
+    //                 $msgdata = [
+    //                     'id'    =>  $user->id,
+    //                     'device_token'  =>  $driver->device_token,
+    //                     'message'       =>  'Booking Request',
+    //                     'user_image'    =>  !empty($user->image)   ?    asset('storage/images/' . $user->image)  :   'no_image',
+    //                     'user_name'     =>  !empty($user->name)   ?   $user->name  :   'NULL',
+    //                     'booking_id'    =>  $booking->id,
+    //                     'booking_data'  =>  $booking_data,
+    //                     'distance'      =>  $notify['dist']
+    //                 ];
+    //                 if ($driver->device_type == 'android') {
+    //                     $sen = $this->sendNotificationAndroid($msgdata);
+    //                 } elseif ($driver->device_type == 'ios') {
+    //                     $sen = $this->sendNotificationAndroid($msgdata);
+    //                 }
+    //             }
+    //             return $this->result_ok('Nearby Drivers', ['boking_id' => $booking->id, 'drivers' => $details]);
+    //         } else {
+    //             return $this->result_fail('No nearby driver found.');
+    //         }
+    //     }
+    // }
     public function sendCustomNotification(Request $request)
     {
 
@@ -565,7 +587,6 @@ class BookingController extends ApiController
             }
         } else {
             $booking = Booking::where('id', $data['booking_id'])->where('user_id', auth('api')->user()->id)->first();
-
 
             if ($booking) {
                 $driver = User::find($booking->driver_id);
@@ -589,10 +610,44 @@ class BookingController extends ApiController
 
     public function completedTrips()
     {
-        $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_completed', RIDE_COMPLETE)->with(['driver', 'details', 'cardetails'])->orderBy('created_at', 'DESC')->get();
-        if ($booking) {
-            return $this->result_ok('Completed Booking', $booking);
-        } else {
+
+         // $bookings = Booking::where('user_id', '149')->where('is_completed', RIDE_COMPLETE)->orWhere('is_cancelled',BOOKING_CANCEL)->with(['driver', 'details', 'cardetails'])->orderBy('created_at', 'DESC')->get();
+
+         // $bookings = Booking::where('user_id', auth('api')->user()->id)->where('is_completed', RIDE_COMPLETE)->with(['driver', 'details', 'cardetails'])->orderBy('created_at', 'DESC')->get();
+
+         $bookings =  Booking::where(function ($query) {
+                        $query->where('user_id', '=', auth('api')->user()->id);
+                    })->where(function ($query) {
+                        $query->where('is_completed', '=' , RIDE_COMPLETE)
+                              ->orWhere('is_cancelled', '=' , BOOKING_CANCEL);
+                    })->with(['driver', 'details', 'cardetails'])->orderBy('created_at', 'DESC')->get();
+
+       
+        if ($bookings) {
+            $booktemp = [];
+               foreach($bookings as $booking) {
+                if($booking['driver']){
+
+                    $booking['driver']['value'] = (isset($booking['driver']['image'])) ? $booking['driver']['image'] : ""; 
+                }
+               }
+                 foreach($bookings as $booking) {
+                    if($booking['driver'])
+                    unset($booking['driver']['image']);
+               }
+                 foreach($bookings as $booking) {
+                    if($booking['driver'])
+
+                    $booking['driver']['image'] = (@$booking['driver']['value']) ? asset('storage/images/'.$booking['driver']['value']) : ""; 
+               }
+                 foreach($bookings as $booking) {
+                    if($booking['driver'])
+                        unset($booking['driver']['value']);
+                }
+                   
+            return $this->result_ok('Completed Booking', $bookings);
+        }
+         else {
             return $this->result_fail('Something Went Wrong.');
         }
     }
@@ -600,8 +655,6 @@ class BookingController extends ApiController
     public function upcomingTrips()
     {
         $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_scheduled', RIDE_SCHEDULED)->where('driver_id', 0)->orderBy('created_at', 'DESC')->get();
-        // $booking = Booking::where('is_scheduled', RIDE_SCHEDULED)->where('driver_id', 0)->orderBy('created_at', 'DESC')->get();
-        // return $booking;die;
         if ($booking) {
             return $this->result_ok('Upcoming Booking', $booking);
         } else {
@@ -611,9 +664,55 @@ class BookingController extends ApiController
 
     public function ongoingTrips()
     {
-        $booking = Booking::where('user_id', auth('api')->user()->id)->where('is_completed', RIDE_ONGOING)->with(['driver', 'details', 'cardetails'])->get();
-        if ($booking) {
-            return $this->result_ok('Ongoing Booking', $booking);
+        $bookings = Booking::where('user_id', auth('api')->user()->id)->where('is_completed', RIDE_ONGOING)->where('is_cancelled','!=',BOOKING_CANCEL)->with(['driver', 'details', 'cardetails'])->get();
+        if ($bookings) {
+            $booktemp = [];
+              foreach($bookings as $booking)
+             {    
+                $booking['driver']['old_image'] = $booking['driver']['image'];
+                unset($booking['driver']['image']);
+                $booking['driver']['image'] =  asset('storage/images/'.$booking['driver']['old_image']);
+                $booktemp[] = $booking;
+            }
+            return $this->result_ok('Ongoing Booking', $booktemp);
+        } else {
+            return $this->result_fail('Something Went Wrong.');
+        }
+    }
+
+    public function recentTrip()
+    {
+
+           $bookings =  Booking::where(function ($query) {
+                        $query->where('user_id', '=', auth('api')->user()->id);
+                    })->where(function ($query) {
+                        $query->where('is_completed', '=' , RIDE_COMPLETE)
+                              ->orWhere('is_cancelled', '=' , BOOKING_CANCEL);
+                    })->with(['driver', 'details', 'cardetails'])->orderBy('created_at', 'DESC')->limit('4')->get();;
+
+
+          if ($bookings) {
+            $booktemp = [];
+               foreach($bookings as $booking) {
+                if($booking['driver']){
+
+                    $booking['driver']['value'] = (isset($booking['driver']['image'])) ? $booking['driver']['image'] : ""; 
+                }
+               }
+                 foreach($bookings as $booking) {
+                    if($booking['driver'])
+                    unset($booking['driver']['image']);
+               }
+                 foreach($bookings as $booking) {
+                    if($booking['driver'])
+
+                    $booking['driver']['image'] = (@$booking['driver']['value']) ? asset('storage/images/'.$booking['driver']['value']) : ""; 
+               }
+                 foreach($bookings as $booking) {
+                    if($booking['driver'])
+                        unset($booking['driver']['value']);
+                }
+            return $this->result_ok('Recent Booking', $bookings);
         } else {
             return $this->result_fail('Something Went Wrong.');
         }
@@ -622,11 +721,22 @@ class BookingController extends ApiController
     public function tripDetails($bookingId)
     {
         $booking = Booking::where('id', $bookingId)->where('user_id', auth('api')->user()->id)->with(['driver', 'details', 'cardetails', 'rating'])->first();
+
         if ($booking) {
+                if($booking['driver']){
+                    $booking['driver']['value'] = (isset($booking['driver']['image'])) ? $booking['driver']['image'] : ""; 
+                    unset($booking['driver']['image']);
+                     $booking['driver']['image'] = (@$booking['driver']['value']) ? asset('storage/images/'.$booking['driver']['value']) : ""; 
+                      unset($booking['driver']['value']);
+                }
+               
+                
             return $this->result_ok('Trip Detail', $booking);
         } else {
             return $this->result_fail('Something Went Wrong.');
         }
+
+      
     }
 
     public function cancelTrip(Request $request)
@@ -655,6 +765,12 @@ class BookingController extends ApiController
                         'cancelled_by' => USER,
                         'cancellation_reasons' => $res
                     ]);
+                    // if($booking->ride_type == 'sharing'){
+                    //     $car_detail = CarDetail::where('user_id',$booking->driver_id)->first();
+                    //     $car_detail->update([
+                    //             'available_seats'   =>  $car_detail->available_seats + $booking->seats
+                    //         ]);
+                    // }
                     $user = User::find(auth('api')->user()->id);
                     if ($user) {
                         $user->update([
@@ -679,3 +795,4 @@ class BookingController extends ApiController
         }
     }
 }
+

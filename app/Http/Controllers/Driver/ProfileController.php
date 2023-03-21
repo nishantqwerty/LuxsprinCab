@@ -20,6 +20,7 @@ use App\Models\RejectDocument;
 use App\Models\CancellationEarning;
 use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class ProfileController extends ApiController
 {
@@ -174,14 +175,35 @@ class ProfileController extends ApiController
         }
     }
 
+
+    public function rating(Request $request)
+    {
+        $user = User::where('id',$request->user_id)->first();
+        $data = [];
+        if($user->user_role == USER){
+           $data = User::where('id',$request->user_id)->with('userRating')->get();
+        }elseif($user->user_role == DRIVER){
+           $data = User::where('id',$request->user_id)->with('driverRating')->get();
+        }
+
+        $totalReview = $data->driver_rating()->sum('rating');
+        return  $totalReview;
+    }
+
     public function showAllRating()
     {
         $rating = Rating::where('driver_id', auth('api')->user()->id)->orderBy('created_at', 'DESC')->get();
-        if ($rating) {
-            return $this->result_message('Ratings', $rating);
-        } else {
-            return $this->result_fail('Something Went Wrong.');
+       foreach($rating as $ratings){
+           $ratingss[] = $ratings['rating'];
         }
+        $average = count($ratingss) != 0 ? (array_sum($ratingss) / count($ratingss)) : 0;
+        $response = array('rating_avg' => number_format($average,2));
+        return $this->result_ok('Ratings', $response);
+            // if ($average) {
+                
+            // // } else {
+            //     return $this->result_fail('Something Went Wrong.');
+    
     }
 
     public function RatingMessages()
@@ -207,6 +229,10 @@ class ProfileController extends ApiController
     public function getProfile()
     {
         $user = User::where('id', auth('api')->user()->id)->with('carDetail')->first();
+        $driver_rating = User::where('id', auth('api')->user()->id)->with('driverRating')->first();
+        $rating =  $driver_rating->driverRating;
+        $rate = ($rating->count() != 0) ? ($rating->sum('rating')/$rating->count()) : 0;
+        $user['rating'] = number_format($rate,2);
         if ($user) {
             if(!empty($user['image'])){
                 $user['image']  =   asset("storage/images/$user->image");
@@ -327,6 +353,15 @@ class ProfileController extends ApiController
                         $booking->update([
                             'driver_id' => auth('api')->user()->id,
                         ]);
+                        $ratingss = [];
+                          $rating = Rating::where('user_id', $booking->user_id)->orderBy('created_at', 'DESC')->get();
+                                 foreach($rating as $ratings){
+                                   $ratingss[] = $ratings['rating'];
+                                }
+                                $rate = (count($ratingss) != 0) ? (array_sum($ratingss) / count($ratingss)) : 0;
+                                $average = number_format($rate,2);
+                                
+
                         $user = User::find($booking->user_id);
                         $driver = User::find(auth('api')->user()->id);
                        
@@ -340,7 +375,7 @@ class ProfileController extends ApiController
                             'fare'          =>  $booking->fare
                         ];
                         $sen = $this->sendAcceptNotification($msgdata);
-                        return $this->result_ok('Booking has been Accepted.', ['user_details' => $user, 'fare' => $msgdata['fare']]);
+                        return $this->result_ok('Booking has been Accepted.', ['user_details' => $user, 'fare' => $msgdata['fare'], 'rating' => $average ]);
                     } else {
                         return $this->result_message('Booking has been rejected succesfully.');
                     }
@@ -353,57 +388,74 @@ class ProfileController extends ApiController
         }
     }
 
-    public function acceptRejectSharing(Request $request)
-    {
-        $data = $request->all();
-        $validator = Validator::make($data, [
-            'booking_id'    =>  'required',
-            'status'        =>  'required'
-        ]);
-        if ($validator->fails()) {
-            $errors = $validator->errors();
-            if (!empty($errors)) {
-                foreach ($errors->all() as $error) {
-                    return $this->result_fail($error);
-                }
-            }
-        } else {
-            $booking = Booking::find($data['booking_id']);
-            if ($booking) {
-                if ($booking->driver_id == 0) {
-                    if ($data['status'] == ACCEPT_BOOKING) {
-                        $booking->update([
-                            'driver_id' => auth('api')->user()->id,
-                        ]);
-                        $car_detail = CarDetail::where('user_id',auth('api')->user()->id)->first();
-                        $car_detail->update([
-                            'available_seats'   =>  $car_detail->available_seats - $booking->seats
-                        ]);
+    // public function acceptRejectSharing(Request $request)
+    // {
+    //     $data = $request->all();
+    //     $validator = Validator::make($data, [
+    //         'booking_id'    =>  'required',
+    //         'status'        =>  'required'
+    //     ]);
+    //     if ($validator->fails()) {
+    //         $errors = $validator->errors();
+    //         if (!empty($errors)) {
+    //             foreach ($errors->all() as $error) {
+    //                 return $this->result_fail($error);
+    //             }
+    //         }
+    //     } else {
+    //         $booking = Booking::find($data['booking_id']);
+    //         if ($booking) {
+    //             if ($booking->driver_id == 0) {
+    //                 if ($data['status'] == ACCEPT_BOOKING) {
+    //                     $booking->update([
+    //                         'driver_id' => auth('api')->user()->id,
+    //                     ]);
+    //                     // Log::channel('sharing')->info('User booking seats.', ['bookingseats' => $booking->seats]);
+    //                     $car_detail = CarDetail::where('user_id',auth('api')->user()->id)->first();
+    //                     $car_detail->update([
+    //                         'available_seats'   =>  $car_detail->available_seats - $booking->seats
+    //                     ]);
+    //                     $car_detail = CarDetail::where('user_id',auth('api')->user()->id)->first();
+    //                     // Log::channel('sharing')->info('Userseats.', ['seats' => $car_detail->available_seats]);
+    //                       // $rating = Rating::where('driver_id', $booking->user_id)->orderBy('created_at', 'DESC')->get();
+    //                       //        foreach($rating as $ratings){
+    //                       //          $ratingss[] = $ratings['rating'];
+    //                       //       }
+    //                       //       $average = array_sum($ratingss) / count($ratingss);
 
-                        $user = User::find($booking->user_id);
-                        $driver = User::find(auth('api')->user()->id);
-                        $msgdata = [
-                            'id'            =>  $driver->id,
-                            'device_token'  =>  $user->device_token,
-                            'message'       =>  'Booking Accepted',
-                            'driver_image'  =>  !empty($driver->image)   ?   asset('storage/images/' . $driver->image)  :   'no_image',
-                            'driver_name'   =>  !empty($driver->name)   ?   $driver->name  :   'NULL',
-                            'booking_id'    =>  $booking->id,
-                            'fare'          =>  $booking->fare
-                        ];
-                        $sen = $this->sendAcceptNotification($msgdata);
-                        return $this->result_ok('Booking has been Accepted.', ['user_details' => $user, 'fare' => $msgdata['fare']]);
-                    } else {
-                        return $this->result_message('Booking has been rejected succesfully.');
-                    }
-                } else {
-                    return $this->result_fail('Booking already accepted by another driver.');
-                }
-            } else {
-                return $this->result_fail('Something Went Wrong.');
-            }
-        }
-    }
+    //                     $rating = Rating::where('user_id', $booking->user_id)->orderBy('created_at', 'DESC')->get();
+    //                              foreach($rating as $ratings){
+    //                               $ratingss[] = $ratings['rating'];
+    //                             }
+    //                             $average = array_sum($ratingss) / count($ratingss);
+
+                                
+
+    //                     $user = User::find($booking->user_id);
+    //                     $driver = User::find(auth('api')->user()->id);
+    //                     $msgdata = [
+    //                         'id'            =>  $driver->id,
+    //                         'device_token'  =>  $user->device_token,
+    //                         'message'       =>  'Booking Accepted',
+    //                         'driver_image'  =>  !empty($driver->image)   ?   asset('storage/images/' . $driver->image)  :   'no_image',
+    //                         'driver_name'   =>  !empty($driver->name)   ?   $driver->name  :   'NULL',
+    //                         'booking_id'    =>  $booking->id,
+    //                         'fare'          =>  $booking->fare
+                           
+    //                     ]; 
+    //                     $sen = $this->sendAcceptNotification($msgdata);
+    //                     return $this->result_ok('Booking has been Accepted.', ['user_details' => $user, 'fare' => $msgdata['fare'], 'rating' => $average]);
+    //                 } else {
+    //                     return $this->result_message('Booking has been rejected succesfully.');
+    //                 }
+    //             } else {
+    //                 return $this->result_fail('Booking already accepted by another driver.');
+    //             }
+    //         } else {
+    //             return $this->result_fail('Something Went Wrong.');
+    //         }
+    //     }
+    // }
 
     public function faqs()
     {
@@ -467,7 +519,7 @@ class ProfileController extends ApiController
             $user = Transaction::where('driver_id', auth('api')->user()->id)->whereDate('created_at', '>=', $date_from)->whereDate('created_at', '<=', $date_to)->get();
         }
         if ($user) {
-            $usertotal = $user->sum('amount');
+            $usertotal = $user->sum('amount')/100;
             return $this->result_ok('Earnings',['details'=>$user,'total_amount' => $usertotal]);
         } else {
             return $this->result_fail('Something Went Wrong.');
@@ -527,7 +579,7 @@ class ProfileController extends ApiController
                 $cancellation_charges = CancellationEarning::where('driver_id', auth('api')->user()->id);
             }
             $data['payment_done'] = $successful_booking->get()->sum('amount');
-            $data['payment_on_hold'] = $cancelled_booking->get()->sum('amount');
+            $data['payment_on_hold'] = $cancelled_booking->get()->sum('amount')/100;
             $data['earning_from_cancellation'] = $cancellation_charges->get()->sum('amount');
             $data['total'] = $data['payment_done'] + $data['payment_on_hold'] + $data['earning_from_cancellation'];
             return $this->result_ok('Earning Report',$data);

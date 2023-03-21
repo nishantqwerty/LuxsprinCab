@@ -40,15 +40,15 @@
                             @foreach ($chats as $category)
                                 <tr>
 
-                                    <td> {{ $category->user->name }} </td>
+                                    <td> {{ @$category->user->name }} </td>
                                     <td>
-                                        @if ($category->user->user_role == USER)
+                                        @if (@$category->user->user_role == USER)
                                             User
-                                        @elseif($category->user->user_role == DRIVER)
+                                        @elseif(@$category->user->user_role == DRIVER)
                                             DRIVER
                                         @endif
                                     </td>
-                                    <td> {{ $category->message }}</td>
+                                    <td> {{ @$category->message }}</td>
                                     <td>
                                         <a href="{{ route('show-chat', ['id' => $category->chat_room_id]) }}"><button
                                                 class='btn btn-success'>Show Chat</button></a>

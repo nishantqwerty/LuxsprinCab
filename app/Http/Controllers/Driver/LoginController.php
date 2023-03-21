@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\ApiController;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class LoginController extends ApiController
 {
@@ -90,7 +91,7 @@ class LoginController extends ApiController
                 'device_token'  =>  isset($data['device_token']) ? $data['device_token'] : '',
                 'cab-mode'  =>  strtolower('private'),
                 'in-ride'  =>  DRIVER_NOT_RIDING,
-                'experience' => isset($data['experience']) ? $data['experience'] : 0 
+                // 'experience' => isset($data['experience']) ? $data['experience'] : 0 
             );
             $otp = rand(1000, 9999);
             $userotp = Otp::where('phone_number', $data['phone_number'])->first();
@@ -141,6 +142,11 @@ class LoginController extends ApiController
         } else {
             $user = User::where('email', $data['email'])->first();
             if ($user) {
+                // $otp = rand(1000, 9999);
+                // $response = $this->us_otp($data['phone_number'], $otp);
+                // $user->update([
+                //     'otp'   =>  $otp
+                // ]);
                 Mail::to($user->email)->send(new ForgotUsername($user->email, $user->username));
                 return $this->result_message('An email has been sent.Please check your email.');
             } else {
@@ -151,6 +157,7 @@ class LoginController extends ApiController
 
     public function sendOtp(Request $request)
     {
+       
         $data = $request->all();
         $validator = Validator::make($data, [
             'phone_number'  =>  'required|numeric',
@@ -163,14 +170,15 @@ class LoginController extends ApiController
                 }
             }
         } else {
+            
             $user = User::where('phone_number', $data['phone_number'])->where('user_role', DRIVER)->first();
             if ($user) {
                 $otp = rand(1000, 9999);
-                if (mb_substr($data['phone_number'], 0, 1) == 1) {
+                // if (mb_substr($data['phone_number'], 0, 1) == 1) {
                     $response = $this->us_otp($data['phone_number'], $otp);
-                } else {
-                    $response = $this->otp($data['phone_number'], $otp);
-                }
+                // } else {
+                //     $response = $this->otp($data['phone_number'], $otp);
+                // }
                 // $response = $this->otp($data['phone_number'], $otp);
                 $user->update([
                     'otp'   =>  $otp
@@ -200,11 +208,11 @@ class LoginController extends ApiController
             $otp = rand(1000, 9999);
             $number = Otp::where('phone_number', $data['phone_number'])->first();
             if ($number) {
-                if (mb_substr($data['phone_number'], 0, 1) == 1) {
+                // if (mb_substr($data['phone_number'], 0, 1) == 1) {
                     $this->us_otp($data['phone_number'], $otp);
-                } else {
-                    $this->otp($data['phone_number'], $otp);
-                }
+                // } else {
+                //     $this->otp($data['phone_number'], $otp);
+                // }
                 // $this->otp($data['phone_number'], $otp);
                 $number->update([
                     'otp'   =>  $otp,

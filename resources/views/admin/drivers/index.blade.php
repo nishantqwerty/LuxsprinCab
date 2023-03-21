@@ -79,7 +79,9 @@
             <!-- /.row (main row) -->
           </div><!-- /.container-fluid -->
         </section>
-        
+        <div class = "float-right">
+          {{ $users->links('pagination::bootstrap-4') }}
+        </div>
         <!-- /.content -->
       </div>
 @endsection

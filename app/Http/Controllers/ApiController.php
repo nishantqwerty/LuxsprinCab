@@ -77,7 +77,7 @@ class ApiController extends Controller
         $basic  = new \Vonage\Client\Credentials\Basic(env("VONAGE_API_KEY"), env("VONAGE_API_SECRET"));
         $client = new \Vonage\Client($basic);
         $response = $client->sms()->send(
-            new \Vonage\SMS\Message\SMS($phone, 'HCAB', "OTP to verify your mobile is $otp")
+            new \Vonage\SMS\Message\SMS($phone, 'Luxsprin', "OTP to verify your mobile is $otp")
         );
 
         $message = $response->current();

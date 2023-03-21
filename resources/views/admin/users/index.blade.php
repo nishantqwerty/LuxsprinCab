@@ -59,6 +59,7 @@
                             </td>
                         </tr>
                         @endforeach
+                        {{-- {{ $users->links() }} --}}
                     </tbody>
                 </table>
               <!-- ./col -->
@@ -66,6 +67,9 @@
             <!-- /.row (main row) -->
           </div><!-- /.container-fluid -->
         </section>
+        <div class = "float-right">
+          {{ $users->links('pagination::bootstrap-4') }}
+        </div>
         
         <!-- /.content -->
       </div>

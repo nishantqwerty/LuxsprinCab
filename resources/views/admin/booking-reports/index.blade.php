@@ -55,11 +55,11 @@
                                 @if (isset($ride_category))
                                     <option value="private" @if ($ride_category == 'private') selected @endif>Private
                                     </option>
-                                    <option value="sharing" @if ($ride_category == 'sharing') selected @endif>Sharing
-                                    </option>
+                                    <!-- <option value="sharing" @if ($ride_category == 'sharing') selected @endif>Sharing -->
+                                    <!-- </option> -->
                                 @else
                                     <option value="private">Private</option>
-                                    <option value="sharing">Sharing</option>
+                                    <!-- <option value="sharing">Sharing</option> -->
                                 @endif
                             </select>
                         </div>

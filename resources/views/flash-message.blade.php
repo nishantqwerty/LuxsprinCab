@@ -6,7 +6,7 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 
 @if ($message = Session::get('success'))
-<div class="alert alert-success alert-block" id="msg">
+<div class="alert alert-warning alert-block" id="msg">
     <button type="button" class="close"  data-dismiss="alert">×</button>
     <strong>{{ $message }}</strong>
 </div>

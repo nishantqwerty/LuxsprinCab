@@ -39,8 +39,8 @@
                     <tbody>
                         @foreach ($driver as $user)
                         <tr>
-                            <td> {{ $user->user->name }} </td>
-                            <td> ${{ ($user->amount) / 100 }} </td>
+                            <td> {{@ $user->user->name }} </td>
+                            <td> ${{@ ($user->amount) / 100 }} </td>
                             <td>
                                 <button type="button" id="pay" value="{{ $user->driver_id }}" class="btn btn-primary btn-lg active pays" role="button" aria-pressed="true" data-toggle="modal" data-target="#exampleModal">Release Payment</button>
                             </td>

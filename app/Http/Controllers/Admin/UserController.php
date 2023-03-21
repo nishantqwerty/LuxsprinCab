@@ -95,7 +95,7 @@ class UserController extends Controller
             $user->update([
                 'is_active' =>  $status
             ]);
-            return back()->with('success', 'Driver Status Updated Successfully.');
+            return back()->with('success', 'User Status Updated Successfully.');
         } else {
             return back()->with('error', 'Something Went Wrong.');
         }

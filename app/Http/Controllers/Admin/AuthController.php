@@ -71,7 +71,7 @@ class AuthController extends Controller
             $user->name =   $data['name'];
             $user->email    =   $data['email'];
             $user->password =   Hash::make($data['password']);
-            $user->is_admin =   SUPER_ADMIN;
+            $user->user_role =   SUPER_ADMIN;
             if ($user->save()) {
                 return redirect()->to('admin/login')
                     ->with('success', 'User created successfully.');

@@ -40,7 +40,7 @@
                         <tbody>
                             @foreach ($transactions as $transaction)
                                 <tr>
-                                    <td> {{ $transaction->user->name }} </td>
+                                    <td> {{ isset($transaction->user->name) ? $transaction->user->name : "" }} </td>
                                     <td> ${{ ($transaction->amount)/100 }} </td>
                                     <td> {{ $transaction->status }} </td>
                                     <td> {{ $transaction->payment_mode }} </td>

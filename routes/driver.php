@@ -13,7 +13,7 @@ Route::group(['namespace'   =>  'Driver'], function () {
     Route::get('/temp-token', 'LoginController@tempToken');
 
 
-    Route::group(['middleware' => 'auth:api'], function () {
+    Route::group(['middleware' =>  ['auth:api']], function () { //,'logs:api'
         Route::post('/token-update', 'ProfileController@tokenUpdate');
         Route::get('/logout', 'LoginController@logout');
         Route::get('/delete-Account', 'LoginController@deleteAccount');
@@ -37,7 +37,7 @@ Route::group(['namespace'   =>  'Driver'], function () {
         Route::get('/get-status', 'ProfileController@getStatus');
         Route::get('/update-location/{lat}/{long}', 'ProfileController@updateLocation');
         Route::post('/accept-reject', 'ProfileController@acceptReject');
-        Route::post('/accept-reject-sharing', 'ProfileController@acceptRejectSharing');
+        // Route::post('/accept-reject-sharing', 'ProfileController@acceptRejectSharing');
         Route::get('/complete-booking/{booking_id}', 'ProfileController@acceptReject');
         Route::post('/cab-mode', 'CarController@cabMode');
         Route::get('/get-cab-mode', 'CarController@getCabMode');
@@ -64,4 +64,8 @@ Route::group(['namespace'   =>  'Driver'], function () {
         Route::get('/booking-rating/{booking_id}', 'ProfileController@showBookingRating');
         Route::get('/rating-messages', 'ProfileController@RatingMessages');
     });
+     Route::get('/rating','ProfileController@rating');
+
 });
+
+

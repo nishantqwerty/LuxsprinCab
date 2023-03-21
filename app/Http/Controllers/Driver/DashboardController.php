@@ -109,6 +109,7 @@ class DashboardController extends ApiController
                 'color'         =>  $data['color'],
                 'car_number'    =>  $data['car_number'],
                 'capacity'      =>  $data['capacity'],
+                'available_seats'      =>  $data['capacity'],
                 'vin'           =>  $data['vin']
             ];
 
@@ -175,6 +176,7 @@ class DashboardController extends ApiController
             return $this->result_fail('No Bank Account detail exists.');
         }
     }
+    
 
     public function vehicleInfo()
     {

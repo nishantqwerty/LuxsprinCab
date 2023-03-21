@@ -12,6 +12,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    use Notifiable;
     /**
      * The attributes that are mass assignable.
      *
@@ -56,4 +57,11 @@ class User extends Authenticatable
     //         return asset('dist/img/no_image.png');
     //     }
     // }
+    public function userRating(){
+        return $this->hasMany(Rating::class,'user_id');;
+    }
+
+    public function driverRating(){
+        return $this->hasMany(Rating::class, 'driver_id');
+    }
 }

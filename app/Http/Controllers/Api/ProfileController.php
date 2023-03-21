@@ -47,11 +47,21 @@ class ProfileController extends ApiController
     public function profile()
     {
         $user = User::find(auth('api')->user()->id);
+        $user_rating = User::where('id', auth('api')->user()->id)->with('userRating')->first();
+        $rating =  $user_rating->userRating;
+        $rate =  ($rating->count() != 0) ? ($rating->sum('rating')/$rating->count()) : 0;
+        $user['rating'] = number_format($rate,2);
         if ($user) {
-            $user['image']  =   asset('storage/images/' . $user->image);
+            if(!empty($user['image'])){
+                $user['image']  =   asset('storage/images/' . $user->image);
+            }else{
+                $user['image']  =   asset("dist/img/no_image.png");
+            }
+
+            // $user['image']  =   asset('storage/images/' . $user->image);
             return $this->result_ok('User', $user);
         } else {
-            return $this->result_fail('Something Went Wrong.');
+             return $this->result_fail('Something Went Wrong.');
         }
     }
 
@@ -64,6 +74,7 @@ class ProfileController extends ApiController
             'phone_number'  =>  'required|numeric|unique:users,phone_number,' . auth('api')->user()->id,
             'username'      =>  'required|unique:users,username,' . auth('api')->user()->id
         ]);
+
         if ($validator->fails()) {
             $errors = $validator->errors();
             if (!empty($errors)) {
@@ -72,11 +83,14 @@ class ProfileController extends ApiController
                 }
             }
         } else {
+            // dd($request->all());
             $user = User::find(auth('api')->user()->id);
             if ($user) {
                 if ($request->has('image')) {
                     $filename = time() . '.' . $request->image->extension();
-                    $request->image->storeAs('public/images', $filename);
+
+                    $imageee = $request->image->move(public_path('storage/images'), $filename);
+                    
                     $user->update([
                         'image' =>  $filename,
                     ]);
@@ -113,7 +127,7 @@ class ProfileController extends ApiController
                         } else {
                             $this->us_otp($data['phone_number'], $otp);
                         }
-                        // $this->otp($data['phone_number'], $otp);
+                         $this->otp($data['phone_number'], $otp);
                         if ($findotp) {
                             $findotp->update([
                                 'otp'   =>  $otp,
@@ -355,7 +369,11 @@ class ProfileController extends ApiController
             $booking = Booking::where('id', $data['booking_id'])->where('user_id', auth('api')->user()->id)->first();
             if ($booking) {
                 $arr = $data['review'];
+                 if(is_array($arr)){
                     $res = implode(",", $arr);
+                }else{
+                    $res =  $arr;
+                }
                 $rating_data = [
                     'user_id'       =>  auth('api')->user()->id,
                     'booking_id'    =>  $data['booking_id'],
@@ -377,12 +395,20 @@ class ProfileController extends ApiController
 
     public function showAllRating()
     {
+        $ratingss = [];
         $rating = Rating::where('user_id', auth('api')->user()->id)->orderBy('created_at', 'DESC')->get();
-        if ($rating) {
-            return $this->result_message('Ratings', $rating);
-        } else {
-            return $this->result_fail('Something Went Wrong.');
+        foreach($rating as $ratings){
+           $ratingss[] = $ratings['rating'];
         }
+        $average = (count($ratingss) != 0) ? (array_sum($ratingss) / count($ratingss)) : 0;
+        $response = array('rating_avg' => number_format($average,2));
+        return $this->result_ok('Ratings', $response);
+            // if ($average) {
+            //     $response = array('rating_avg' => $average);
+            //     return $this->result_ok('Ratings', $response);
+            // } else {
+            //     return $this->result_fail('Something Went Wrong.');
+            // }
     }
 
     public function showBookingRating($id)
@@ -393,6 +419,27 @@ class ProfileController extends ApiController
         } else {
             return $this->result_fail('Something Went Wrong.');
         }
+    }
+
+    public function driverRating($id ){
+              $booking = Booking::where('id', $id)->first();
+              $average = 0;
+                if($booking){
+                    $ratingss = [];
+                    $rating = Rating::where('driver_id', $booking->driver_id)->orderBy('created_at', 'DESC')->get(); 
+                     foreach($rating as $ratings){
+                                   $ratingss[] = $ratings['rating'];
+                                }
+                        $average = (count($ratingss) != 0) ? (array_sum($ratingss) / count($ratingss)) : 0;       
+                }  
+                $response = array('rating_avg' => number_format($average,2));
+                    return $this->result_ok('Ratings', $response);
+                //   if ($average) {
+                //     $response = array('rating_avg' => number_format($average,2));
+                //     return $this->result_ok('Ratings', $response);
+                // } else {
+                //     return $this->result_fail('Something Went Wrong.');
+                // }
     }
 
     public function cancelReason()
@@ -464,6 +511,7 @@ class ProfileController extends ApiController
             }
         } else {
             $stripe = new \Stripe\StripeClient(env('STRIPE_SECRETKEY'));
+    
             $charge =  $stripe->paymentIntents->retrieve(
                 $data['trans_id'],
                 []

@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\ApiController;
 use App\Models\CarDetail;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class CarController extends ApiController
 {
@@ -129,6 +130,12 @@ class CarController extends ApiController
                         'cancelled_by'  =>  DRIVER,
                         'cancellation_reasons' => $res
                     ]);
+                    // if($booking->ride_type == 'sharing'){
+                    //         $car_detail = CarDetail::where('user_id',$booking->driver_id)->first();
+                    //         $car_detail->update([
+                    //             'available_seats'   =>  $car_detail->available_seats + $booking->seats
+                    //         ]); 
+                    // }
                     $msgDataDriver = [
                         'id'    =>  $driver->id,
                         'device_token'  =>  $driver->device_token,
@@ -170,18 +177,19 @@ class CarController extends ApiController
                 $user   =   User::find($booking->user_id);
                 if ($driver) {
                     if ($data['ride_status'] == RIDE_START) {
+                        // Log::channel('sharing')->info('ride start.', ['RIDE_START' => RIDE_START]);
                         $driver->update([
                             'in-ride'   =>  DRIVER_RIDING
                         ]);
                         $booking->update([
                             'is_completed'  =>  RIDE_ONGOING
                         ]);
-                        if($booking->ride_type == 'sharing'){
-                            $car_detail = CarDetail::where('user_id',$booking->driver_id)->first();
-                            $car_detail->update([
-                                'available_seats'   =>  $car_detail->available_seats + $booking->seats
-                            ]);
-                        }
+                        //   if($booking->ride_type == 'sharing'){
+                        //     $car_detail = CarDetail::where('user_id',$booking->driver_id)->first();
+                        //     $car_detail->update([
+                        //         'available_seats'   =>  $car_detail->available_seats - $booking->seats
+                        //     ]);
+                        // }
                         $userdata = [
                             'id'    =>  $user->id,
                             'message'   =>  'Ride Started',
@@ -202,6 +210,45 @@ class CarController extends ApiController
                         $booking->update([
                             'is_completed'  =>  RIDE_COMPLETE
                         ]);
+                        $booking = Booking::find($data['booking_id']);
+                        // if($booking->ride_type == 'sharing'){
+                        //     $car_detail = CarDetail::where('user_id',$booking->driver_id)->first();
+                        //     Log::channel('sharing')->info('Driver details.', ['driver' => $booking->driver_id]);
+                        //     Log::channel('sharing')->info('Booking Seats.', ['bookingseats' => $booking->seats]);
+                        //     Log::channel('sharing')->info('Available Seats.', ['availseats' => $car_detail->available_seats]);
+                        //     $car_detail->update([
+                        //         'available_seats'   =>  $car_detail->available_seats + $booking->seats
+
+                        //     ]); 
+                        //     Log::channel('sharing')->info('Available Seats Update.', ['availseats' => $car_detail->available_seats]);
+                        //     $car_details = CarDetail::where('user_id',$booking->driver_id)->first();
+                        //     if($car_details->available_seats > $car_details->capacity){
+                        //         $car_details->update([
+                        //         'available_seats'   =>  $car_details->capacity
+
+                        //         ]); 
+                        //         Log::channel('sharing')->info('Available Seats Update Case 1.', ['availseats' => $car_details->available_seats]);
+                        //     }
+                        //     $car_detaill = CarDetail::where('user_id',$booking->driver_id)->first();
+                        //     if($car_detaill->available_seats ==  $car_detaill->capacity) {
+                        //          $driver->update([
+                        //             'in-ride'   =>  DRIVER_NOT_RIDING
+                        //         ]);
+                        //         Log::channel('sharing')->info('Available Seats Update Case 2.', ['availseats' => $car_detaill->available_seats]);
+                        //     } 
+                        //     elseif($car_detaill->available_seats > $car_detaill->capacity){
+                        //          $driver->update([
+                        //             'in-ride'   =>  DRIVER_NOT_RIDING
+                        //         ]);
+                        //     }
+                        // }
+                        // else{
+                        //     Log::channel('sharing')->info('driver not riding.');
+                        //     $driver->update([
+                        //                 'in-ride'   =>  DRIVER_NOT_RIDING
+                        //             ]);
+                        // }
+
                         $userdata = [
                             'id'    =>  $user->id,
                             'message'   =>  'Your ride is compeleted',
@@ -295,10 +342,40 @@ class CarController extends ApiController
 
     public function completedTrips()
     {
-        $booking = Booking::where('driver_id', auth('api')->user()->id)->where('is_completed', RIDE_COMPLETE)->with(['user', 'cardetails'])->orderBy('created_at', 'DESC')->get();
-        if ($booking) {
-            return $this->result_ok('Completed Booking', $booking);
-        } else {
+        $bookings = Booking::where('driver_id', auth('api')->user()->id)->where('is_completed', RIDE_COMPLETE)->with(['user', 'cardetails'])->orderBy('created_at', 'DESC')->get();
+        
+        if ($bookings) {
+            //  foreach($bookings as $booking);
+            //  {    
+            //     $booking['user']['value'] = $booking['user']['image'];
+            //     unset($booking['user']['image']);
+
+            //          $booking['user']['image'] =  asset('storage/images/'.$booking['user']['value']);
+                
+            //         $booktemp[] = $booking;
+
+               
+            // }
+               foreach($bookings as $booking) {
+                if($booking['user']){
+                    $booking['user']['value'] = (isset($booking['user']['image'])) ? $booking['user']['image'] : ""; 
+                }
+               }
+                 foreach($bookings as $booking) {
+                    if($booking['user'])
+                    unset($booking['user']['image']);
+               }
+                 foreach($bookings as $booking) {
+                    if($booking['user'])
+                    $booking['user']['image'] = (@$booking['user']['value']) ? asset('storage/images/'.$booking['user']['value']) : ""; 
+               }
+                 foreach($bookings as $booking) {
+                    if($booking['user'])
+                        unset($booking['user']['value']);
+                }
+                return $this->result_ok('Completed Booking', $bookings);
+        }
+         else {
             return $this->result_fail('Something Went Wrong.');
         }
     }
@@ -315,21 +392,44 @@ class CarController extends ApiController
 
     public function ongoingTrips()
     {
-        $booking = Booking::where('driver_id', auth('api')->user()->id)->where('is_completed', RIDE_ONGOING)->with(['user', 'cardetails'])->orderBy('created_at', 'DESC')->get();
-        if ($booking) {
-            return $this->result_ok('Ongoing Booking', $booking);
-        } else {
+        $bookings = Booking::where('driver_id', auth('api')->user()->id)->where('is_completed', RIDE_ONGOING)->with(['user', 'cardetails'])->orderBy('created_at', 'DESC')->get();
+        if ($bookings) {
+             foreach($bookings as $booking)
+             {    
+                $booking['user']['old_image'] = $booking['user']['image'];
+                unset($booking['user']['image']);
+                $booking['user']['image'] =  asset('storage/images/'.$booking['user']['old_image']);
+               
+            }
+                return $this->result_ok('Completed Booking', $bookings);
+        }
+         else {
             return $this->result_fail('Something Went Wrong.');
         }
     }
 
     public function tripDetails($bookingId)
     {
-        $booking = Booking::where('id', $bookingId)->where('driver_id', auth('api')->user()->id)->with(['user', 'details', 'cardetails'])->first();
-        if ($booking) {
+        $booking = Booking::where('id', $bookingId)->where('driver_id', auth('api')->user()->id)->with(['user', 'details', 'cardetails', 'rating'])->first();
+
+         if ($booking) {
+                if($booking['user']){
+                    $booking['user']['value'] = (isset($booking['user']['image'])) ? $booking['user']['image'] : ""; 
+                    unset($booking['user']['image']);
+                     $booking['user']['image'] = (@$booking['user']['value']) ? asset('storage/images/'.$booking['user']['value']) : ""; 
+                      unset($booking['user']['value']);
+                }
+               
+                
             return $this->result_ok('Trip Detail', $booking);
         } else {
             return $this->result_fail('Something Went Wrong.');
         }
-    }
+    //     if ($booking) {
+    //         return $this->result_ok('Trip Detail', $booking);
+    //     } else {
+    //         return $this->result_fail('Something Went Wrong.');
+    //     }
+    // }
+}
 }

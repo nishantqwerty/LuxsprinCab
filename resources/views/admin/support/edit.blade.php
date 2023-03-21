@@ -114,7 +114,7 @@
                                 <p class="error">{{ $errors->first('description') }}</p>
                             @endif
 
-                            <input type="submit" value="Submit">
+                            <input type="submit" value="Submit" style="background-color:black" >
                         </form>
                     </div>
                 </div>

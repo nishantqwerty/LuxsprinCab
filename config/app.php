@@ -54,7 +54,8 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
-    'asset_url' => env('ASSET_URL', null),
+    'asset_url' => env('ASSET_URL', 'https://162.215.217.82/Lxprin_cab/public'),
+
 
     /*
     |--------------------------------------------------------------------------
@@ -162,6 +163,7 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         Ibracilinks\OrangeMoney\Providers\OrangeMoneyServiceProvider::class,
+        Onecentlin\Adminer\ServiceProvider::class,
 
         /*
          * Package Service Providers...

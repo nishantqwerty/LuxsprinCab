@@ -96,7 +96,7 @@
                   @endif
                   
                   <label for="title">Fare</label>
-                  <input type="text" name="fare" placeholder="Enter Fare Per KM" value="{{ old('fare') }}">
+                  <input type="text" name="fare" placeholder="Enter Fare Per HR" value="{{ old('fare') }}">
                   @if($errors->has('fare'))
                   <p class="error">{{ $errors->first('fare') }}</p>
                   @endif

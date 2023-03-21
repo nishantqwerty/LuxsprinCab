@@ -133,15 +133,15 @@
                   <div class="upload-demo-wrap"><img alt="your image" class="portimg" src="#"></div>
 
                   @if(!empty($user->image))
-                  <a class="pakainfo fancybox" rel="ligthbox" href="{{ asset('storage/images'.$user->image) }}">
-                    <img class="img-responsive infinityknow" width="150px" alt="user image" title="user image" src="{{ asset('storage/images'.$user->image) }}" 
+                  <a class="pakainfo fancybox" rel="ligthbox" href="{{ asset('storage/images/'.$user->image) }}">
+                    <img class="img-responsive infinityknow" width="150px" alt="user image" title="user image" src="{{ asset('storage/images/'.$user->image) }}" 
                   </a>
                   <a class="fancybox-button fancybox-button--delete" title="Delete" href="{{ route('delete-image',['id' => $user->id]) }}">
                     <i class="fas fa-trash-alt"></i>
                   </a>
                   @endif
 
-                  <input type="submit" value="Submit">
+                  <input type="submit" value="Submit" style =  "background-color:black">
                 </form>
               </div>
         </div>

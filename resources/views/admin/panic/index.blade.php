@@ -42,12 +42,12 @@
                         <tbody>
                             @foreach ($panic as $pnc)
                                 <tr>
-                                    <td> {{ $pnc->booking_id }} </td>
-                                    <td> {{ $pnc->user->name }} </td>
-                                    <td> {{ $pnc->user->phone_number }} </td>
+                                    <td> {{@ $pnc->booking_id }} </td>
+                                    <td> {{@ $pnc->user->name }} </td>
+                                    <td> {{@ $pnc->user->phone_number }} </td>
                                     <td><a target="_blank" href="https://www.google.com/maps/search/?api=1&query={{ $pnc->lat.','.$pnc->long }}"> {{ $pnc->lat.' , '.$pnc->long }}</a></td>
-                                    <td> {{ $pnc->booking->cardetails->car_number }} </td>
-                                    <td> {{ date('Y-m-d H:i:s',strtotime($pnc->created_at)) }} </td>
+                                    <td> {{@ $pnc->booking->cardetails->car_number }} </td>
+                                    <td> {{@ date('Y-m-d H:i:s',strtotime($pnc->created_at)) }} </td>
                                 </tr>
                             @endforeach
                         </tbody>

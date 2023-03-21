@@ -55,11 +55,11 @@
                                 @if (isset($ride_category))
                                     <option value="card" @if ($ride_category == 'card') selected @endif>Stripe
                                     </option>
-                                    <option value="orange" @if ($ride_category == 'orange') selected @endif>Orange Money
-                                    </option>
+                                    <!-- <option value="orange" @if ($ride_category == 'orange') selected @endif>Orange Money
+                                    </option> -->
                                 @else
                                     <option value="card">Stripe</option>
-                                    <option value="orange">Orange Money</option>
+                                    <!-- <option value="orange">Orange Money</option> -->
                                 @endif
                             </select>
                         </div>
@@ -101,9 +101,9 @@
                             </div>
                         </div>
 
-                        <div class="col-lg-4 col-6">
+                        <!-- <div class="col-lg-4 col-6">
                             <!-- small box -->
-                            <div class="small-box bg-info">
+                            <!-- <div class="small-box bg-info">
                                 <div class="inner">
                                     <h3>
                                         {{ $orange }}
@@ -117,7 +117,7 @@
                                 {{-- <a href="{{ route('drivers') }}" class="small-box-footer">More info <i
                                 class="fas fa-arrow-circle-right"></i></a> --}}
                             </div>
-                        </div>
+                        </div> -->
 
                         {{-- <div class="chart has-fixed-height" id="bars_basic"></div> --}}
                         <div class="chart has-fixed-height" id="pie_basic"></div>
@@ -188,7 +188,7 @@
                     orient: 'horizontal',
                     bottom: '0%',
                     left: 'center',
-                    data: ['Total Payment', 'Stripe Payment', 'Orange Money'],
+                    data: ['Total Payment', 'Stripe Payment', ],
                     itemHeight: 8,
                     itemWidth: 8
                 },
@@ -212,10 +212,7 @@
                             value: {{ $stripe }},
                             name: 'Stripe Payment'
                         },
-                        {
-                            value: {{ $orange }},
-                            name: 'Orange Money'
-                        }
+                        
                     ]
                 }]
             });

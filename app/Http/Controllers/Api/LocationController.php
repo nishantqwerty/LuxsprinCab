@@ -235,17 +235,23 @@ class LocationController extends ApiController
             $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
             $dist = acos($dist);
             $dist = rad2deg($dist);
-
             $cab_fares = CarFare::with('carCategory')->get();
-            $fares = [];
+            // $fares = [];
+            $tempArr = [];
+            $responseArr = [];
             foreach ($cab_fares as $fare) {
-                if (!empty($fare)) {
-                    $fares[$fare->carCategory->name] =  floor($dist * $fare->fare * 100);
-                }
+                $tempArr = array(
+                    'carName' => $fare->carCategory->name,
+                    'carFare' => floor($dist * $fare->fare * 100),
+                    'carImage' => asset('/carimages/'.$fare->carCategory->car_images)
+                );
+                array_push($responseArr , $tempArr);
+                // if (!empty($fare)) {
+                //     $fares[$fare->carCategory->name] =  floor($dist * $fare->fare * 100);
+                // }
             }
-            // return $cab_fares;
-            if (!empty($fares)) {
-                return $this->result_ok('Fares', $fares);
+            if (!empty($responseArr)) {
+                return $this->result_ok('Car Details', $responseArr);
             } else {
                 return $this->result_fail('Something Went Wrong.');
             }

@@ -24,7 +24,7 @@ Route::group(['namespace'   =>  'Api'], function () {
     Route::post('/reset-password', 'LoginController@resetPassword');
 
 
-    Route::group(['middleware' => 'auth:api'], function () {
+    Route::group(['middleware' => ['auth:api']], function () {
         Route::post('/token-update', 'ProfileController@tokenUpdate');
         Route::get('/all-users', 'ProfileController@allUsers');
         Route::get('/dashboard', 'ProfileController@dashboard');
@@ -55,10 +55,13 @@ Route::group(['namespace'   =>  'Api'], function () {
         Route::post('/submit-rating', 'ProfileController@submitRating');
         Route::get('/all-rating', 'ProfileController@showAllRating');
         Route::get('/booking-rating/{booking_id}', 'ProfileController@showBookingRating');
+        Route::get('/driver-rating/{id}', 'ProfileController@driverRating');
 
         Route::get('/completed-trips', 'BookingController@completedTrips');
         Route::get('/upcoming-trips', 'BookingController@upcomingTrips');
         Route::get('/ongoing-trips', 'BookingController@ongoingTrips');
+        Route::get('/recent-trips', 'BookingController@recentTrip');
+        Route::get('/update-booking', 'BookingController@updateBooking');
 
         Route::get('/trip-details/{bookingId}', 'BookingController@tripDetails');
         Route::get('/cancellaton-reasons', 'ProfileController@cancelReason');
@@ -67,8 +70,15 @@ Route::group(['namespace'   =>  'Api'], function () {
         Route::post('/transaction', 'ProfileController@transaction');
         Route::get('/my-transaction', 'ProfileController@myTransaction');
 
-        Route::post('orange-money-payment','OrangeController@payment');
-        Route::post('payment-status','OrangeController@checkStatus');
+        // Route::post('orange-money-payment','OrangeController@payment');
+        // Route::post('payment-status','OrangeController@checkStatus');
         Route::post('cancel-trip','BookingController@cancelTrip');
+
+        
+        // Route::post('momo-payment', 'MomomoneyController@payment');
+        // Route::get('momo-balance', 'MomomoneyController@accountBalance');
+        // Route::post('check-status', 'MomomoneyController@checkStatus');
     });
+   
+   
 });

@@ -164,11 +164,12 @@ class LoginController extends ApiController
             $user = User::where('phone_number', $data['phone_number'])->first();
             if ($user) {
                 $otp = rand(1000, 9999);
-                if (mb_substr($data['phone_number'], 0, 1) == 1) {
-                    $response = $this->us_otp($data['phone_number'], $otp);
-                } else {
-                    $response = $this->otp($data['phone_number'], $otp);
-                }
+                $response = $this->us_otp($data['phone_number'], $otp);
+                // if (mb_substr($data['phone_number'], 0, 1) == 1) {
+                //     $response = $this->us_otp($data['phone_number'], $otp);
+                // } else {
+                //     $response = $this->otp($data['phone_number'], $otp);
+                // }
                 $user->update([
                     'otp'   =>  $otp
                 ]);
@@ -196,12 +197,14 @@ class LoginController extends ApiController
         } else {
             $otp = rand(1000, 9999);
             $number = Otp::where('phone_number', $data['phone_number'])->first();
+            
             if ($number) {
-                if (mb_substr($data['phone_number'], 0, 1) == 1) {
-                    $response = $this->us_otp($data['phone_number'], $otp);
-                } else {
-                    $response = $this->otp($data['phone_number'], $otp);
-                }
+                
+                // if (mb_substr($data['phone_number'], 0, 1) == 1) {
+                     $response = $this->us_otp($data['phone_number'], $otp);
+                // } else {
+                //     $response = $this->otp($data['phone_number'], $otp);
+                // }
                 // $this->otp($data['phone_number'], $otp);
                 $number->update([
                     'otp'   =>  $otp,

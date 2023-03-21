@@ -65,7 +65,7 @@
                     border-top: 1px solid #a9aabe;" cellpadding="0" cellspacing="0">
                 <tr>
                     <td style="color:#bdbbc6; font-size:15px; padding:0; width:50%; text-align:left;">
-                        <a href="https://brightworld.com" style="color:#bdbbc6;">www.hcab.com</a></td>
+                        <a href="https://brightworld.com" style="color:#bdbbc6;">www.Luxsprin.com</a></td>
                     <td style="color:#bdbbc6; font-size:15px; padding:0; width:50%; text-align:right;">
                         Follow Us
                         <a href="https://www.facebook.com/" style="vertical-align: middle;"><img src="{{ asset('images/emails/f.png') }}"></a>

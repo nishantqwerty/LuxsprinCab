@@ -7,7 +7,7 @@
         .switch {
             position: relative;
             display: inline-block;
-            width: 60px;
+            width: 80px;
             height: 34px;
         }
 
@@ -24,7 +24,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #ccc;
+            background-color: yellow;
             -webkit-transition: .4s;
             transition: .4s;
         }
@@ -36,13 +36,13 @@
             width: 26px;
             left: 4px;
             bottom: 4px;
-            background-color: white;
+            background-color: yellow;
             -webkit-transition: .4s;
             transition: .4s;
         }
 
         input:checked+.slider {
-            background-color: #2196F3;
+            background-color: yellow;
         }
 
         img.portimg {
@@ -75,10 +75,10 @@
     <title>{{ env('APP_NAME') }}</title>
 
     <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"> -->
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="{{ asset('plugins/fontawesome-free/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/fontawesome-free/css/all.min.css') }}"> -->
     <!-- Ionicons -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <!-- Tempusdominus Bootstrap 4 -->
@@ -96,6 +96,7 @@
     <link rel="stylesheet" href="{{ asset('plugins/daterangepicker/daterangepicker.css') }}">
     <!-- summernote -->
     <link rel="stylesheet" href="{{ asset('plugins/summernote/summernote-bs4.min.css') }}">
+                                           
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed">
@@ -105,7 +106,7 @@
         <!-- Preloader -->
         <div class="preloader flex-column justify-content-center align-items-center">
             <img class="animation__shake" src="{{ asset('dist/img/AdminLTELogo.png') }}" alt="AdminLTELogo"
-                height="60" width="60">
+                height="80" width="80">
         </div>
 
         <!-- Navbar -->
@@ -126,10 +127,10 @@
         <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <!-- Brand Logo -->
-            <a href="{{ route('dashboard') }}" class="brand-link">
+            <a href="{{ route('dashboard') }}" class="brand-link" style="background-color:black">
                 <img src="{{ asset('dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo"
                     class="brand-image img-circle elevation-3" style="opacity: .8">
-                <span class="brand-text font-weight-light">{{ env('APP_NAME') }}</span>
+                <span class="brand-text font-weight-light">&nbsp;</span>
             </a>
 
             <!-- Sidebar -->
@@ -272,7 +273,7 @@
                             </a>
                         </li>
 
-                        <li class="nav-item menu-open">
+                        {{-- <li class="nav-item menu-open">
                             @if (Request::Segment(2) == 'rating-messages')
                                 <a href="{{ route('rating-messages') }}" class="nav-link active ">
                                 @else
@@ -283,7 +284,7 @@
                                 Rating Messages
                             </p>
                             </a>
-                        </li>
+                        </li> --}}
 
                         <li class="nav-item menu-open">
                             @if (Request::Segment(2) == 'booking-reports')
@@ -337,7 +338,7 @@
                             </a>
                         </li>
 
-                        <li class="nav-item menu-open">
+                        <!-- <li class="nav-item menu-open">
                             @if (Request::Segment(2) == 'promo')
                                 <a href="{{ route('promo') }}" class="nav-link active ">
                                 @else
@@ -348,7 +349,7 @@
                                 Promo Code Management
                             </p>
                             </a>
-                        </li>
+                        </li> -->
 
                         <li class="nav-item menu-open">
                             @if (Request::Segment(2) == 'commission')

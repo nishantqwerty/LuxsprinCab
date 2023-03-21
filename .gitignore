@@ -19,6 +19,9 @@ dist/
 # Package files
 *.jar
 
+.env
+.gitignoregit 
+.git
 # Maven
 target/
 dist/

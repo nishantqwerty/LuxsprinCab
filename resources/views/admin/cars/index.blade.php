@@ -43,7 +43,7 @@
                         @foreach($categories as $category)
                         <tr>
                             <td> {{ $category->carCategory->name }} </td>
-                            <td> {{ $category->fare }}/km </td>
+                            <td> {{ $category->fare }}/hr </td>
                             <td>
                               <a href="{{ route('edit-fare', ['id' => $category->id]) }}"> <i class="fa fa-edit" ></i> <a>
                               <a href="{{ route('delete-fare', ['id' => $category->id]) }}"> <i class="fa fa-trash" style="font-size:20px;color:red"></i> <a>

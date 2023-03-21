@@ -60,6 +60,7 @@ class OrangeController extends ApiController
 
             // return $options;
             $success = $payment->checkTransactionStatus($orderId, $amount, $pay_token);
+            
             if ($success) {
                 return $this->result_ok('Payment Status',$success);
             } else {

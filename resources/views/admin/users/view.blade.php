@@ -84,8 +84,8 @@
                 <tr>
                     <th >
                       @if(!empty($user->image))
-                        <a class="pakainfo fancybox" rel="ligthbox" href="{{ assset('storage/images'.$user->image) }}">
-                          <img class="img-responsive infinityknow" width="15%" alt="jquery fancybox popup example" title="jquery fancybox popup example" src="{{ assset('storage/images'.$user->image) }}" 
+                        <a class="pakainfo fancybox" rel="ligthbox" href="{{ asset('/storage/images/'.$user->image) }}">
+                          <img class="img-responsive infinityknow" width="15%" alt="jquery fancybox popup example" title="jquery fancybox popup example" src="{{ asset('storage/images/'.$user->image) }}" 
                         </a>
                       @endif
                     </th>
